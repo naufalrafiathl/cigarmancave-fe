@@ -3,17 +3,21 @@ import { getSession } from '@auth0/nextjs-auth0';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutDashboard, UserCircle, LogOut } from 'lucide-react';
+import { getUserProfile } from '@/lib/api';
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
 
-  if (!session) {
-    redirect('/login');
+  const session = await getSession();
+  
+  if (!session?.user) {
+    redirect('/api/auth/login');
   }
+
+  const profile = await getUserProfile();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -22,27 +26,27 @@ export default async function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo/Brand */}
           <div className="p-4 border-b">
-            <Link href="/" className="text-xl font-bold text-gray-800">
+            <a href="/" className="text-xl font-bold text-gray-800">
               Mancave
-            </Link>
+            </a>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
-            <Link
+            <a
               href="/dashboard"
               className="flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
             >
               <LayoutDashboard className="w-5 h-5 mr-3" />
               Dashboard
-            </Link>
-            <Link
+            </a>
+            <a
               href="/dashboard/profile"
               className="flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
             >
               <UserCircle className="w-5 h-5 mr-3" />
               Profile
-            </Link>
+            </a>
           </nav>
 
           {/* User Section */}
@@ -50,12 +54,12 @@ export default async function DashboardLayout({
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <img
-                  src={session.user.picture || '/placeholder-avatar.png'}
+                  src={profile.user.profileImageUrl || '/placeholder-avatar.png'}
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="ml-3 text-sm font-medium text-gray-700">
-                  {session.user.name || session.user.email}
+                  {profile.user.fullName || profile.user.email}
                 </span>
               </div>
               <a

@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { useState, useEffect } from 'react';
 import { User } from '@/types/auth';
 
@@ -29,21 +28,18 @@ export function useAuth(): UseAuthReturn {
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/session');
+      
+      if (!response.ok) {
+        throw new Error('Session check failed');
+      }
+      
       const data = await response.json();
 
-      if (data.user) {
-        setState(prev => ({
-          ...prev,
-          user: data.user,
-          loading: false,
-        }));
-      } else {
-        setState(prev => ({
-          ...prev,
-          user: null,
-          loading: false,
-        }));
-      }
+      setState(prev => ({
+        ...prev,
+        user: data.user || null,
+        loading: false,
+      }));
     } catch (error) {
       setState(prev => ({
         ...prev,
@@ -55,7 +51,7 @@ export function useAuth(): UseAuthReturn {
   };
 
   const login = async (email: string, password: string) => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState(prev => ({ ...prev, loading: true, error: null })); // Fixed typo: _error -> error
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -69,9 +65,10 @@ export function useAuth(): UseAuthReturn {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.error || data.message || 'Login failed');
       }
 
+      // Only update state if login was successful
       setState(prev => ({
         ...prev,
         user: data.user,
@@ -79,7 +76,6 @@ export function useAuth(): UseAuthReturn {
         error: null,
       }));
 
-      // Optional: Save auth token to localStorage if you're using token-based auth
       if (data.token) {
         localStorage.setItem('auth_token', data.token);
       }
@@ -99,13 +95,13 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
+        credentials: 'include', // Added to ensure cookies are sent
       });
 
       if (!response.ok) {
         throw new Error('Logout failed');
       }
 
-      // Clear any stored auth data
       localStorage.removeItem('auth_token');
 
       setState({

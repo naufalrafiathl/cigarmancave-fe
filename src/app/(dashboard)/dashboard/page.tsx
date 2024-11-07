@@ -1,12 +1,22 @@
 // src/app/(dashboard)/dashboard/page.tsx
+import { getUserProfile } from '@/lib/api';
+import { getSession } from '@auth0/nextjs-auth0';
+
+import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart } from "lucide-react";
+export default async function DashboardPage() {
+  const session = await getSession();
+  
+  if (!session?.user) {
+    redirect('/api/auth/login');
+  }
 
-export default function DashboardPage() {
+  const profile = await getUserProfile();
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Welcome, {profile.user.fullName || 'User'}</h1>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

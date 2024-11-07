@@ -1,7 +1,7 @@
 // src/app/api/auth/session/route.ts
-import { NextRequest } from 'next/server';
+import { NextRequest,NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_: NextRequest) {
   try {
     // Your session verification logic here
     // This is just an example - implement your actual session checking logic
@@ -19,6 +19,8 @@ export async function GET(request: NextRequest) {
 
     return Response.json({ user: null });
   } catch (error) {
-    return Response.json({ error: 'Session check failed' }, { status: 401 });
-  }
+    return NextResponse.json(
+      { error: 'Session check failed' }, 
+      { status: 401 }
+  );  }
 }

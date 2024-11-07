@@ -1,5 +1,5 @@
 // src/lib/auth.ts
-import { AppState, User } from '@auth0/auth0-react';
+import { User } from '@auth0/auth0-react';
 import axios from 'axios';
 
 export const api = axios.create({

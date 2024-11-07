@@ -29,12 +29,12 @@ export default async function Home() {
           <div className="flex gap-x-6">
             {session ? (
               <>
-                <Link
+                <a
                   href="/dashboard"
                   className="text-sm font-semibold leading-6 text-gray-900"
                 >
                   Dashboard
-                </Link>
+                </a>
                 <a
                   href="/api/auth/logout"
                   className="text-sm font-semibold leading-6 text-gray-900"
@@ -89,12 +89,12 @@ export default async function Home() {
                   </a>
                 </>
               ) : (
-                <Link
+                <a
                   href="/dashboard"
                   className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Go to Dashboard
-                </Link>
+                </a>
               )}
             </div>
           </div>
