@@ -24,6 +24,12 @@ const nextConfig = {
   // Add Auth0 domain to images configuration
   images: {
     domains: ['cigarmancave.us.auth0.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      }],
   }
 };
 

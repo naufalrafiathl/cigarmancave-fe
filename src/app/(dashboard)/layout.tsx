@@ -1,6 +1,7 @@
 // src/app/(dashboard)/layout.tsx
 import { getSession } from '@auth0/nextjs-auth0';
 import { redirect } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { LayoutDashboard, UserCircle, LogOut } from 'lucide-react';
 import { getUserProfile } from '@/lib/api';
@@ -53,8 +54,10 @@ export default async function DashboardLayout({
           <div className="p-4 border-t">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <img
+                <Image
                   src={profile.user.profileImageUrl || '/placeholder-avatar.png'}
+                  width={50}
+                  height={50}
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />

@@ -1,6 +1,7 @@
 import { getSession } from '@auth0/nextjs-auth0';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUserProfile } from '@/lib/api';
+import Image from 'next/image';
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -21,8 +22,10 @@ export default async function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-4">
-              <img
+              <Image
                 src={profile.picture || session.user.picture || '/placeholder-avatar.png'}
+                width={150}
+                height={150}
                 alt="Profile"
                 className="w-16 h-16 rounded-full"
               />
