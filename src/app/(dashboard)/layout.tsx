@@ -1,9 +1,10 @@
-
+// src/app/(dashboard)/layout.tsx
 import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/lib/api";
 import { Sidebar } from "./components/Sidebar";
 import { MobileNav } from "./components/MobileNav";
+import { SearchHeader } from "./components/SearchHeader";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,7 +26,15 @@ export default async function DashboardLayout({ children }: LayoutProps) {
 
       {/* Main Content */}
       <div className="md:ml-64">
-        <main className="p-4 md:ml-4">{children}</main>
+        <main className="p-4 md:ml-4">
+          {/* Search Header */}
+          <SearchHeader />
+          
+          {/* Page Content */}
+          <div className="mt-4">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
