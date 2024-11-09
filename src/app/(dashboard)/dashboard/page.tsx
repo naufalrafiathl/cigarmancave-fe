@@ -1,10 +1,10 @@
 // src/app/(dashboard)/dashboard/page.tsx
 import { getUserProfile } from '@/lib/api';
 import { getSession } from '@auth0/nextjs-auth0';
-
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart } from "lucide-react";
+import Image from 'next/image';
+import { UserCircle } from 'lucide-react';
+
 export default async function DashboardPage() {
   const session = await getSession();
   
@@ -13,75 +13,44 @@ export default async function DashboardPage() {
   }
 
   const profile = await getUserProfile();
+  console.log(profile)
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Welcome, {profile.user.fullName || 'User'}</h1>
+    <div className="flex flex-col h-[calc(100vh-2rem)]">
+      {/* Search bar */}
+      <div className='bg-[#222222] rounded-full w-full p-5 mb-3 shrink-0'>
+        <div className='flex text-[#B9B9B9]'>
+          <div>Search</div>
+          <div>Icons</div>
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cigars</CardTitle>
-            <BarChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              +2 from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reviews</CardTitle>
-            <BarChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              +4 from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Followers</CardTitle>
-            <BarChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">127</div>
-            <p className="text-xs text-muted-foreground">
-              +18 from last month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Reviews</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              No reviews yet. Start by adding your first cigar review!
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>My Humidor</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Your humidor is empty. Add some cigars to get started!
-            </p>
-          </CardContent>
-        </Card>
+      {/* Profile component */}
+      <div id="profcomp" className="bg-[#222222] rounded-2xl w-full p-5 flex flex-1 min-h-0">
+        <div className="w-[25%] bg-[#333333] mr-2 rounded-2xl p-4">
+          {/* Image container with fixed width and centered */}
+          <div className="flex justify-center">
+            <div className="mt-10 relative w-24 h-24 rounded-full overflow-hidden border border-gray-600">
+              {profile?.user.profileImageUrl ? (
+                <Image
+                  src={profile.user?.profileImageUrl}
+                  alt="Profile picture"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-800">
+                  <UserCircle className="w-12 h-12 text-gray-400" />
+                </div>
+              )}
+            </div>
+            
+          </div>
+          <div className='text-[#FFFFFF] text-center mt-5'>{profile.user.fullName}</div>
+        </div>
+        <div className="w-[75%] h-full rounded-2xl p-4">
+          Page
+        </div>
       </div>
     </div>
   );
