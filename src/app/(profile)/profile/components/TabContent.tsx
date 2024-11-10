@@ -1,5 +1,6 @@
 // src/components/profile/TabContent.tsx
 import { TabType, TABS } from "@/types/profile";
+import { HumidorView } from "./humidor/HumidorView";
 
 interface TabContentProps {
   currentTab: TabType;
@@ -8,10 +9,7 @@ interface TabContentProps {
 export function TabContent({ currentTab }: TabContentProps) {
   const tabContent: Record<TabType, JSX.Element> = {
     [TABS.humidor]: (
-      <div className="p-4 text-[#B9B9B9]">
-        <h2 className="text-xl font-semibold text-white mb-4">My Humidor</h2>
-        <p>Your humidor is empty. Add some cigars to get started!</p>
-      </div>
+      <HumidorView></HumidorView>
     ),
     [TABS.reviews]: (
       <div className="p-4 text-[#B9B9B9]">
