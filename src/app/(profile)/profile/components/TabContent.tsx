@@ -9,7 +9,10 @@ interface TabContentProps {
 export function TabContent({ currentTab }: TabContentProps) {
   const tabContent: Record<TabType, JSX.Element> = {
     [TABS.humidor]: (
+      <div className="overflow-y-auto">
       <HumidorView></HumidorView>
+      </div>
+
     ),
     [TABS.reviews]: (
       <div className="p-4 text-[#B9B9B9]">
