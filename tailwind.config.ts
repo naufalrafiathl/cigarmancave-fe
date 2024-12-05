@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        epilogue: ['var(--font-epilogue)'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

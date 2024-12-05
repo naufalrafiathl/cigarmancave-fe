@@ -30,10 +30,10 @@ export default async function Home() {
             {session ? (
               <>
                 <a
-                  href="/dashboard"
+                  href="/profile"
                   className="text-sm font-semibold leading-6 text-gray-900"
                 >
-                  Dashboard
+                  App
                 </a>
                 <a
                   href="/api/auth/logout"
