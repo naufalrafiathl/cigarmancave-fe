@@ -1,6 +1,6 @@
 // src/components/profile/TabContent.tsx
 import { TabType, TABS } from "@/types/profile";
-import { HumidorView } from "./humidor/HumidorView";
+import { HumidorView } from "./HumidorView";
 
 interface TabContentProps {
   currentTab: TabType;

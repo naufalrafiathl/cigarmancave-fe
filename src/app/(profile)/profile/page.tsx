@@ -1,7 +1,7 @@
 import { getUserProfile } from "@/lib/api";
 import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
-import { ProfileSidebar } from "./components/ProfileSidebar";
+import { ProfileSidebar } from "./components/profile/ProfileSidebar";
 import { ProfileTabs } from "./components/ProfileTabs";
 import { TabContent } from "./components/TabContent";
 import { isValidTab, TABS, TabType } from "@/types/profile";
