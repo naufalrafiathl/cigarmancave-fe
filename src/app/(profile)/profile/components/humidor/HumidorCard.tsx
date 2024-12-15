@@ -1,6 +1,5 @@
-// components/humidor/HumidorCard.tsx
-import React from 'react';
-import { Edit2, Trash2, MoreVertical, Package } from 'lucide-react';
+import React from "react";
+import { Edit2, Trash2, Package, Calendar } from "lucide-react";
 
 interface Humidor {
   id: number;
@@ -16,168 +15,134 @@ interface Humidor {
 
 interface HumidorCardProps {
   humidor: Humidor;
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
+  onSelect: (humidor: Humidor) => void;
   onView: (humidor: Humidor) => void;
   onEdit: (humidor: Humidor) => void;
   onDelete: (humidor: Humidor) => void;
 }
 
-export function HumidorCard({ 
-  humidor, 
-  viewMode, 
-  onView, 
-  onEdit, 
-  onDelete 
+export function HumidorCard({
+  humidor,
+  viewMode,
+  onView,
+  onSelect,
+  onEdit,
+  onDelete,
 }: HumidorCardProps) {
-  const [showDropdown, setShowDropdown] = React.useState(false);
-
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowDropdown(false);
     onEdit(humidor);
   };
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShowDropdown(false);
-    if (window.confirm('Are you sure you want to delete this humidor?')) {
+    if (window.confirm("Are you sure you want to delete this humidor?")) {
       onDelete(humidor);
     }
   };
 
-  if (viewMode === 'list') {
+  if (viewMode === "list") {
     return (
-      <div 
+      <div
         onClick={() => onView(humidor)}
-        className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center justify-between cursor-pointer hover:border-blue-500 transition-colors"
+        className="bg-[#2A2A2A] rounded-lg border border-white/10 p-4 flex items-center justify-between cursor-pointer hover:border-[#EFA427] transition-colors"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+          <div className="w-20 h-20 bg-[#222222] rounded-lg overflow-hidden flex-shrink-0">
             {humidor.imageUrl ? (
-              <img 
-                src={humidor.imageUrl} 
-                alt={humidor.name} 
+              <img
+                src={humidor.imageUrl}
+                alt={humidor.name}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <div className="w-full h-full flex items-center justify-center">
                 <Package className="w-8 h-8 text-gray-400" />
               </div>
             )}
           </div>
-          <div>
-            <h3 className="font-medium text-gray-900">{humidor.name}</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-white">{humidor.name}</h3>
             {humidor.description && (
-              <p className="text-sm text-gray-500 line-clamp-1">{humidor.description}</p>
+              <p className="text-sm text-[#B9B9B9] line-clamp-1 mt-1">
+                {humidor.description}
+              </p>
             )}
-            <p className="text-sm text-gray-600 mt-1">
+            <div className="flex items-center text-sm text-[#B9B9B9] mt-2">
+              <Package className="w-4 h-4 mr-1" />
               {humidor.cigars.length} cigars
-            </p>
+            </div>
           </div>
         </div>
-        
-        <div className="relative">
+
+        <div className="flex gap-2">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowDropdown(!showDropdown);
-            }}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            onClick={handleEditClick}
+            className="p-2 text-white hover:text-[#EFA427] hover:bg-white/5 rounded-lg transition-colors"
           >
-            <MoreVertical className="w-5 h-5 text-gray-500" />
+            <Edit2 className="w-5 h-5" />
           </button>
-          
-          {showDropdown && (
-            <div 
-              className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={handleEditClick}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <Edit2 className="w-4 h-4" />
-                Edit
-              </button>
-              <button
-                onClick={handleDeleteClick}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete
-              </button>
-            </div>
-          )}
+          <button
+            onClick={handleDeleteClick}
+            className="p-2 text-white hover:text-red-500 hover:bg-white/5 rounded-lg transition-colors"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       onClick={() => onView(humidor)}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:border-blue-500 transition-colors"
+      className="bg-[#2A2A2A] rounded-lg border border-white/10 overflow-hidden cursor-pointer hover:border-[#EFA427] transition-colors"
     >
-      <div className="h-48 bg-gray-200">
+      <div className="aspect-video bg-[#222222]">
         {humidor.imageUrl ? (
-          <img 
-            src={humidor.imageUrl} 
-            alt={humidor.name} 
+          <img
+            src={humidor.imageUrl}
+            alt={humidor.name}
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+          <div className="w-full h-full flex items-center justify-center">
             <Package className="w-16 h-16 text-gray-400" />
           </div>
         )}
       </div>
-      
+
       <div className="p-4">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="font-medium text-gray-900">{humidor.name}</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-white truncate">
+              {humidor.name}
+            </h3>
             {humidor.description && (
-              <p className="text-sm text-gray-500 line-clamp-2 mt-1">
+              <p className="text-sm text-[#B9B9B9] line-clamp-2 mt-1">
                 {humidor.description}
               </p>
             )}
-            <p className="text-sm text-gray-600 mt-1">
+            <div className="flex items-center text-sm text-[#B9B9B9] mt-2">
+              <Package className="w-4 h-4 mr-1" />
               {humidor.cigars.length} cigars
-            </p>
+            </div>
           </div>
-          
-          <div className="relative">
+
+          <div className="flex gap-2">
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDropdown(!showDropdown);
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full"
+              onClick={handleEditClick}
+              className="p-2 text-white hover:text-[#EFA427] hover:bg-white/5 rounded-lg transition-colors"
             >
-              <MoreVertical className="w-5 h-5 text-gray-500" />
+              <Edit2 className="w-5 h-5" />
             </button>
-            
-            {showDropdown && (
-              <div 
-                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  onClick={handleEditClick}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  Edit
-                </button>
-                <button
-                  onClick={handleDeleteClick}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
-              </div>
-            )}
+            <button
+              onClick={handleDeleteClick}
+              className="p-2 text-white hover:text-red-500 hover:bg-white/5 rounded-lg transition-colors"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

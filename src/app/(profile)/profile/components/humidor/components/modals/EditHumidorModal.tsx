@@ -1,14 +1,10 @@
-// components/humidor/modals/EditHumidorModal.tsx
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-// Define the form schema
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -24,89 +20,87 @@ interface EditHumidorModalProps {
   onClose: () => void;
 }
 
-export function EditHumidorModal({ humidor, onSubmit, onClose }: EditHumidorModalProps) {
+export function EditHumidorModal({
+  humidor,
+  onSubmit,
+  onClose,
+}: EditHumidorModalProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: humidor?.name || "",
       description: humidor?.description || "",
-      imageUrl: humidor?.imageUrl || "",
     },
   });
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+      <div className="bg-[#2A2A2A] rounded-lg p-6 w-full max-w-md border border-white/10">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-white">
             {humidor ? "Edit Humidor" : "Create New Humidor"}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-white/60 hover:text-white transition-colors text-2xl leading-none"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
               Name
             </label>
             <input
               {...form.register("name")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg 
+                text-white placeholder-gray-400 
+                focus:outline-none focus:ring-1 focus:ring-[#EFA427] focus:border-[#EFA427]
+                transition-colors"
+              placeholder="Enter humidor name"
             />
             {form.formState.errors.name && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1.5 text-sm text-red-400">
                 {form.formState.errors.name.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
               Description
             </label>
             <textarea
               {...form.register("description")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg 
+                text-white placeholder-gray-400 
+                focus:outline-none focus:ring-1 focus:ring-[#EFA427] focus:border-[#EFA427]
+                transition-colors min-h-[100px] resize-none"
+              placeholder="Enter description (optional)"
             />
             {form.formState.errors.description && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1.5 text-sm text-red-400">
                 {form.formState.errors.description.message}
               </p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image URL
-            </label>
-            <input
-              {...form.register("imageUrl")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {form.formState.errors.imageUrl && (
-              <p className="mt-1 text-sm text-red-600">
-                {form.formState.errors.imageUrl.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium text-[#B9B9B9] bg-transparent 
+                border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#EFA427] 
+                rounded-lg hover:bg-[#d89421] disabled:opacity-50 transition-colors"
             >
               {humidor ? "Save Changes" : "Create Humidor"}
             </button>

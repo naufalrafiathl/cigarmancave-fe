@@ -11,7 +11,9 @@ export interface Cigar {
 }
 
 export interface HumidorCigar {
+  name:string;
   id: number;
+  brand: string;
   cigarId: number;
   humidorId: number;
   quantity: number;

@@ -1,14 +1,14 @@
-"use client"
-import { useState } from 'react';
-import { Plus, ArrowLeft, Search } from 'lucide-react';
-import { Humidor, HumidorCigar, Cigar, CigarDisplay } from '@/types/humidor';
-import { ViewToggle } from './humidor/ViewToggle';
-import { CigarCard } from './humidor/CigarCard';
-import { HumidorCard } from './humidor/HumidorCard';
-import { EditHumidorModal } from './humidor/components/modals/EditHumidorModal';
-import { EditHumidorCigarModal } from './humidor/components/modals/EditHumidorCigarModal';
-import { PaginationControls } from './humidor/PaginationControls';
-import { useHumidorOperations } from '@/hooks/useHumidorOperations';
+"use client";
+import { useState, useEffect } from "react";
+import { Plus, ArrowLeft, Search } from "lucide-react";
+import { Humidor, HumidorCigar, Cigar, CigarDisplay } from "@/types/humidor";
+import { ViewToggle } from "./humidor/ViewToggle";
+import { CigarCard } from "./humidor/CigarCard";
+import { HumidorCard } from "./humidor/HumidorCard";
+import { EditHumidorModal } from "./humidor/components/modals/EditHumidorModal";
+import EditHumidorCigarModal from "./humidor/components/modals/EditHumidorCigarModal";
+import { PaginationControls } from "./humidor/PaginationControls";
+import { useHumidorOperations } from "@/hooks/useHumidorOperations";
 
 const ITEMS_PER_PAGE = {
   humidors: 8,
@@ -16,9 +16,12 @@ const ITEMS_PER_PAGE = {
 };
 
 export function HumidorView() {
-  // State management
   const [selectedHumidor, setSelectedHumidor] = useState<Humidor | null>(null);
-  const [editingHumidor, setEditingHumidor] = useState<Partial<Humidor> | null>(null);
+  const [editingHumidor, setEditingHumidor] = useState<Partial<Humidor> | null>(
+    null
+  );
+  const [humidors, setHumidors] = useState<Humidor[]>([]);
+  const [isLoadingHumidors, setIsLoadingHumidors] = useState(true);
   const [editingHumidorCigar, setEditingHumidorCigar] = useState<{
     humidorCigar?: HumidorCigar;
     cigar: Cigar;
@@ -26,10 +29,11 @@ export function HumidorView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentHumidorPage, setCurrentHumidorPage] = useState(1);
   const [currentCigarPage, setCurrentCigarPage] = useState(1);
-  const [humidorViewMode, setHumidorViewMode] = useState<"grid" | "list">("grid");
+  const [humidorViewMode, setHumidorViewMode] = useState<"grid" | "list">(
+    "grid"
+  );
   const [cigarViewMode, setCigarViewMode] = useState<"grid" | "list">("grid");
 
-  // Hook for API operations
   const {
     isLoading,
     error,
@@ -39,10 +43,29 @@ export function HumidorView() {
     addCigarToHumidor,
     updateHumidorCigar,
     removeCigarFromHumidor,
+    getHumidors,
   } = useHumidorOperations();
 
-  // Transform HumidorCigar to CigarDisplay
-  const transformToCigarDisplay = (humidorCigar: HumidorCigar): CigarDisplay => {
+  useEffect(() => {
+    const loadHumidors = async () => {
+      try {
+        setIsLoadingHumidors(true);
+        const fetchedHumidors = (await getHumidors()) as Humidor[];
+        setHumidors(fetchedHumidors);
+      } catch (err) {
+        console.error("Failed to load humidors:", err);
+      } finally {
+        setIsLoadingHumidors(false);
+      }
+    };
+
+    loadHumidors();
+  }, []);
+
+  useEffect(() => {});
+  const transformToCigarDisplay = (
+    humidorCigar: HumidorCigar
+  ): CigarDisplay => {
     return {
       id: humidorCigar.id,
       name: humidorCigar.cigar.name,
@@ -56,17 +79,18 @@ export function HumidorView() {
     };
   };
 
-  // Handlers
-  const handleCreateHumidor = async (data: { name: string; description?: string; imageUrl?: string }) => {
+  const handleCreateHumidor = async (data: {
+    name: string;
+    description?: string;
+    imageUrl?: string;
+  }) => {
     try {
-      await createHumidor({
-        name: data.name,
-        description: data.description,
-        imageUrl: data.imageUrl,
-      });
+      const result = await createHumidor(data);
+      const updatedHumidors = (await getHumidors()) as Humidor[];
+      setHumidors(updatedHumidors);
       setEditingHumidor(null);
     } catch (err) {
-      console.error('Failed to create humidor:', err);
+      console.error("Failed to create humidor:", err);
     }
   };
 
@@ -74,13 +98,16 @@ export function HumidorView() {
     if (!editingHumidor?.id) return;
     try {
       await updateHumidor(editingHumidor.id, data);
+      const updatedHumidors = (await getHumidors()) as Humidor[];
+      setHumidors(updatedHumidors);
       setEditingHumidor(null);
     } catch (err) {
-      console.error('Failed to update humidor:', err);
+      console.error("Failed to update humidor:", err);
     }
   };
 
-  const handleAddCigarToHumidor = async (data: { 
+  const handleAddCigarToHumidor = async (data: {
+    cigarId: number;
     quantity: number;
     purchasePrice?: number;
     purchaseDate?: string;
@@ -90,7 +117,7 @@ export function HumidorView() {
     if (!selectedHumidor || !editingHumidorCigar) return;
     try {
       await addCigarToHumidor(selectedHumidor.id, {
-        cigarId: editingHumidorCigar.cigar.id,
+        cigarId: data.cigarId,
         quantity: data.quantity,
         purchasePrice: data.purchasePrice,
         purchaseDate: data.purchaseDate,
@@ -99,7 +126,7 @@ export function HumidorView() {
       });
       setEditingHumidorCigar(null);
     } catch (err) {
-      console.error('Failed to add cigar:', err);
+      console.error("Failed to add cigar:", err);
     }
   };
 
@@ -113,72 +140,88 @@ export function HumidorView() {
       );
       setEditingHumidorCigar(null);
     } catch (err) {
-      console.error('Failed to update cigar:', err);
+      console.error("Failed to update cigar:", err);
     }
   };
 
-  // Filter cigars based on search query
   const filterCigars = (cigars: HumidorCigar[]) => {
     if (!searchQuery) return cigars;
     return cigars.filter(
       (humidorCigar) =>
-        humidorCigar.cigar.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        humidorCigar.cigar.brand.toLowerCase().includes(searchQuery.toLowerCase())
+        humidorCigar.cigar.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        humidorCigar.cigar.brand
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
     );
   };
 
-  // Individual humidor view (Cigars page)
   if (selectedHumidor) {
     const filteredCigars = filterCigars(selectedHumidor.cigars);
     const paginatedCigars = filterCigars(selectedHumidor.cigars).slice(
       (currentCigarPage - 1) * ITEMS_PER_PAGE.cigars,
       currentCigarPage * ITEMS_PER_PAGE.cigars
     );
-    const totalCigarPages = Math.ceil(filteredCigars.length / ITEMS_PER_PAGE.cigars);
+    const totalCigarPages = Math.ceil(
+      filteredCigars.length / ITEMS_PER_PAGE.cigars
+    );
 
     return (
       <div className="h-full">
-        {/* Header */}
         <div className="sticky top-0 z-10 bg-[#222222] border-b border-white/10 px-4 py-3 pt-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setSelectedHumidor(null)}
-                className="text-white hover:text-[#EFA427] transition-colors p-2 rounded-lg hover:bg-white/5"
-              >
-                <ArrowLeft className="w-6 h-6" />
-              </button>
-              <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
-                {selectedHumidor.name}
-              </h2>
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setSelectedHumidor(null)}
+                  className="text-white hover:text-[#EFA427] transition-colors p-2 rounded-lg hover:bg-white/5"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
+                <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
+                  {selectedHumidor.name}
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() =>
+                    setEditingHumidorCigar({
+                      cigar: { id: 0, name: "", brand: "", imageUrl: "" },
+                    })
+                  }
+                  className="h-10 px-4 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
+                >
+                  <Plus size={20} />
+                  <span className="hidden sm:inline">Add New Cigar</span>
+                  <span className="sm:hidden">Add New</span>
+                </button>
+                <ViewToggle
+                  viewMode={cigarViewMode}
+                  setViewMode={setCigarViewMode}
+                />
+              </div>
             </div>
-            <ViewToggle viewMode={cigarViewMode} setViewMode={setCigarViewMode} />
           </div>
         </div>
-
-        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Search and Actions */}
           <div className="mb-5 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
             <div className="flex-1 max-w-xl">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
-                  placeholder="Search cigars..."
+                  placeholder="Search cigar in humidor..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 w-full h-12 bg-[#2A2A2A] border-white/10 rounded-lg text-white"
                 />
               </div>
             </div>
-            <button
-              onClick={() => setEditingHumidorCigar({ cigar: { id: 0, name: '', brand: '' } as Cigar })}
-              className="h-12 px-6 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center justify-center gap-2"
-            >
-              <Plus size={20} />
-              <span>Add Cigar</span>
-            </button>
           </div>
 
           {/* Cigars Grid/List */}
@@ -205,7 +248,7 @@ export function HumidorView() {
                     });
                   }
                 }}
-                onDelete={(cigarDisplay) => 
+                onDelete={(cigarDisplay) =>
                   removeCigarFromHumidor(selectedHumidor.id, cigarDisplay.id)
                 }
               />
@@ -223,13 +266,39 @@ export function HumidorView() {
             </div>
           )}
         </div>
-
         {/* Modals */}
         {editingHumidorCigar && (
           <EditHumidorCigarModal
-            humidorCigar={editingHumidorCigar.humidorCigar}
-            cigar={editingHumidorCigar.cigar}
-            onSubmit={editingHumidorCigar.humidorCigar ? handleUpdateHumidorCigar : handleAddCigarToHumidor}
+            humidorCigar={
+              editingHumidorCigar.humidorCigar
+                ? {
+                    cigarId: editingHumidorCigar.humidorCigar.id,
+                    quantity: editingHumidorCigar.humidorCigar.quantity,
+                    purchasePrice:
+                      editingHumidorCigar.humidorCigar.purchasePrice,
+                    purchaseDate: editingHumidorCigar.humidorCigar.purchaseDate,
+                    purchaseLocation:
+                      editingHumidorCigar.humidorCigar.purchaseLocation,
+                    notes: editingHumidorCigar.humidorCigar.notes,
+                  }
+                : undefined
+            }
+            onSubmit={async (data) => {
+              if (editingHumidorCigar.humidorCigar) {
+                await handleUpdateHumidorCigar(data as Partial<HumidorCigar>);
+              } else {
+                await handleAddCigarToHumidor(
+                  data as {
+                    cigarId: number;
+                    quantity: number;
+                    purchasePrice?: number;
+                    purchaseDate?: string;
+                    purchaseLocation?: string;
+                    notes?: string;
+                  }
+                );
+              }
+            }}
             onClose={() => setEditingHumidorCigar(null)}
           />
         )}
@@ -237,7 +306,6 @@ export function HumidorView() {
     );
   }
 
-  // Humidors list view
   return (
     <div className="h-full">
       {/* Header */}
@@ -250,14 +318,19 @@ export function HumidorView() {
             </div>
             <div className="flex items-center gap-4">
               <button
-                onClick={() => setEditingHumidor({ name: '', description: '', imageUrl: '' })}
+                onClick={() =>
+                  setEditingHumidor({ name: "", description: "", imageUrl: "" })
+                }
                 className="h-10 px-4 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
               >
                 <Plus size={20} />
                 <span className="hidden sm:inline">Add New Humidor</span>
                 <span className="sm:hidden">Add New</span>
               </button>
-              <ViewToggle viewMode={humidorViewMode} setViewMode={setHumidorViewMode} />
+              <ViewToggle
+                viewMode={humidorViewMode}
+                setViewMode={setHumidorViewMode}
+              />
             </div>
           </div>
         </div>
@@ -272,15 +345,55 @@ export function HumidorView() {
               : "flex flex-col gap-4"
           }
         >
-          {/* Here you would map through your humidors data */}
+          {isLoadingHumidors ? (
+            <div className="col-span-full flex justify-center py-12">
+              <div className="text-white/60">Loading humidors...</div>
+            </div>
+          ) : humidors.length === 0 ? (
+            <div className="col-span-full flex flex-col items-center py-12">
+              <p className="text-white/60 mb-4">No humidors yet</p>
+              <button
+                onClick={() =>
+                  setEditingHumidor({ name: "", description: "", imageUrl: "" })
+                }
+                className="px-4 py-2 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
+              >
+                <Plus size={20} />
+                <span>Create Your First Humidor</span>
+              </button>
+            </div>
+          ) : (
+            humidors.map((humidor) => (
+              <HumidorCard
+                key={humidor.id}
+                onView={() => setSelectedHumidor(humidor)}
+                viewMode={humidorViewMode}
+                onSelect={() => setSelectedHumidor(humidor)}
+                humidor={humidor}
+                onEdit={() => setEditingHumidor(humidor)}
+                onDelete={async () => {
+                  try {
+                    await deleteHumidor(humidor.id);
+                    // Refresh the list after deletion
+                    const updatedHumidors = (await getHumidors()) as Humidor[];
+                    setHumidors(updatedHumidors);
+                  } catch (err) {
+                    console.error("Failed to delete humidor:", err);
+                  }
+                }}
+              />
+            ))
+          )}
         </div>
       </div>
 
       {/* Modals */}
       {editingHumidor && (
         <EditHumidorModal
-          humidor={editingHumidor.id ? editingHumidor as Humidor : undefined}
-          onSubmit={editingHumidor.id ? handleUpdateHumidor : handleCreateHumidor}
+          humidor={editingHumidor.id ? (editingHumidor as Humidor) : undefined}
+          onSubmit={
+            editingHumidor.id ? handleUpdateHumidor : handleCreateHumidor
+          }
           onClose={() => setEditingHumidor(null)}
         />
       )}

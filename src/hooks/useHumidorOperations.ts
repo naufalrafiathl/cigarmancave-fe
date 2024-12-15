@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { config } from "@/config";
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 interface Humidor {
   id: number;
@@ -22,86 +22,228 @@ interface HumidorCigar {
     brand: string;
   };
 }
-  
+
+interface AddCigarData {
+  cigarId: number;
+  quantity: number;
+  purchasePrice?: number;
+  purchaseDate?: string;
+  purchaseLocation?: string;
+  notes?: string;
+}
+
+interface UpdateCigarData {
+  quantity?: number;
+  purchasePrice?: number;
+  purchaseDate?: string;
+  purchaseLocation?: string;
+  notes?: string;
+}
+
+const formatCigarData = (data: AddCigarData): AddCigarData => {
+  return {
+    ...data,
+    purchasePrice: data?.purchasePrice,
+    purchaseDate: data.purchaseDate
+      ? new Date(data.purchaseDate).toISOString()
+      : new Date().toISOString(),
+  };
+};
 
 export function useHumidorOperations() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const { user, error: userError, isLoading: userLoading } = useUser();
-    console.log('token',user)
-    const createHumidor = async (data: { 
-      name: string; 
-      description?: string; 
-      imageUrl?: string; 
-    }) => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${config.apiUrl}/api/humidors`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${user?.accessToken}`,
-          },
-          credentials: 'include',
-          body: JSON.stringify(data),
-        });
-  
-        if (!response.ok) {
-          throw new Error("Failed to create humidor");
-        }
-  
-        const result = await response.json();
-        return result;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to create humidor");
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user, isLoading: userLoading } = useUser();
 
-  const updateHumidor = async (id: number, data: Partial<Humidor>) => {
+  const parseErrorResponse = async (response: Response) => {
+    try {
+      const data = await response.json();
+      if (data.error) {
+        return data.error;
+      } else if (data.message) {
+        return typeof data.message === "object"
+          ? JSON.stringify(data.message)
+          : data.message;
+      } else {
+        return `Request failed with status ${response.status}`;
+      }
+    } catch (e) {
+      return `Request failed with status ${response.status}`;
+    }
+  };
+
+  const getAuthHeaders = async () => {
+    try {
+      const tokenResponse = await fetch("/api/auth/token");
+      if (!tokenResponse.ok) {
+        const errorMessage = await parseErrorResponse(tokenResponse);
+        throw new Error(errorMessage);
+      }
+      const { accessToken } = await tokenResponse.json();
+
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      };
+    } catch (err) {
+      console.error("Error getting auth headers:", err);
+      throw new Error(
+        err instanceof Error ? err.message : "Authentication failed"
+      );
+    }
+  };
+
+  const createHumidor = async (data: {
+    name: string;
+    description?: string;
+    imageUrl?: string;
+  }) => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const response = await fetch(`${config.apiUrl}/api/humidors/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
+      const headers = await getAuthHeaders();
+
+      const profileResponse = await fetch(`${config.apiUrl}/api/auth/profile`, {
+        headers,
+        credentials: "include",
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to update humidor");
+      if (!profileResponse.ok) {
+        throw new Error("Failed to get user profile");
       }
 
-      const result = await response.json();
-      return result;
+      const userProfile = await profileResponse.json();
+
+      const requestBody = {
+        name: data.name.trim(),
+        ...(data.description && { description: data.description.trim() }),
+        ...(data.imageUrl && { imageUrl: data.imageUrl.trim() }),
+        userId: userProfile.user.id,
+      };
+
+      const response = await fetch(`${config.apiUrl}/api/humidors`, {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(requestBody),
+      });
+
+      const responseText = await response.text();
+      let parsedResponse;
+
+      try {
+        parsedResponse = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Failed to parse response:", responseText);
+        throw new Error("Invalid server response");
+      }
+
+      if (!response.ok) {
+        throw new Error(parsedResponse.message || "Failed to create humidor");
+      }
+
+      return parsedResponse;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update humidor");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to create humidor";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const deleteHumidor = async (id: number) => {
+  const getHumidors = async (): Promise<Humidor[]> => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const response = await fetch(`${config.apiUrl}/api/humidors/${id}`, {
-        method: "DELETE",
-        credentials: 'include'
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${config.apiUrl}/api/humidors`, {
+        headers,
+        credentials: "include",
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch humidors");
+      }
+
+      return await response.json();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch humidors";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateHumidor = async (
+    humidorId: number,
+    data: {
+      name?: string;
+      description?: string;
+    }
+  ) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${config.apiUrl}/api/humidors/${humidorId}`,
+        {
+          method: "PUT",
+          headers,
+          credentials: "include",
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update humidordsda");
+      }
+
+      return await response.json();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update humidors";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteHumidor = async (humidorId: number) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const headers = await getAuthHeaders();
+      const response = await fetch(
+        `${config.apiUrl}/api/humidors/${humidorId}`,
+        {
+          method: "DELETE",
+          headers,
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete humidor");
       }
+
+      return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete humidor");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete humidor";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -110,28 +252,35 @@ export function useHumidorOperations() {
 
   const addCigarToHumidor = async (
     humidorId: number,
-    data: Omit<HumidorCigar, "id" | "cigar"> & { cigarId: number }
-  ) => {
+    data: AddCigarData
+  ): Promise<HumidorCigar> => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const response = await fetch(`${config.apiUrl}/api/humidors/${humidorId}/cigars`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
+      const headers = await getAuthHeaders();
+      const formattedData = formatCigarData(data);
+
+      const response = await fetch(
+        `${config.apiUrl}/api/humidors/${humidorId}/cigars`,
+        {
+          method: "POST",
+          headers,
+          credentials: "include",
+          body: JSON.stringify(formattedData),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to add cigar to humidor");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "Failed to add cigar to humidor");
       }
 
-      const result = await response.json();
-      return result;
+      return await response.json();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add cigar to humidor");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to add cigar to humidor";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -141,54 +290,72 @@ export function useHumidorOperations() {
   const updateHumidorCigar = async (
     humidorId: number,
     humidorCigarId: number,
-    data: Partial<Omit<HumidorCigar, "id" | "cigar">>
-  ) => {
+    data: UpdateCigarData
+  ): Promise<HumidorCigar> => {
     setIsLoading(true);
     setError(null);
+
     try {
+      const headers = await getAuthHeaders();
       const response = await fetch(
         `${config.apiUrl}/api/humidors/${humidorId}/cigars/${humidorCigarId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include',
+          headers,
+          credentials: "include",
           body: JSON.stringify(data),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update cigar in humidor");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          errorData?.message || "Failed to update cigar in humidor"
+        );
       }
 
-      const result = await response.json();
-      return result;
+      return await response.json();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update cigar in humidor");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to update cigar in humidor";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const removeCigarFromHumidor = async (humidorId: number, humidorCigarId: number) => {
+  const removeCigarFromHumidor = async (
+    humidorId: number,
+    humidorCigarId: number
+  ): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
+
     try {
+      const headers = await getAuthHeaders();
       const response = await fetch(
         `${config.apiUrl}/api/humidors/${humidorId}/cigars/${humidorCigarId}`,
         {
           method: "DELETE",
-          credentials: 'include'
+          headers,
+          credentials: "include",
         }
       );
 
       if (!response.ok) {
         throw new Error("Failed to remove cigar from humidor");
       }
+
+      return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove cigar from humidor");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to remove cigar from humidor";
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
@@ -196,13 +363,15 @@ export function useHumidorOperations() {
   };
 
   return {
-    isLoading,
-    error,
     createHumidor,
+    getHumidors,
     updateHumidor,
     deleteHumidor,
     addCigarToHumidor,
     updateHumidorCigar,
     removeCigarFromHumidor,
+    isLoading,
+    error,
+    isAuthenticated: !!user && !userLoading,
   };
 }
