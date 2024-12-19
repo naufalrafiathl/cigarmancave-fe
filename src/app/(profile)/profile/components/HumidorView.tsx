@@ -9,6 +9,7 @@ import { EditHumidorModal } from "./humidor/components/modals/EditHumidorModal";
 import EditHumidorCigarModal from "./humidor/components/modals/EditHumidorCigarModal";
 import { PaginationControls } from "./humidor/PaginationControls";
 import { useHumidorOperations } from "@/hooks/useHumidorOperations";
+import CigarInfoModal from "./cigar/CigarInfoModal";
 
 const ITEMS_PER_PAGE = {
   humidors: 8,
@@ -33,6 +34,8 @@ export function HumidorView() {
     "grid"
   );
   const [cigarViewMode, setCigarViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCigarForView, setSelectedCigarForView] =
+    useState<HumidorCigar | null>(null);
 
   const {
     isLoading,
@@ -48,11 +51,13 @@ export function HumidorView() {
 
   const refreshSelectedHumidor = async (humidorId: number) => {
     try {
-      const updatedHumidors = await getHumidors() as Humidor[];
+      const updatedHumidors = (await getHumidors()) as Humidor[];
       setHumidors(updatedHumidors);
-      
+
       if (humidorId) {
-        const updatedSelectedHumidor = updatedHumidors.find(h => h.id === humidorId);
+        const updatedSelectedHumidor = updatedHumidors.find(
+          (h) => h.id === humidorId
+        );
         setSelectedHumidor(updatedSelectedHumidor || null);
       }
     } catch (err) {
@@ -62,11 +67,13 @@ export function HumidorView() {
 
   const refreshHumidorState = async () => {
     try {
-      const updatedHumidors = await getHumidors() as Humidor[];
+      const updatedHumidors = (await getHumidors()) as Humidor[];
       setHumidors(updatedHumidors);
-      
+
       if (selectedHumidor) {
-        const updatedSelectedHumidor = updatedHumidors.find(h => h.id === selectedHumidor.id);
+        const updatedSelectedHumidor = updatedHumidors.find(
+          (h) => h.id === selectedHumidor.id
+        );
         setSelectedHumidor(updatedSelectedHumidor || null);
       }
     } catch (err) {
@@ -269,27 +276,34 @@ export function HumidorView() {
                 : "flex flex-col gap-4"
             }
           >
+            {/* Cigar Info Modal */}
+            {selectedCigarForView && (
+              <CigarInfoModal
+              isOpen={!!selectedCigarForView}
+              onClose={() => setSelectedCigarForView(null)}
+              data={selectedCigarForView}
+              mode="humidor"
+            />
+            )}
             {paginatedCigars.map((humidorCigar) => (
               <CigarCard
-              key={humidorCigar.id}
-              cigar={transformToCigarDisplay(humidorCigar)}
-              viewMode={cigarViewMode}
-              onView={(cigarDisplay) => {
-                console.log('Viewing cigar:', cigarDisplay);
-              }}
-              onEdit={(cigarDisplay) => {
-                const originalHumidorCigar = selectedHumidor.cigars.find(
-                  (hc) => hc.id === cigarDisplay.id
-                );
-                if (originalHumidorCigar) {
-                  setEditingHumidorCigar({
-                    humidorCigar: originalHumidorCigar,
-                    cigar: originalHumidorCigar.cigar,
-                  });
-                }
-              }}
-              onDelete={handleDeleteCigar}
-            />
+                key={humidorCigar.id}
+                cigar={transformToCigarDisplay(humidorCigar)}
+                viewMode={cigarViewMode}
+                onView={() => setSelectedCigarForView(humidorCigar)}
+                onEdit={(cigarDisplay) => {
+                  const originalHumidorCigar = selectedHumidor.cigars.find(
+                    (hc) => hc.id === cigarDisplay.id
+                  );
+                  if (originalHumidorCigar) {
+                    setEditingHumidorCigar({
+                      humidorCigar: originalHumidorCigar,
+                      cigar: originalHumidorCigar.cigar,
+                    });
+                  }
+                }}
+                onDelete={handleDeleteCigar}
+              />
             ))}
           </div>
 
