@@ -35,7 +35,7 @@ export function EditHumidorModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-[#2A2A2A] rounded-lg p-6 w-full max-w-md border border-white/10">
+      <div className="bg-[#2A2A2A] rounded-lg p-6 mx-4 w-full max-w-md border border-white/10">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">
             {humidor ? "Edit Humidor" : "Create New Humidor"}

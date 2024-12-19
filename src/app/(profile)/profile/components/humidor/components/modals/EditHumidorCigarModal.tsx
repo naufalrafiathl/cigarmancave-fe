@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Search } from 'lucide-react';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useCigarOperations } from '@/hooks/useCigarOperations';
+import React, { useState } from "react";
+import { Search } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useCigarOperations } from "@/hooks/useCigarOperations";
 
 interface Variant {
   id: number;
@@ -28,7 +28,7 @@ interface HumidorCigar {
 }
 
 interface SearchApiResponse {
-  type: 'SEARCH_RESULTS';
+  type: "SEARCH_RESULTS";
   total: number;
   data: SearchResult[];
 }
@@ -44,18 +44,20 @@ export default function EditHumidorCigarModal({
   onSubmit,
   onClose,
 }: EditHumidorCigarModalProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
+  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(
+    null
+  );
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [formData, setFormData] = useState<HumidorCigar>({
     quantity: humidorCigar?.quantity || 1,
     purchasePrice: humidorCigar?.purchasePrice,
-    purchaseDate: humidorCigar?.purchaseDate ?? new Date().toISOString().split('T')[0],
-    purchaseLocation: humidorCigar?.purchaseLocation || '',
-    notes: humidorCigar?.notes || '',
+    purchaseDate:
+      humidorCigar?.purchaseDate ?? new Date().toISOString().split("T")[0],
+    purchaseLocation: humidorCigar?.purchaseLocation || "",
+    notes: humidorCigar?.notes || "",
   });
-  
 
   const { searchCigars, isLoading: isSearching } = useCigarOperations();
 
@@ -65,17 +67,17 @@ export default function EditHumidorCigarModal({
       return;
     }
     try {
-      const response = await searchCigars({ query }) as SearchApiResponse;
-      
+      const response = (await searchCigars({ query })) as SearchApiResponse;
+
       if (!response || !response.data || !Array.isArray(response.data)) {
-        console.warn('Invalid response format:', response);
+        console.warn("Invalid response format:", response);
         setSearchResults([]);
         return;
       }
 
       setSearchResults(response.data);
     } catch (error) {
-      console.error('Search failed:', error);
+      console.error("Search failed:", error);
       setSearchResults([]);
     }
   }, 300);
@@ -84,16 +86,20 @@ export default function EditHumidorCigarModal({
     e.preventDefault();
     onSubmit({
       ...formData,
-      cigarId: selectedVariant?.id
+      cigarId: selectedVariant?.id,
     });
   };
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-[#2A2A2A] rounded-lg p-6 w-full max-w-md border border-white/10">
+      <div
+        className={`bg-[#2A2A2A] rounded-lg mx-4 p-6 w-full max-w-md border border-white/10 ${
+          selectedResult ? "h-[60%] overflow-auto" : ""
+        }`}
+      >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">
-            {humidorCigar ? 'Edit Cigar in Humidor' : 'Add Cigar to Humidor'}
+            {humidorCigar ? "Edit Cigar in Humidor" : "Add Cigar to Humidor"}
           </h2>
           <button
             onClick={onClose}
@@ -106,7 +112,10 @@ export default function EditHumidorCigarModal({
         {!humidorCigar && (
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 placeholder="Search for a cigar..."
@@ -132,8 +141,12 @@ export default function EditHumidorCigarModal({
                     }}
                     className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors border-b border-white/10 last:border-b-0"
                   >
-                    <div className="text-white font-medium">{result.lineName}</div>
-                    <div className="text-sm text-white/60">{result.brandName}</div>
+                    <div className="text-white font-medium">
+                      {result.lineName}
+                    </div>
+                    <div className="text-sm text-white/60">
+                      {result.brandName}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -147,13 +160,19 @@ export default function EditHumidorCigarModal({
               <div className="mb-6 p-4 bg-[#222222] rounded-lg border border-white/10">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-white font-medium">{selectedResult.lineName}</div>
-                    <div className="text-sm text-white/60">{selectedResult.brandName}</div>
+                    <div className="text-white font-medium">
+                      {selectedResult.lineName}
+                    </div>
+                    <div className="text-sm text-white/60">
+                      {selectedResult.brandName}
+                    </div>
                     {selectedVariant && (
                       <div className="mt-2 text-sm text-white/80">
                         {selectedVariant.length}" × {selectedVariant.ringGauge}
-                        {selectedVariant.strength && ` • ${selectedVariant.strength}`}
-                        {selectedVariant.wrapper && ` • ${selectedVariant.wrapper} wrapper`}
+                        {selectedVariant.strength &&
+                          ` • ${selectedVariant.strength}`}
+                        {selectedVariant.wrapper &&
+                          ` • ${selectedVariant.wrapper} wrapper`}
                       </div>
                     )}
                   </div>
@@ -182,8 +201,8 @@ export default function EditHumidorCigarModal({
                           onClick={() => setSelectedVariant(variant)}
                           className={`p-2 text-sm rounded-lg border ${
                             selectedVariant?.id === variant.id
-                              ? 'border-[#EFA427] bg-[#EFA427]/10 text-white'
-                              : 'border-white/10 text-white/60 hover:border-white/20'
+                              ? "border-[#EFA427] bg-[#EFA427]/10 text-white"
+                              : "border-white/10 text-white/60 hover:border-white/20"
                           }`}
                         >
                           {variant.length}" × {variant.ringGauge}
@@ -202,7 +221,12 @@ export default function EditHumidorCigarModal({
               <input
                 type="number"
                 value={formData.quantity}
-                onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    quantity: parseInt(e.target.value),
+                  })
+                }
                 min="1"
                 className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
                 required
@@ -216,8 +240,13 @@ export default function EditHumidorCigarModal({
               <input
                 type="number"
                 step="0.01"
-                value={formData.purchasePrice || ''}
-                onChange={(e) => setFormData({ ...formData, purchasePrice: parseFloat(e.target.value) })}
+                value={formData.purchasePrice || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    purchasePrice: parseFloat(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
               />
             </div>
@@ -228,8 +257,10 @@ export default function EditHumidorCigarModal({
               </label>
               <input
                 type="date"
-                value={formData.purchaseDate || ''}
-                onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+                value={formData.purchaseDate || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, purchaseDate: e.target.value })
+                }
                 className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
               />
             </div>
@@ -241,7 +272,9 @@ export default function EditHumidorCigarModal({
               <input
                 type="text"
                 value={formData.purchaseLocation}
-                onChange={(e) => setFormData({ ...formData, purchaseLocation: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, purchaseLocation: e.target.value })
+                }
                 className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
               />
             </div>
@@ -252,7 +285,9 @@ export default function EditHumidorCigarModal({
               </label>
               <textarea
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
                 className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white min-h-[100px] resize-none"
               />
             </div>
@@ -270,7 +305,7 @@ export default function EditHumidorCigarModal({
                 className="px-4 py-2 text-sm font-medium text-white bg-[#EFA427] rounded-lg hover:bg-[#d89421] disabled:opacity-50"
                 disabled={!humidorCigar && !selectedVariant}
               >
-                {humidorCigar ? 'Save Changes' : 'Add to Humidor'}
+                {humidorCigar ? "Save Changes" : "Add to Humidor"}
               </button>
             </div>
           </form>
