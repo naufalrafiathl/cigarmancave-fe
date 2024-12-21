@@ -1,13 +1,13 @@
-import { getSession } from '@auth0/nextjs-auth0';
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSideUser } from '@/utils/session';
 
+// Change to named export instead of default export
 export async function GET(req: NextRequest) {
   try {
-    const session = await getSession();
+    const session = await getServerSideUser();
 
     // If no session exists, return a 200 with null user
-    // This is better than 401 for client-side handling
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json({ 
         user: null,
         isAuthenticated: false 

@@ -1,51 +1,54 @@
-/* eslint-disable */
 import axios from 'axios';
-import { getSession } from '@auth0/nextjs-auth0';
+import { getServerSideUser } from '@/utils/session';
+import { getAccessToken } from '@auth0/nextjs-auth0';
 
 export const getUserProfile = async () => {
-  const session = await getSession();
-  
-  if (!session?.user) {
-    return null;
-  }
-
-  const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-    headers: session.accessToken ? {
-      Authorization: `Bearer ${session.accessToken}`
-    } : {}
-  });
-  
   try {
-    const response = await api.post('/api/auth/profile', {
-      user: session.user
+    const session = await getServerSideUser();
+
+    if (!session?.user) {
+      console.log('No session found');
+      return null;
+    }
+
+    const { accessToken } = await getAccessToken();
+
+    console.log('Access Token available:', !!accessToken);
+
+    const api = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+      headers: accessToken ? {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      } : {}
     });
+
+    const response = await api.get('/api/auth/profile');
     return response.data;
+
   } catch (error: any) {
-    if (error.response?.status === 404) {
+    if (error.response?.status === 404 || error.response?.status === 500) {
       try {
-        // Try to create/update the user profile
-        const callbackResponse = await api.post('/api/auth/callback', {
-          user: session.user
-        });
-        
-        // Then fetch the profile again
-        const retryResponse = await api.get('/api/auth/profile');
-        return retryResponse.data;
+        const session = await getServerSideUser();
+        if (!session?.user) return null;
+
+        console.log('Attempting callback with user:', session.user.email);
+
+        return {
+          user: {
+            fullName: session.user.name,
+            email: session.user.email,
+            picture: session.user.picture,
+            emailVerified: session.user.email_verified,
+            locale: session.user.locale || null
+          }
+        };
       } catch (callbackError) {
-        console.error("Callback error:", callbackError);
+        console.error("Profile creation error:", callbackError);
+        throw callbackError;
       }
     }
 
-    // Fallback to session user data if API calls fail
-    return {
-      user: {
-        fullName: session.user.name,
-        email: session.user.email,
-        picture: session.user.picture,
-        emailVerified: session.user.email_verified,
-        locale: session.user.locale
-      }
-    };
+    throw error;
   }
 };

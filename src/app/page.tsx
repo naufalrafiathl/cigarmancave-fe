@@ -1,21 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
-import { getSession } from "@auth0/nextjs-auth0";
+import { getServerSideUser } from "@/utils/session";
 import { ScrollText, Users, Book, Repeat, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  headers();
-
-  let session = null;
-  try {
-    session = await getSession();
-  } catch (error) {
-    console.error("Session error:", error);
-  }
-
+  const session = await getServerSideUser();
   return (
     <div className="bg-[#171717] min-h-screen">
       {/* Header/Navigation */}

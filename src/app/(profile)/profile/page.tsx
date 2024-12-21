@@ -1,27 +1,33 @@
 import { getUserProfile } from "@/lib/api";
-import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { ProfileSidebar } from "./components/profile/ProfileSidebar";
 import { ProfileTabs } from "./components/ProfileTabs";
 import { TabContent } from "./components/TabContent";
 import { isValidTab, TABS, TabType } from "@/types/profile";
+import { getServerSideUser } from "@/utils/session";
 
 export const dynamic = "force-dynamic";
 
+interface ProfilePageProps {
+  searchParams: Promise<{ tab?: string }> | { tab?: string };
+}
+
 export default async function ProfilePage({
   searchParams,
-}: {
-  searchParams: { tab?: string };
-}) {
-  const session = await getSession();
+}: ProfilePageProps) {
+  const [session, resolvedSearchParams] = await Promise.all([
+    getServerSideUser(),
+    Promise.resolve(searchParams)
+  ]);
 
   if (!session?.user) {
     redirect("/api/auth/login");
   }
 
   const profile = await getUserProfile();
-  const currentTab: TabType = isValidTab(searchParams.tab)
-    ? searchParams.tab
+  
+  const currentTab: TabType = isValidTab(resolvedSearchParams.tab)
+    ? resolvedSearchParams.tab
     : TABS.humidor;
 
   return (
