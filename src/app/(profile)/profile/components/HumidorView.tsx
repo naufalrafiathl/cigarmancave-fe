@@ -10,6 +10,7 @@ import EditHumidorCigarModal from "./humidor/components/modals/EditHumidorCigarM
 import { PaginationControls } from "./humidor/PaginationControls";
 import { useHumidorOperations } from "@/hooks/useHumidorOperations";
 import CigarInfoModal from "./cigar/CigarInfoModal";
+import ReviewModal from "./review/ReviewModal";
 
 const ITEMS_PER_PAGE = {
   humidors: 8,
@@ -17,6 +18,9 @@ const ITEMS_PER_PAGE = {
 };
 
 export function HumidorView() {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedCigarForReview, setSelectedCigarForReview] =
+    useState<CigarDisplay | null>(null);
   const [selectedHumidor, setSelectedHumidor] = useState<Humidor | null>(null);
   const [editingHumidor, setEditingHumidor] = useState<Partial<Humidor> | null>(
     null
@@ -279,11 +283,11 @@ export function HumidorView() {
             {/* Cigar Info Modal */}
             {selectedCigarForView && (
               <CigarInfoModal
-              isOpen={!!selectedCigarForView}
-              onClose={() => setSelectedCigarForView(null)}
-              data={selectedCigarForView}
-              mode="humidor"
-            />
+                isOpen={!!selectedCigarForView}
+                onClose={() => setSelectedCigarForView(null)}
+                data={selectedCigarForView}
+                mode="humidor"
+              />
             )}
             {paginatedCigars.map((humidorCigar) => (
               <CigarCard
@@ -291,6 +295,11 @@ export function HumidorView() {
                 cigar={transformToCigarDisplay(humidorCigar)}
                 viewMode={cigarViewMode}
                 onView={() => setSelectedCigarForView(humidorCigar)}
+                onReview={() => {
+                  const cigarDisplay = transformToCigarDisplay(humidorCigar);
+                  setSelectedCigarForReview(cigarDisplay);
+                  setReviewModalOpen(true);
+                }}
                 onEdit={(cigarDisplay) => {
                   const originalHumidorCigar = selectedHumidor.cigars.find(
                     (hc) => hc.id === cigarDisplay.id
@@ -305,6 +314,25 @@ export function HumidorView() {
                 onDelete={handleDeleteCigar}
               />
             ))}
+
+            {/* Add the ReviewModal */}
+            {selectedCigarForReview && (
+              <ReviewModal
+                cigar={{
+                  id: selectedCigarForReview.id,
+                  name: selectedCigarForReview.name,
+                  brand: selectedCigarForReview.brand,
+                }}
+                isOpen={reviewModalOpen}
+                onClose={() => {
+                  setReviewModalOpen(false);
+                  setSelectedCigarForReview(null);
+                }}
+                onSubmit={(reviewData) => {
+                  console.log(reviewData);
+                }}
+              />
+            )}
           </div>
 
           {/* Pagination */}
