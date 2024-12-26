@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import Image from "next/image";
 import Link from "next/link";
@@ -70,27 +70,39 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
           </Link>
         </nav>
 
-        <div className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Image
-                src={profile.user.profileImageUrl || "/placeholder-avatar.png"}
-                width={50}
-                height={50}
-                alt="Profile"
-                className="w-8 h-8 rounded-full"
-              />
-              <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
-                {profile.user.fullName || profile.user.email}
-              </span>
+        <div className="mt-auto">
+          <div className="pl-10 mb-4">
+            <Image
+              src="/images/layout.png"
+              width={240}
+              height={120}
+              alt="Layout Cigar"
+              className="w-full rounded-lg"
+            />
+          </div>
+
+          <div className="p-4 border-t border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Image
+                  src={profile.user.profileImageUrl || "/placeholder-avatar.png"}
+                  width={50}
+                  height={50}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
+                  {profile.user.fullName || profile.user.email}
+                </span>
+              </div>
+              <Link
+                href="/api/auth/logout"
+                className="p-2 text-[#B9B9B9] rounded-lg hover:bg-gray-100 hover:text-gray-800"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </Link>
             </div>
-            <Link
-              href="/api/auth/logout"
-              className="p-2 text-[#B9B9B9] rounded-lg hover:bg-gray-100 hover:text-gray-800"
-              title="Logout"
-            >
-              <LogOut className="w-5 h-5" />
-            </Link>
           </div>
         </div>
       </div>
