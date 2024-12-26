@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from "next/link";
 import { Box, Star, Award, Crown, ChevronDown } from "lucide-react";
 import { TABS, TabType } from "@/types/profile";
@@ -10,6 +10,7 @@ interface ProfileTabsProps {
 }
 
 export function ProfileTabs({ currentTab }: ProfileTabsProps) {
+  console.log('cr',currentTab)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tabs = [
@@ -21,6 +22,11 @@ export function ProfileTabs({ currentTab }: ProfileTabsProps) {
 
   const currentTabInfo = tabs.find(tab => tab.id === currentTab);
   const CurrentIcon = currentTabInfo?.icon;
+
+  useEffect(()=>{
+    console.log('open',isDropdownOpen)
+    console.log('info',tabs)
+  },[isDropdownOpen])
 
   return (
     <div className="mb-4">
@@ -38,8 +44,7 @@ export function ProfileTabs({ currentTab }: ProfileTabsProps) {
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-[#222222] rounded-xl overflow-hidden shadow-lg z-10">
-            {tabs.map((tab) => {
+ <div className="absolute top-full left-0 right-0 mt-2 bg-[#222222] rounded-xl overflow-hidden shadow-lg z-50">            {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.id;
               if (isActive) return null;

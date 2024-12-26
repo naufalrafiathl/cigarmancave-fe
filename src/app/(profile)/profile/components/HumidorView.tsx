@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, ArrowLeft, Search } from "lucide-react";
+import { Plus, ArrowLeft, PlusCircle } from "lucide-react";
 import { Humidor, HumidorCigar, Cigar, CigarDisplay } from "@/types/humidor";
 import { ViewToggle } from "./humidor/ViewToggle";
 import { CigarCard } from "./humidor/CigarCard";
@@ -432,16 +432,33 @@ export function HumidorView() {
             </div>
           ) : humidors.length === 0 ? (
             <div className="col-span-full flex flex-col items-center py-12">
-              <p className="text-white/60 mb-4">No humidors yet</p>
-              <button
-                onClick={() =>
-                  setEditingHumidor({ name: "", description: "", imageUrl: "" })
-                }
-                className="px-4 py-2 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
-              >
-                <Plus size={20} />
-                <span>Create Your First Humidor</span>
-              </button>
+              <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
+                <div className="mb-4">
+                  <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
+                    <PlusCircle className="w-8 h-8 text-gray-400" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No Humidors Yet
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  Start organizing your cigar collection by creating your first
+                  humidor.
+                </p>
+                <button
+                  onClick={() =>
+                    setEditingHumidor({
+                      name: "",
+                      description: "",
+                      imageUrl: "",
+                    })
+                  }
+                  className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-md text-white font-medium"
+                >
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  Create Your First Humidor
+                </button>
+              </div>
             </div>
           ) : (
             humidors.map((humidor) => (
