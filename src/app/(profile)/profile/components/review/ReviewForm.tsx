@@ -5,12 +5,15 @@ import { ManualDuration } from './ManualDuration';
 import { BuyAgainSection } from './BuyAgainSection';
 import { NotesSection } from './NotesSection';
 import { Button } from '@/components/ui/button';
+import { CigarStrengthSelection } from './CigarStrengthSelection';
+import { Loader2 } from 'lucide-react';
 
 interface ReviewFormProps {
   scores: Record<string, number>;
   flavorProfiles: Record<string, number>;
   isTimerRunning: boolean;
   elapsedTime: number;
+  cigarStrength: string;
   manualDuration: number;
   buyAgain: boolean | null;
   notes: string;
@@ -20,6 +23,7 @@ interface ReviewFormProps {
     overall: boolean;
     flavor: boolean;
   };
+  isSubmitting?: boolean; // New prop
   onScoreChange: (key: string, value: number) => void;
   onFlavorProfileChange: (key: string, value: number) => void;
   onManualDurationChange: (value: number) => void;
@@ -27,6 +31,7 @@ interface ReviewFormProps {
   onNotesChange: (value: string) => void;
   onNotesModalToggle: (value: boolean) => void;
   onNotesMinimize: () => void;
+  onCigarStrengthChange: (value: string) => void;
   onSectionToggle: (section: 'overall' | 'flavor') => void;
   onSubmit: () => void;
 }
@@ -42,6 +47,9 @@ export const ReviewForm = ({
   showNotesModal,
   isNotesMinimized,
   sectionsCollapsed,
+  cigarStrength,
+  isSubmitting = false, // Default to false
+  onCigarStrengthChange,
   onScoreChange,
   onFlavorProfileChange,
   onManualDurationChange,
@@ -58,6 +66,11 @@ export const ReviewForm = ({
     )}
 
     <div className="space-y-6">
+      <CigarStrengthSelection
+        strength={cigarStrength}
+        onChange={onCigarStrengthChange}
+      />
+
       <OverallRatings
         scores={scores}
         isCollapsed={sectionsCollapsed.overall}
@@ -87,9 +100,16 @@ export const ReviewForm = ({
       <Button
         className="w-full"
         onClick={onSubmit}
-        disabled={buyAgain === null}
+        disabled={buyAgain === null || isSubmitting}
       >
-        Submit Review
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Submitting...
+          </>
+        ) : (
+          'Submit Review'
+        )}
       </Button>
     </div>
 

@@ -106,6 +106,7 @@ export function HumidorView() {
     humidorCigar: HumidorCigar
   ): CigarDisplay => {
     return {
+      cigarId: humidorCigar.cigar.id,
       id: humidorCigar.id,
       name: humidorCigar.cigar.name,
       brand: humidorCigar.cigar.brand,
@@ -319,7 +320,7 @@ export function HumidorView() {
             {selectedCigarForReview && (
               <ReviewModal
                 cigar={{
-                  id: selectedCigarForReview.id,
+                  id: selectedCigarForReview.cigarId,
                   name: selectedCigarForReview.name,
                   brand: selectedCigarForReview.brand,
                 }}
