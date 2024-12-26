@@ -39,6 +39,7 @@ export interface ReviewData {
 }
 
 export interface ReviewResponse {
+  data: {};
   id: number;
   createdAt: string;
   updatedAt: string;
@@ -55,6 +56,16 @@ export interface ReviewResponse {
     brand: string;
   };
 }
+export interface ReviewsResponse {
+  // Make sure it's exported
+  reviews: ReviewResponse[];
+  pagination: {
+    total: number;
+    pages: number;
+    currentPage: number;
+    perPage: number;
+  };
+}
 
 interface APIError {
   message: string;
@@ -65,13 +76,14 @@ interface APIError {
 const handleApiResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({
-      message: 'An unknown error occurred',
-      status: response.status
+      message: "An unknown error occurred",
+      status: response.status,
     }));
-    
+
     throw {
-      message: errorData.message || 'An error occurred while processing your request',
-      status: response.status
+      message:
+        errorData.message || "An error occurred while processing your request",
+      status: response.status,
     } as APIError;
   }
 
@@ -84,7 +96,7 @@ const getAuthHeaders = async () => {
   if (!tokenResponse.ok) {
     throw new Error("Failed to get authentication token");
   }
-  
+
   const { accessToken } = await tokenResponse.json();
   return {
     "Content-Type": "application/json",
@@ -99,8 +111,8 @@ export function useReviewOperations() {
   const createReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData): Promise<ReviewResponse> => {
       const headers = await getAuthHeaders();
-      
-      console.log(reviewData)
+
+      console.log(reviewData);
       const response = await fetch(`${config.apiUrl}/api/reviews`, {
         method: "POST",
         headers,
@@ -112,8 +124,8 @@ export function useReviewOperations() {
     },
     onSuccess: () => {
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['reviews'] });
-      queryClient.invalidateQueries({ queryKey: ['userReviews'] });
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["userReviews"] });
     },
   });
 
@@ -135,11 +147,12 @@ export function useReviewOperations() {
   }) => {
     const headers = await getAuthHeaders();
     const queryParams = new URLSearchParams();
-    
-    if (params.cigarId) queryParams.append('cigarId', params.cigarId.toString());
-    if (params.userId) queryParams.append('userId', params.userId.toString());
-    if (params.page) queryParams.append('page', params.page.toString());
-    if (params.limit) queryParams.append('limit', params.limit.toString());
+
+    if (params.cigarId)
+      queryParams.append("cigarId", params.cigarId.toString());
+    if (params.userId) queryParams.append("userId", params.userId.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.limit) queryParams.append("limit", params.limit.toString());
 
     const response = await fetch(
       `${config.apiUrl}/api/reviews?${queryParams.toString()}`,
@@ -150,12 +163,14 @@ export function useReviewOperations() {
     );
 
     return handleApiResponse<{
-      reviews: ReviewResponse[];
-      pagination: {
-        total: number;
-        pages: number;
-        currentPage: number;
-        perPage: number;
+      data: {
+        reviews: ReviewResponse[];
+        pagination: {
+          total: number;
+          pages: number;
+          currentPage: number;
+          perPage: number;
+        };
       };
     }>(response);
   };
@@ -163,11 +178,11 @@ export function useReviewOperations() {
   // Upload image and get URL
   const uploadImage = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     const headers = await getAuthHeaders();
     const response = await fetch(`${config.apiUrl}/api/uploads/image`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: headers.Authorization,
       },
@@ -188,5 +203,3 @@ export function useReviewOperations() {
     isAuthenticated: !!user,
   };
 }
-
-
