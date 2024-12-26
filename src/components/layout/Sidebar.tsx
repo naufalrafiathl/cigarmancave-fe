@@ -1,8 +1,15 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, UserCircle, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  UserCircle,
+  LogOut,
+  Star,
+  Award,
+  Box,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 interface UserProfile {
@@ -46,29 +53,41 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          <Link
-            href="/profile"
-            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
-              isLinkActive(pathname, "/dashboard")
-                ? "bg-gray-100 text-gray-800"
-                : "text-[#B9B9B9] hover:bg-gray-100 hover:text-gray-800"
-            }`}
-          >
-            <UserCircle className="w-5 h-5 mr-3" />
-            Profile
-          </Link>
-          <Link
-            href="/profile/test"
+        <Link
+            href="/profile?tab=humidor"
             className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
               isLinkActive(pathname, "/dashboard/profile")
                 ? "bg-gray-100 text-gray-800"
-                : "text-[#B9B9B9] hover:bg-gray-100 hover:text-gray-800"
+                : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
             }`}
           >
             <LayoutDashboard className="w-5 h-5 mr-3" />
-            Test
+            Feeds
+          </Link>
+          <Link
+            href="/profile?tab=humidor"
+            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+              isLinkActive(pathname, "/dashboard/profile")
+                ? "bg-gray-100 text-gray-800"
+                : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
+            }`}
+          >
+            <Box className="w-5 h-5 mr-3" />
+            Humidor
+          </Link>
+          <Link
+            href="/profile?tab=reviews"
+            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+              isLinkActive(pathname, "/dashboard/profile")
+                ? "bg-gray-100 text-gray-800"
+                : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
+            }`}
+          >
+            <Star className="w-5 h-5 mr-3" />
+            Reviews
           </Link>
         </nav>
+        
 
         <div className="mt-auto">
           <div className="pl-10 mb-4">
@@ -85,7 +104,9 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <Image
-                  src={profile.user.profileImageUrl || "/placeholder-avatar.png"}
+                  src={
+                    profile.user.profileImageUrl || "/placeholder-avatar.png"
+                  }
                   width={50}
                   height={50}
                   alt="Profile"

@@ -10,6 +10,18 @@ export interface ReviewPairing {
   notes?: string;
 }
 
+interface Pairing {
+    id: number;
+    reviewId: number;
+    pairingId: number;
+    notes: string | null;
+    pairing: {
+      id: number;
+      name: string;
+      type: string;
+    };
+  }
+
 export interface ReviewData {
   cigarId: number;
   duration: number;
@@ -39,29 +51,47 @@ export interface ReviewData {
 }
 
 export interface ReviewResponse {
-  data: {};
-  id: number;
-  duration: number;
-  createdAt: string;
-  updatedAt: string;
-  date: string;
-  overallScore: number;
-  constructionScore: number;
-  drawScore: number;
-  flavorScore: number;
-  impressionScore: number;
-  notes:string;
-  user: {
+    data: {};
     id: number;
-    fullName: string;
-    profileImageUrl: string;
-  };
-  cigar: {
-    id: number;
-    name: string;
-    brand: string;
-  };
-}
+    duration: number;
+    createdAt: string;
+    updatedAt: string;
+    buyAgain: boolean;
+    date: string;
+    overallScore: number;
+    constructionScore: number;
+    drawScore: number;
+    flavorScore: number;
+    burnScore:number;
+    impressionScore: number;
+    notes: string;
+    // Flavor scores
+    flavorPepperScore: number;
+    flavorChocolateScore: number;
+    flavorCreamyScore: number;
+    flavorLeatherScore: number;
+    flavorWoodyScore: number;
+    flavorEarthyScore: number;
+    flavorNuttyScore: number;
+    flavorSweetScore: number;
+    flavorFruityScore: number;
+    flavorGrassyScore: number;
+    flavorBerryScore: number;
+    flavorCoffeeScore: number;
+    flavorBittersScore: number;
+    user: {
+      id: number;
+      fullName: string;
+      profileImageUrl: string;
+    };
+    pairings: Pairing[],
+    cigar: {
+      id: number;
+      name: string;
+      brand: string;
+    };
+  }
+
 export interface ReviewsResponse {
   // Make sure it's exported
   reviews: ReviewResponse[];

@@ -1,46 +1,46 @@
-"use client"
+"use client";
 import React, { useState } from "react";
-import { Search } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ViewToggle } from "./humidor/ViewToggle";
 import { PaginationControls } from "./humidor/PaginationControls";
-import { useReviewOperations, ReviewResponse } from "@/hooks/useReviewOperations";
+import {
+  useReviewOperations,
+  ReviewResponse,
+} from "@/hooks/useReviewOperations";
 import { ReviewCard } from "./review/ReviewCard";
+import ReviewDetailModal from "./review/ReviewDetailModal";
+import Link from "next/link";
+
 const ITEMS_PER_PAGE = 8;
 
 export function ReviewsView() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [selectedReview, setSelectedReview] = useState<ReviewResponse | null>(null);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [selectedReview, setSelectedReview] = useState<ReviewResponse | null>(
+    null
+  );
   const { getReviews } = useReviewOperations();
 
   // Use React Query to fetch reviews
   const { data, isLoading, error } = useQuery({
-    queryKey: ['reviews', currentPage, ITEMS_PER_PAGE],
+    queryKey: ["reviews", currentPage, ITEMS_PER_PAGE],
     queryFn: () => getReviews({ page: currentPage, limit: ITEMS_PER_PAGE }),
   });
 
-  console.log('Query Data:', data);
-  console.log('Loading:', isLoading);
-  console.log('Error:', error);
+  console.log("Query Data:", data);
+  console.log("Loading:", isLoading);
+  console.log("Error:", error);
 
   // Filter and sort reviews
   const filteredAndSortedReviews = React.useMemo(() => {
-    console.log('Filtering reviews from data:', data?.data?.reviews);
+    console.log("Filtering reviews from data:", data?.data?.reviews);
     const reviews = data?.data?.reviews ?? [];
-    
+
     return reviews
-      .filter(review => {
+      .filter((review) => {
         const searchLower = searchQuery.toLowerCase();
         return (
           review.cigar.name.toLowerCase().includes(searchLower) ||
@@ -49,9 +49,9 @@ export function ReviewsView() {
       })
       .sort((a, b) => {
         switch (sortBy) {
-          case 'rating':
+          case "rating":
             return b.overallScore - a.overallScore;
-          case 'date':
+          case "date":
           default:
             return new Date(b.date).getTime() - new Date(a.date).getTime();
         }
@@ -74,7 +74,7 @@ export function ReviewsView() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mt-4">
+          {/* <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mt-4">
             <div className="flex-1 max-w-xl">
               <div className="relative">
                 <Search
@@ -99,7 +99,7 @@ export function ReviewsView() {
                 <SelectItem value="rating">Rating</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -111,12 +111,35 @@ export function ReviewsView() {
         ) : error ? (
           <div className="flex justify-center py-12">
             <div className="text-red-400">
-              {error instanceof Error ? error.message : 'Failed to load reviews'}
+              {error instanceof Error
+                ? error.message
+                : "Failed to load reviews"}
             </div>
           </div>
         ) : filteredAndSortedReviews.length === 0 ? (
-          <div className="flex flex-col items-center py-12">
-            <p className="text-white/60">No reviews found</p>
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
+              <div className="mb-4">
+                {/* You can replace this with an actual illustration or icon */}
+                <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
+                  <PlusCircle className="w-8 h-8 text-gray-400" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                No Reviews Yet
+              </h3>
+              <p className="text-gray-400 mb-6">
+                Start tracking your cigar experiences by adding your first
+                review.
+              </p>
+              <Link
+                href="?tab=humidor" // Adjust this path to your actual new review route
+                className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-md text-white font-medium"
+              >
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add Your First Review
+              </Link>
+            </div>
           </div>
         ) : (
           <div
@@ -131,12 +154,21 @@ export function ReviewsView() {
                 key={review.id}
                 review={review}
                 viewMode={viewMode}
-                onView={(review) => setSelectedReview(review)}
+                onView={(review) => {
+                  console.log("test", review);
+                  setSelectedReview(review);
+                }}
               />
             ))}
           </div>
         )}
 
+        {selectedReview && (
+          <ReviewDetailModal
+            review={selectedReview}
+            onClose={() => setSelectedReview(null)}
+          />
+        )}
         {totalPages > 1 && (
           <div className="mt-6 flex justify-center">
             <PaginationControls
