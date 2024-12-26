@@ -41,10 +41,16 @@ export interface ReviewData {
 export interface ReviewResponse {
   data: {};
   id: number;
+  duration: number;
   createdAt: string;
   updatedAt: string;
   date: string;
   overallScore: number;
+  constructionScore: number;
+  drawScore: number;
+  flavorScore: number;
+  impressionScore: number;
+  notes:string;
   user: {
     id: number;
     fullName: string;

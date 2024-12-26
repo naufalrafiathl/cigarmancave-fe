@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ImageStep } from './ImageStep';
-import { PairingStep } from './PairingStep';
-import { TimerStep } from './TimerStep';
-import { ReviewForm } from './ReviewForm';
-import { useReviewOperations } from '@/hooks/useReviewOperations';
+import { ImageStep } from "./ImageStep";
+import { PairingStep } from "./PairingStep";
+import { TimerStep } from "./TimerStep";
+import { ReviewForm } from "./ReviewForm";
+import { useReviewOperations } from "@/hooks/useReviewOperations";
 
 interface ReviewModalProps {
   cigar: {
@@ -23,29 +24,33 @@ interface ReviewModalProps {
   onSubmit?: (reviewData: any) => void;
 }
 
-const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => {
+const ReviewModal = ({
+  cigar,
+  isOpen,
+  onClose,
+  onSubmit,
+}: ReviewModalProps) => {
+  const router = useRouter();
   const { createReview, uploadImage, isCreating } = useReviewOperations();
-
-  // Step management - keeping your existing step logic
   const [showImagePrompt, setShowImagePrompt] = useState(true);
   const [showPairingPrompt, setShowPairingPrompt] = useState(false);
   const [showTimerPrompt, setShowTimerPrompt] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  
-  // State management - keeping your existing states
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [pairings, setPairings] = useState<Array<{ name: string; type: string }>>([]);
+  const [pairings, setPairings] = useState<
+    Array<{ name: string; type: string }>
+  >([]);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [manualDuration, setManualDuration] = useState(0);
   const timerInterval = useRef<NodeJS.Timeout | null>(null);
-  const [cigarStrength, setCigarStrength] = useState('MILD');
-  
+  const [cigarStrength, setCigarStrength] = useState("MILD");
+
   const [sectionsCollapsed, setSectionsCollapsed] = useState({
     overall: false,
-    flavor: false
+    flavor: false,
   });
-  
+
   const [scores, setScores] = useState({
     constructionScore: 3,
     drawScore: 3,
@@ -53,7 +58,7 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
     burnScore: 3,
     impressionScore: 3,
   });
-  
+
   const [flavorProfiles, setFlavorProfiles] = useState({
     flavorPepperScore: 0,
     flavorChocolateScore: 0,
@@ -72,14 +77,14 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
 
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [isNotesMinimized, setIsNotesMinimized] = useState(false);
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState("");
   const [buyAgain, setBuyAgain] = useState<boolean | null>(null);
 
   // Timer management
   useEffect(() => {
     if (isTimerRunning) {
       timerInterval.current = setInterval(() => {
-        setElapsedTime(prev => prev + 1);
+        setElapsedTime((prev) => prev + 1);
       }, 1000);
     }
     return () => {
@@ -113,13 +118,12 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
         const reader = new FileReader();
         reader.onload = (e) => {
           const result = e.target?.result as string;
-          // We'll keep the file for later upload, but show preview
           moveToNextStep();
         };
         reader.readAsDataURL(file);
       } catch (error) {
-        toast.error('Failed to process image');
-        console.error('Image upload error:', error);
+        toast.error("Failed to process image");
+        console.error("Image upload error:", error);
       }
     }
   };
@@ -127,7 +131,7 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
   const handleSubmit = async () => {
     try {
       let imageUrl: string | undefined;
-      
+
       if (imageFile) {
         // Upload image first if we have one
         imageUrl = await uploadImage(imageFile);
@@ -140,20 +144,22 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
         ...scores,
         ...flavorProfiles,
         notes,
-        buyAgain: buyAgain === null ? undefined : buyAgain, // Convert null to undefined
+        buyAgain: buyAgain === null ? undefined : buyAgain, 
         pairings,
         images: imageUrl ? [imageUrl] : [],
       };
-
-      // Use the hook to submit the review
       await createReview(reviewData);
-      
-      toast.success('Review submitted successfully!');
-      onSubmit?.(reviewData); // Call the original onSubmit if provided
+
+      toast.success("Review submitted successfully!");
+      onSubmit?.(reviewData); 
       onClose();
+
+      setTimeout(() => {
+        router.push("/profile?tab=reviews");
+      }, 100);
     } catch (error) {
-      toast.error('Failed to submit review');
-      console.error('Review submission error:', error);
+      toast.error("Failed to submit review");
+      console.error("Review submission error:", error);
     }
   };
 
@@ -161,22 +167,28 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-[#1A1A1A] text-white sm:max-w-[600px] max-h-[90vh] overflow-y-auto border border-white/10">
         <DialogHeader className="border-b border-white/10 pb-4">
-          <DialogTitle className="text-xl font-semibold">Review: {cigar.name}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            Review: {cigar.name}
+          </DialogTitle>
           <p className="text-sm text-gray-400 mt-1">{cigar.brand}</p>
         </DialogHeader>
-        
+
         {showImagePrompt && (
           <ImageStep
             onImageUpload={handleImageUpload}
             onSkip={moveToNextStep}
           />
         )}
-        
+
         {showPairingPrompt && (
           <PairingStep
             pairings={pairings}
-            onAddPairing={() => setPairings([...pairings, { name: '', type: 'Beverage' }])}
-            onRemovePairing={(index) => setPairings(pairings.filter((_, i) => i !== index))}
+            onAddPairing={() =>
+              setPairings([...pairings, { name: "", type: "Beverage" }])
+            }
+            onRemovePairing={(index) =>
+              setPairings(pairings.filter((_, i) => i !== index))
+            }
             onUpdatePairing={(index, field, value) => {
               const newPairings = [...pairings];
               newPairings[index] = { ...newPairings[index], [field]: value };
@@ -189,7 +201,7 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
             }}
           />
         )}
-        
+
         {showTimerPrompt && (
           <TimerStep
             onStartTimer={() => {
@@ -202,7 +214,7 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
             }}
           />
         )}
-        
+
         {showReviewForm && (
           <ReviewForm
             scores={scores}
@@ -216,11 +228,11 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
             showNotesModal={showNotesModal}
             isNotesMinimized={isNotesMinimized}
             sectionsCollapsed={sectionsCollapsed}
-            onScoreChange={(key, value) => 
-              setScores(prev => ({ ...prev, [key]: value }))
+            onScoreChange={(key, value) =>
+              setScores((prev) => ({ ...prev, [key]: value }))
             }
             onFlavorProfileChange={(key, value) =>
-              setFlavorProfiles(prev => ({ ...prev, [key]: value }))
+              setFlavorProfiles((prev) => ({ ...prev, [key]: value }))
             }
             onCigarStrengthChange={setCigarStrength}
             onManualDurationChange={setManualDuration}
@@ -229,9 +241,9 @@ const ReviewModal = ({ cigar, isOpen, onClose, onSubmit }: ReviewModalProps) => 
             onNotesModalToggle={setShowNotesModal}
             onNotesMinimize={() => setIsNotesMinimized(true)}
             onSectionToggle={(section) =>
-              setSectionsCollapsed(prev => ({
+              setSectionsCollapsed((prev) => ({
                 ...prev,
-                [section]: !prev[section]
+                [section]: !prev[section],
               }))
             }
             onSubmit={handleSubmit}

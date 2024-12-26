@@ -12,90 +12,8 @@ import {
 import { ViewToggle } from "./humidor/ViewToggle";
 import { PaginationControls } from "./humidor/PaginationControls";
 import { useReviewOperations, ReviewResponse } from "@/hooks/useReviewOperations";
-
-const ITEMS_PER_PAGE = 9;
-
-interface ReviewCardProps {
-  review: ReviewResponse;
-  viewMode: 'grid' | 'list';
-  onView: (review: ReviewResponse) => void;
-}
-
-const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  if (viewMode === 'list') {
-    return (
-      <div 
-        onClick={() => onView(review)}
-        className="bg-[#2A2A2A] rounded-lg border border-white/10 p-4 hover:border-[#EFA427] transition-colors cursor-pointer"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#222222] rounded-lg overflow-hidden">
-              {/* We'll add image handling when implementing the image upload feature */}
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                No Image
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold text-white">{review.cigar.name}</h3>
-              <p className="text-sm text-[#B9B9B9]">{review.cigar.brand}</p>
-              <p className="text-sm text-[#B9B9B9] mt-1">
-                {formatDate(review.date)}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-white">
-                {review.overallScore.toFixed(1)}
-              </div>
-              <div className="text-sm text-[#B9B9B9]">Rating</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div 
-      onClick={() => onView(review)}
-      className="bg-[#2A2A2A] rounded-lg border border-white/10 overflow-hidden hover:border-[#EFA427] transition-colors cursor-pointer"
-    >
-      <div className="h-48 bg-[#222222] flex items-center justify-center text-gray-400">
-        {/* Image handling will be added later */}
-        No Image
-      </div>
-      
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="font-semibold text-white">{review.cigar.name}</h3>
-            <p className="text-sm text-[#B9B9B9]">{review.cigar.brand}</p>
-          </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-white">
-              {review.overallScore.toFixed(1)}
-            </div>
-            <div className="text-sm text-[#B9B9B9]">Rating</div>
-          </div>
-        </div>
-
-        <p className="text-sm text-[#B9B9B9]">
-          {formatDate(review.date)}
-        </p>
-      </div>
-    </div>
-  );
-};
+import { ReviewCard } from "./review/ReviewCard";
+const ITEMS_PER_PAGE = 8;
 
 export function ReviewsView() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -204,7 +122,7 @@ export function ReviewsView() {
           <div
             className={
               viewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                ? "max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8"
                 : "flex flex-col gap-4"
             }
           >
