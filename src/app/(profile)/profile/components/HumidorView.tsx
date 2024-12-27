@@ -293,7 +293,8 @@ export function HumidorView() {
             {paginatedCigars.map((humidorCigar) => (
               <CigarCard
                 key={humidorCigar.id}
-                cigar={transformToCigarDisplay(humidorCigar)}
+                cigar={humidorCigar.cigar}
+                humidorCigar={transformToCigarDisplay(humidorCigar)}
                 viewMode={cigarViewMode}
                 onView={() => setSelectedCigarForView(humidorCigar)}
                 onReview={() => {
