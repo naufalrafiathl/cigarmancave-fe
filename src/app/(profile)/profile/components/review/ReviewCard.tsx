@@ -79,7 +79,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
   );
 
   return (
-    <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl border border-white/10 hover:border-[#EFA427] transition-all duration-300 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+    <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border-[#EFA427] rounded-xl hover:border-[#EFA427] hover:border transition-all duration-300 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-1">
     <div className="p-4 md:p-6 flex flex-col h-full">
       {/* Header */}
       <div className="border-b border-white/10 pb-4 mb-4 md:mb-6">
