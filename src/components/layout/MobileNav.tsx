@@ -16,7 +16,6 @@ interface NavProps {
   profile: UserProfile;
 }
 
-// Helper function to check if link is active
 const isLinkActive = (pathname: string, href: string) => {
   if (href === '/dashboard') {
     return pathname === '/dashboard';
@@ -31,7 +30,7 @@ export const MobileNav: React.FC<NavProps> = () => {
     <div className="rounded-t-xl fixed bottom-0 left-0 right-0 bg-[#EFA427] md:hidden z-50">
       <nav className="flex justify-around items-center h-16">
         <Link
-          href="/profile"
+          href="/feeds"
           className={`flex flex-col items-center px-4 ${
             isLinkActive(pathname, '/profile')
               ? 'text-[#222222] rounded-lg'
@@ -39,10 +38,10 @@ export const MobileNav: React.FC<NavProps> = () => {
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
-          <span className="text-xs">Profile</span>
+          <span className="text-xs">Feeds</span>
         </Link>
         <Link
-          href="/dashboard/profile"
+          href="/profile"
           className={`flex flex-col items-center px-4 ${
             isLinkActive(pathname, '/dashboard/profile')
               ? 'text-[#222222] rounded-lg'
@@ -50,7 +49,7 @@ export const MobileNav: React.FC<NavProps> = () => {
           }`}
         >
           <UserCircle className="w-5 h-5" />
-          <span className="text-xs">Tester</span>
+          <span className="text-xs">Profile</span>
         </Link>
         <Link
           href="/api/auth/logout"

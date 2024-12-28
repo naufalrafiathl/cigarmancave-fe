@@ -24,7 +24,6 @@ export function ReviewsView() {
   );
   const { getReviews } = useReviewOperations();
 
-  // Use React Query to fetch reviews
   const { data, isLoading, error } = useQuery({
     queryKey: ["reviews", currentPage, ITEMS_PER_PAGE],
     queryFn: () => getReviews({ page: currentPage, limit: ITEMS_PER_PAGE }),
@@ -34,7 +33,6 @@ export function ReviewsView() {
   console.log("Loading:", isLoading);
   console.log("Error:", error);
 
-  // Filter and sort reviews
   const filteredAndSortedReviews = React.useMemo(() => {
     console.log("Filtering reviews from data:", data?.data?.reviews);
     const reviews = data?.data?.reviews ?? [];
@@ -120,7 +118,6 @@ export function ReviewsView() {
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
               <div className="mb-4">
-                {/* You can replace this with an actual illustration or icon */}
                 <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
                   <PlusCircle className="w-8 h-8 text-gray-400" />
                 </div>
@@ -133,7 +130,7 @@ export function ReviewsView() {
                 review.
               </p>
               <Link
-                href="?tab=humidor" // Adjust this path to your actual new review route
+                href="?tab=humidor"
                 className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-md text-white font-medium"
               >
                 <PlusCircle className="w-4 h-4 mr-2" />
@@ -179,8 +176,6 @@ export function ReviewsView() {
           </div>
         )}
       </div>
-
-      {/* TODO: Add ReviewDetailModal component when a review is selected */}
     </div>
   );
 }

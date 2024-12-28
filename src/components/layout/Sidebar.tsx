@@ -4,10 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  UserCircle,
   LogOut,
   Star,
-  Award,
   Box,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -54,7 +52,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
 
         <nav className="flex-1 p-4 space-y-1">
         <Link
-            href="/profile?tab=humidor"
+            href="/feeds"
             className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
               isLinkActive(pathname, "/dashboard/profile")
                 ? "bg-gray-100 text-gray-800"
