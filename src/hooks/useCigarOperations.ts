@@ -34,15 +34,6 @@ interface SearchResult {
   }[];
 }
 
-interface AddCigarData {
-  cigarId: number;
-  quantity: number;
-  purchasePrice: number;
-  purchaseDate: string;
-  purchaseLocation?: string;
-  notes?: string;
-}
-
 interface SearchApiResponse {
   type: "SEARCH_RESULTS";
   total: number;

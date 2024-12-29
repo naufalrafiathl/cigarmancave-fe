@@ -4,7 +4,6 @@ import { getSession } from '@auth0/nextjs-auth0';
 
 export const getUserProfile = async () => {
   const session = await getSession();
-  
   if (!session?.user) {
     return null;
   }

@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
+import { useUser } from "@/hooks/useUserOperations";
 import { ReviewCard } from "../../profile/components/review/ReviewCard";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { MoreVertical, Reply } from "lucide-react";
+import Link from "next/link";
+import { PostCardSkeleton } from "./PostCardSkeleton";
 import Image from "next/image";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import ReviewDetailModal from "../../profile/components/review/ReviewDetailModal";
-import { ReviewResponse } from "@/hooks/useReviewOperations";
 import { useFeedOperations } from "@/hooks/useFeedOperations";
+import { formatReviewData } from "@/utils/formatReviewData";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CommentForm } from "../../posts/[postId]/components/CommentForm";
+import { CommentThread } from "../../posts/[postId]/components/CommentThread";
+import { useRouter } from "next/navigation"; // Changed this line
+import { Comment } from "@/types/feeds";
 
 interface PostCardProps {
   post: {
@@ -59,25 +75,7 @@ interface PostCardProps {
         };
       }>;
     };
-    comments: Array<{
-      id: number;
-      content: string;
-      createdAt: string;
-      user: {
-        id: number;
-        fullName: string;
-        profileImageUrl: string;
-      };
-      replies: Array<{
-        id: number;
-        content: string;
-        user: {
-          id: number;
-          fullName: string;
-          profileImageUrl: string;
-        };
-      }>;
-    }>;
+    comments: Comment[];
     images: Array<{
       id: number;
       url: string;
@@ -95,115 +93,201 @@ interface PostCardProps {
       hasMoreComments: boolean;
     };
   };
+  isDetailView: boolean;
 }
 
 interface ReviewWithFlavorScores {
-    flavorPepperScore: number;
-    flavorChocolateScore: number;
-    flavorCreamyScore: number;
-    flavorLeatherScore: number;
-    flavorWoodyScore: number;
-    flavorEarthyScore: number;
-    flavorNuttyScore: number;
-    flavorSweetScore: number;
-    flavorFruityScore: number;
-    flavorGrassyScore: number;
-    flavorBerryScore: number;
-    flavorCoffeeScore: number;
-    flavorBittersScore: number;
-  }
+  flavorPepperScore: number;
+  flavorChocolateScore: number;
+  flavorCreamyScore: number;
+  flavorLeatherScore: number;
+  flavorWoodyScore: number;
+  flavorEarthyScore: number;
+  flavorNuttyScore: number;
+  flavorSweetScore: number;
+  flavorFruityScore: number;
+  flavorGrassyScore: number;
+  flavorBerryScore: number;
+  flavorCoffeeScore: number;
+  flavorBittersScore: number;
+}
 
-export const PostCard = ({ post }: PostCardProps) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.engagement.totalLikes);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const { toggleLike } = useFeedOperations();
+const buildCommentTree = (comments: Comment[]) => {
+  const commentMap = new Map();
+  const topLevel: Comment[] = [];
 
-  const hasFlavorScores = (review: any): review is ReviewWithFlavorScores => {
-    return (
-      'flavorPepperScore' in review &&
-      'flavorChocolateScore' in review &&
-      'flavorCreamyScore' in review &&
-      'flavorLeatherScore' in review &&
-      'flavorWoodyScore' in review &&
-      'flavorEarthyScore' in review &&
-      'flavorNuttyScore' in review &&
-      'flavorSweetScore' in review &&
-      'flavorFruityScore' in review &&
-      'flavorGrassyScore' in review &&
-      'flavorBerryScore' in review &&
-      'flavorCoffeeScore' in review &&
-      'flavorBittersScore' in review
-    );
-  };
-  
-  const formattedReview: ReviewResponse | undefined = post.review
-  ? {
-      data: {},
-      ...post.review,
-      // Add all required flavor scores
-      flavorPepperScore: hasFlavorScores(post.review) ? post.review.flavorPepperScore : 0,
-      flavorChocolateScore: hasFlavorScores(post.review) ? post.review.flavorChocolateScore : 0,
-      flavorCreamyScore: hasFlavorScores(post.review) ? post.review.flavorCreamyScore : 0,
-      flavorLeatherScore: hasFlavorScores(post.review) ? post.review.flavorLeatherScore : 0,
-      flavorWoodyScore: hasFlavorScores(post.review) ? post.review.flavorWoodyScore : 0,
-      flavorEarthyScore: hasFlavorScores(post.review) ? post.review.flavorEarthyScore : 0,
-      flavorNuttyScore: hasFlavorScores(post.review) ? post.review.flavorNuttyScore : 0,
-      flavorSweetScore: hasFlavorScores(post.review) ? post.review.flavorSweetScore : 0,
-      flavorFruityScore: hasFlavorScores(post.review) ? post.review.flavorFruityScore : 0,
-      flavorGrassyScore: hasFlavorScores(post.review) ? post.review.flavorGrassyScore : 0,
-      flavorBerryScore: hasFlavorScores(post.review) ? post.review.flavorBerryScore : 0,
-      flavorCoffeeScore: hasFlavorScores(post.review) ? post.review.flavorCoffeeScore : 0,
-      flavorBittersScore: hasFlavorScores(post.review) ? post.review.flavorBittersScore : 0,
-      cigar: {
-        id: post.review.cigar.id,
-        name: post.review.cigar.name,
-        brand: post.review.cigar.brand.name,
-      },
-      user: {
-        id: post.user.id,
-        fullName: post.user.fullName,
-        profileImageUrl: post.user.profileImageUrl,
-      },
+  comments.forEach((comment) => {
+    commentMap.set(comment.id, { ...comment, replies: [] });
+  });
+
+  comments.forEach((comment) => {
+    const commentWithReplies = commentMap.get(comment.id);
+    if (comment.parentId === null || !commentMap.has(comment.parentId)) {
+      topLevel.push(commentWithReplies);
+    } else {
+      const parent = commentMap.get(comment.parentId);
+      parent.replies.push(commentWithReplies);
     }
-  : undefined;
+  });
+
+  return topLevel;
+};
+
+export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
+  const { user, isLoading, error } = useUser();
+  const router = useRouter();
+
+  const [isLiked, setIsLiked] = useState(() => {
+    if (user && post.likes) {
+      return post.likes.some((like) => like.user.id === user.id);
+    }
+    return false;
+  });
+
+  const [likesCount, setLikesCount] = useState(post.engagement.totalLikes);
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
+  const { toggleLike, deletePost, reportPost } = useFeedOperations();
+
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
+  const formattedReview = formatReviewData(post.review);
+
+  const topLevelComments = buildCommentTree(post.comments);
+  const displayComments = topLevelComments.slice(0, 2);
+  const hasMoreComments = post.comments.length > 2;
+
+  console.log("All comments:", post.comments);
+  console.log("Top level comments:", topLevelComments);
+
+  useEffect(() => {
+    if (user && post.likes) {
+      const userLiked = post.likes.some((like) => like.user.id === user.id);
+      setIsLiked(userLiked);
+    }
+  }, [user, post.likes]);
 
   const handleLike = async () => {
+    if (!user) {
+      toast.error("Please login to like posts");
+      return;
+    }
+
+    if (isLikeProcessing) return;
+
     try {
-      await toggleLike({ postId: post.id, isLiked });
-      setIsLiked(!isLiked);
+      setIsLikeProcessing(true);
+
+      setIsLiked((prev) => !prev);
       setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+
+      await toggleLike({ postId: post.id, isLiked });
     } catch (error) {
-      console.error("Failed to like post:", error);
+      setIsLiked((prev) => !prev);
+      setLikesCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      toast.error("Failed to update like status");
+    } finally {
+      setIsLikeProcessing(false);
     }
   };
 
+  const handleShare = async () => {
+    try {
+      const url = `${window.location.origin}/posts/${post.id}`;
+      await navigator.clipboard.writeText(url);
+      toast.success("Post link copied to clipboard!");
+    } catch (error) {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await deletePost(post.id);
+        toast.success("Post deleted successfully");
+      } catch (error) {
+        toast.error("Failed to delete post");
+      }
+    }
+  };
+
+  const handleReport = async () => {
+    await reportPost(post.id, "inappropriate content");
+  };
+
+  const handleViewAllComments = () => {
+    if (!isDetailView) {
+      router.push(`/posts/${post.id}`);
+    } else {
+      setShowAllComments(true);
+    }
+  };
+
+  if (isLoading) {
+    return <PostCardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div
+        className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl 
+        border border-red-500/20 p-4 text-center text-red-400"
+      >
+        Error loading post
+      </div>
+    );
+  }
+
   return (
-<div className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/5 
-  hover:border-white/10 transition-all duration-300 mx-0 md:mx-0">
+    <div
+      className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/5 
+      hover:border-white/10 transition-all duration-300 mx-0 md:mx-0"
+    >
       <div className="p-4 space-y-4">
-        {/* User Info */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12">
-            <Image
-              src={post.user.profileImageUrl || "/placeholder-avatar.png"}
-              alt={post.user.fullName}
-              fill
-              className="rounded-full object-cover"
-            />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-12 h-12">
+              <Image
+                src={post.user.profileImageUrl || "/placeholder-avatar.png"}
+                alt={post.user.fullName}
+                fill
+                className="rounded-full object-cover"
+              />
+            </div>
+            <div>
+              <h3 className="font-medium text-white">{post.user.fullName}</h3>
+              <p className="text-sm text-[#B9B9B9]">
+                {format(new Date(post.createdAt), "MMM d, yyyy • h:mm a")}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-medium text-white">{post.user.fullName}</h3>
-            <p className="text-sm text-[#B9B9B9]">
-              {format(new Date(post.createdAt), "MMM d, yyyy • h:mm a")}
-            </p>
-          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-2 hover:bg-white/5 rounded-full transition-colors">
+              <MoreVertical className="w-5 h-5 text-[#B9B9B9]" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-[#2A2A2A] border-white/10"
+            >
+              {post.user.id === user?.id ? (
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className="text-red-500 hover:text-red-400"
+                >
+                  Delete post
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem className="text-white" onClick={handleReport}>
+                  Report post
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        {/* Post Content */}
         {post.content && <div className="text-[#E5E5E5]">{post.content}</div>}
 
-        {/* Post Images */}
         {post.images && post.images.length > 0 && (
           <div className="grid grid-cols-2 gap-2">
             {post.images.map((image) => (
@@ -219,7 +303,6 @@ export const PostCard = ({ post }: PostCardProps) => {
           </div>
         )}
 
-        {/* Review Card */}
         {formattedReview && (
           <div onClick={() => setShowReviewModal(true)}>
             <ReviewCard
@@ -230,84 +313,64 @@ export const PostCard = ({ post }: PostCardProps) => {
           </div>
         )}
 
-        {/* Engagement Stats */}
         <div className="flex items-center gap-6 pt-2 border-t border-white/10">
           <button
             onClick={handleLike}
+            disabled={isLikeProcessing}
             className={`flex items-center gap-2 transition-colors duration-300
-              ${
-                isLiked
-                  ? "text-[#EFA427]"
-                  : "text-[#B9B9B9] hover:text-[#EFA427]"
-              }`}
+        ${isLiked ? "text-[#EFA427]" : "text-[#B9B9B9] hover:text-[#EFA427]"}
+        ${isLikeProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+            <Heart
+              className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`}
+              fill={isLiked ? "#EFA427" : "none"}
+            />
             <span>{likesCount}</span>
           </button>
 
-          <button
+          <Link
+            href={`/posts/${post.id}`}
             className="flex items-center gap-2 text-[#B9B9B9] hover:text-white 
-            transition-colors duration-300"
+              transition-colors duration-300"
           >
             <MessageCircle className="w-5 h-5" />
             <span>{post.engagement.totalComments}</span>
-          </button>
+          </Link>
 
           <button
+            onClick={handleShare}
             className="flex items-center gap-2 text-[#B9B9B9] hover:text-white 
-            transition-colors duration-300"
+              transition-colors duration-300"
           >
             <Share2 className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Comments Preview */}
-        {post.comments.length > 0 && (
+        {!isDetailView && (
           <div className="space-y-3 pt-3 border-t border-white/10">
-            {post.comments.map((comment) => (
-              <div key={comment.id} className="flex gap-3">
-                <div className="relative w-8 h-8 flex-shrink-0">
-                  <Image
-                    src={
-                      comment.user.profileImageUrl || "/placeholder-avatar.png"
-                    }
-                    alt={comment.user.fullName}
-                    fill
-                    className="rounded-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm">
-                    <span className="font-medium text-white">
-                      {comment.user.fullName}
-                    </span>{" "}
-                    <span className="text-[#B9B9B9]">{comment.content}</span>
-                  </p>
-                  <div className="flex gap-4 mt-1 text-xs text-[#B9B9B9]">
-                    <span>
-                      {format(new Date(comment.createdAt), "MMM d, yyyy")}
-                    </span>
-                    <button className="hover:text-white transition-colors duration-300">
-                      Reply
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <CommentForm postId={post.id} />
+
+            {displayComments.map((comment) => (
+              <CommentThread
+                key={comment.id}
+                comment={comment}
+                postId={post.id}
+              />
             ))}
 
-            {post.engagement.hasMoreComments && (
+            {hasMoreComments && (
               <button
+                onClick={handleViewAllComments}
                 className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
-                transition-colors duration-300"
+                  transition-colors duration-300"
               >
-                View more comments
+                View all comments
               </button>
             )}
           </div>
         )}
       </div>
 
-      {/* Review Modal */}
       {showReviewModal && formattedReview && (
         <ReviewDetailModal
           review={formattedReview}

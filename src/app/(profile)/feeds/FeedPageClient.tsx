@@ -21,30 +21,33 @@ import {
   FeedSortType,
   FeedFilterType,
 } from "@/hooks/useFeedOperations";
-import { useInfiniteQuery, InfiniteData, QueryFunctionContext } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  InfiniteData,
+  QueryFunctionContext,
+} from "@tanstack/react-query";
 import { useIntersection } from "@/hooks/useIntersection";
 import { ArrowDownCircle, Loader2, Plus } from "lucide-react";
 import { Post } from "@/types/feed";
 
 interface FeedPagination {
-    total: number;
-    pages: number;
-    currentPage: number;
-    perPage: number;
-  }
-  
-  interface FeedPageData {
-    posts: Post[];
-    pagination: FeedPagination;
-  }
-  
-  interface FeedPage {
-    status: string;
-    data: FeedPageData;
-  }
+  total: number;
+  pages: number;
+  currentPage: number;
+  perPage: number;
+}
 
-  type QueryKey = ["feed", FeedSortType, FeedFilterType];
+interface FeedPageData {
+  posts: Post[];
+  pagination: FeedPagination;
+}
 
+interface FeedPage {
+  status: string;
+  data: FeedPageData;
+}
+
+type QueryKey = ["feed", FeedSortType, FeedFilterType];
 
 const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
@@ -81,11 +84,17 @@ export default function FeedPageClient() {
     isFetchingNextPage,
     isLoading,
     refetch,
-  } = useInfiniteQuery<FeedPage, Error, InfiniteData<FeedPage>, QueryKey, number>({
+  } = useInfiniteQuery<
+    FeedPage,
+    Error,
+    InfiniteData<FeedPage>,
+    QueryKey,
+    number
+  >({
     queryKey: ["feed", sortBy, filterBy] as const,
-    queryFn: async ({ 
+    queryFn: async ({
       pageParam,
-      queryKey 
+      queryKey,
     }: QueryFunctionContext<QueryKey, number>) => {
       const response = await getFeed({
         page: pageParam,
@@ -117,10 +126,10 @@ export default function FeedPageClient() {
           filterBy,
           limit: 1,
         });
-        
+
         const newestPostsResponse = response as FeedPage;
         const newestPost = newestPostsResponse.data.posts[0];
-        
+
         if (newestPost && newestPost.id !== lastPostRef.current) {
           setHasNewPosts(true);
         }
@@ -128,7 +137,6 @@ export default function FeedPageClient() {
         console.error("Failed to check for new posts:", error);
       }
     }, 30000);
-
 
     return () => clearInterval(pollInterval);
   }, [sortBy, filterBy, data]);
@@ -138,25 +146,26 @@ export default function FeedPageClient() {
     await refetch();
   };
 
-  const allPosts = data?.pages.flatMap((page) => {
-    if (!page?.data?.posts) return [];
-    return page.data.posts.map((post: Post) => ({
-      ...post,
-      user: {
-        ...post.user,
-        fullName: post.user.fullName || "Unknown User",
-      },
-      content: post.content || "",
-      createdAt: post.createdAt || new Date().toISOString(),
-      images: post.images || [],
-      engagement: {
-        totalLikes: Number(post.engagement?.totalLikes || 0),
-        totalComments: Number(post.engagement?.totalComments || 0),
-        totalEngagement: Number(post.engagement?.totalEngagement || 0),
-        hasMoreComments: Boolean(post.engagement?.hasMoreComments),
-      },
-    }));
-  }) ?? [];
+  const allPosts =
+    data?.pages.flatMap((page) => {
+      if (!page?.data?.posts) return [];
+      return page.data.posts.map((post: Post) => ({
+        ...post,
+        user: {
+          ...post.user,
+          fullName: post.user.fullName || "Unknown User",
+        },
+        content: post.content || "",
+        createdAt: post.createdAt || new Date().toISOString(),
+        images: post.images || [],
+        engagement: {
+          totalLikes: Number(post.engagement?.totalLikes || 0),
+          totalComments: Number(post.engagement?.totalComments || 0),
+          totalEngagement: Number(post.engagement?.totalEngagement || 0),
+          hasMoreComments: Boolean(post.engagement?.hasMoreComments),
+        },
+      }));
+    }) ?? [];
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] rounded-xl">
@@ -265,7 +274,7 @@ export default function FeedPageClient() {
               ) : (
                 <div className="space-y-6">
                   {allPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
+                    <PostCard key={post.id} post={post} isDetailView={false} />
                   ))}
 
                   <div
