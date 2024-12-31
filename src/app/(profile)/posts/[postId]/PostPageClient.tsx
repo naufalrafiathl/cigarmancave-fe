@@ -1,116 +1,127 @@
 'use client'
 
-import { useRouter,useSearchParams  } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { QueryKey, useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useIntersection } from '@/hooks/useIntersection';
-import { Post } from '@/types/feed';
+import { useRouter } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { toast } from 'sonner';
 import { useFeedOperations } from '@/hooks/useFeedOperations';
-import { CommentForm } from './components/CommentForm';
-import { CommentThread } from './components/CommentThread';
 import { PostCard } from '../../feeds/components/PostCard';
+import { CreatePostCard } from '../../feeds/components/CreatePostCard';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
+interface PostPageClientProps {
+  postId: string;
+}
 
-const PostPageClient = () => {
+const PostPageClient = ({ postId }: PostPageClientProps) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const postId = searchParams.get('postId');
+  const queryClient = useQueryClient();
   const { user } = useUser();
-  const { getPost, getPostComments } = useFeedOperations();
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const entry = useIntersection(loadMoreRef, {});
+  const { getPost, addComment } = useFeedOperations();
 
+  // Post Query
   const {
-    data: post,
-    isLoading: isPostLoading
+    data: postResponse,
+    isLoading: isPostLoading,
+    error: postError,
   } = useQuery({
     queryKey: ['post', postId],
-    queryFn: () => getPost(Number(postId)) as Promise<{
-      status: string;
-      data: any;
-    }>,
+    queryFn: async () => {
+      if (!postId) throw new Error('No post ID provided');
+      const response = await getPost(Number(postId));
+      return response;
+    },
     enabled: !!postId,
   });
-  
-
-const {
-  data: commentsData,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
-  isLoading: isCommentsLoading,
-} = useInfiniteQuery({
-  queryKey: ['post-comments', postId] as const,
-  queryFn: ({ pageParam }) => {
-    return getPostComments(Number(postId), {
-      page: pageParam,
-      limit: 10,
-    });
-  },
-  initialPageParam: 1,
-  getNextPageParam: (lastPage: any) => {
-    const { currentPage, pages } = lastPage.data.pagination;
-    return currentPage < pages ? currentPage + 1 : undefined;
-  },
-  enabled: !!postId,
-});
-
-  useEffect(() => {
-    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [entry?.isIntersecting, fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const handleShare = async () => {
-    try {
-      const url = `${window.location.origin}/posts/${postId}`;
-      await navigator.clipboard.writeText(url);
-      toast.success('Post link copied to clipboard!');
-    } catch (error) {
-      toast.error('Failed to copy link to clipboard');
-    }
-  };
 
   if (isPostLoading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="animate-spin text-2xl">⏳</div>
+        <Loader2 className="w-8 h-8 text-[#EFA427] animate-spin" />
       </div>
     );
   }
 
-  if (!post) {
+  if (postError) {
     return (
-      <div className="flex justify-center py-12">
-        <div className="text-white">Post not found</div>
+      <div className="flex flex-col items-center justify-center py-12 px-4">
+        <div className="text-red-500 text-center mb-2">Failed to load post</div>
+        <button 
+          onClick={() => router.back()}
+          className="text-[#EFA427] hover:text-[#EFA427]/80 transition-colors"
+        >
+          Go back
+        </button>
       </div>
     );
   }
 
-  const allComments = commentsData?.pages?.flatMap((page: any) => page.data.comments) ?? [];
+  if (!postResponse?.data) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-4">
+        <div className="text-white text-center mb-2">Post not found</div>
+        <button 
+          onClick={() => router.back()}
+          className="text-[#EFA427] hover:text-[#EFA427]/80 transition-colors"
+        >
+          Go back
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="mb-6">
-      {post && <PostCard post={post.data} isDetailView={true} />}
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Left Column - Back Button and Post Content */}
+        <div className="md:col-span-8">
+          {/* Back Button */}
+          <Link 
+            href="/feeds" 
+            className="flex items-center gap-2 text-[#EFA427] hover:text-[#EFA427]/80 
+              transition-colors mb-4"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Feed
+          </Link>
 
-      <div className="space-y-4">
-        <CommentForm postId={Number(postId)} />
-        
-        {allComments.map((comment) => (
-          <CommentThread key={comment.id} comment={comment} postId={Number(postId)} />
-        ))}
-
-        {isFetchingNextPage && (
-          <div className="flex justify-center py-4">
-            <div className="animate-spin text-2xl">⏳</div>
+          {/* Post and Comments */}
+          <div className="space-y-6">
+            <PostCard post={postResponse.data} isDetailView={true} />
           </div>
-        )}
+        </div>
 
-        <div ref={loadMoreRef} className="h-10" />
+        {/* Right Column - Create Post and Coming Soon */}
+        <div className="md:col-span-4 space-y-6">
+          {user && <CreatePostCard />}
+          
+          {/* Coming Soon Card */}
+          <div className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl 
+            border border-white/5 p-6">
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Coming Soon
+            </h3>
+            <p className="text-[#B9B9B9]">
+              More exciting features are on the way! Stay tuned for updates.
+            </p>
+            
+            {/* Coming Soon Features List */}
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2 text-[#B9B9B9]">
+                <div className="w-2 h-2 rounded-full bg-[#EFA427]" />
+                <span>Advanced Cigar Reviews</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#B9B9B9]">
+                <div className="w-2 h-2 rounded-full bg-[#EFA427]" />
+                <span>Cigar Collection Tracking</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#B9B9B9]">
+                <div className="w-2 h-2 rounded-full bg-[#EFA427]" />
+                <span>Community Events</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

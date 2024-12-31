@@ -1,3 +1,5 @@
+import { Comment } from "./comment";
+
 export interface Post {
     id: number;
     content: string;
@@ -49,25 +51,7 @@ export interface Post {
         };
       }>;
     };
-    comments: Array<{
-      id: number;
-      content: string;
-      createdAt: string;
-      user: {
-        id: number;
-        fullName: string;
-        profileImageUrl: string;
-      };
-      replies: Array<{
-        id: number;
-        content: string;
-        user: {
-          id: number;
-          fullName: string;
-          profileImageUrl: string;
-        };
-      }>;
-    }>;
+    comments: Comment[]
     images: Array<{   
       id: number;
       url: string;
@@ -83,6 +67,10 @@ export interface Post {
       totalComments: number;
       totalEngagement: number;
       hasMoreComments: boolean;
+    };
+    _count?: {
+      likes: number;
+      comments: number;
     };
 }
   

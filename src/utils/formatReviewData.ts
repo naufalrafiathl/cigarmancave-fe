@@ -54,9 +54,9 @@ export const formatReviewData = (review: any): ReviewResponse | undefined => {
     flavorCoffeeScore: hasFlavorScores(review) ? review.flavorCoffeeScore : 0,
     flavorBittersScore: hasFlavorScores(review) ? review.flavorBittersScore : 0,
     cigar: {
-      id: review.cigar.id,
-      name: review.cigar.name,
-      brand: review.cigar.brand.name,
+      id: review?.cigar?.id,
+      name: review?.cigar?.name,
+      brand: review?.cigar?.brand?.name,
     },
     user: {
       id: review?.user?.id,

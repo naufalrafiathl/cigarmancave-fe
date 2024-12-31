@@ -148,7 +148,6 @@ export function useReviewOperations() {
     mutationFn: async (reviewData: ReviewData): Promise<ReviewResponse> => {
       const headers = await getAuthHeaders();
 
-      console.log(reviewData);
       const response = await fetch(`${config.apiUrl}/api/reviews`, {
         method: "POST",
         headers,

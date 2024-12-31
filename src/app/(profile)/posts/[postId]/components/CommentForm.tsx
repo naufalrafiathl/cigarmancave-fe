@@ -6,12 +6,14 @@ import { toast } from 'sonner';
 import { useFeedOperations } from '@/hooks/useFeedOperations';
 
 interface CommentFormProps {
-  postId: number;
-  parentId?: number;
-  onSuccess?: () => void;
-}
+    postId: number;
+    parentId?: number;
+    onSuccess?: () => void;
+    refetchPost?: () => void; // Optional prop
+  }
 
-export const CommentForm = ({ postId, parentId, onSuccess }: CommentFormProps) => {
+
+export const CommentForm = ({ postId, parentId, onSuccess,refetchPost  }: CommentFormProps) => {
   const { user } = useUser();
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,7 +31,9 @@ export const CommentForm = ({ postId, parentId, onSuccess }: CommentFormProps) =
         parentId,
       });
       setContent('');
+      // Call both callbacks if they exist
       onSuccess?.();
+      refetchPost?.();
       toast.success(parentId ? 'Reply added successfully' : 'Comment added successfully');
     } catch (error) {
       toast.error('Failed to add comment');
@@ -37,7 +41,6 @@ export const CommentForm = ({ postId, parentId, onSuccess }: CommentFormProps) =
       setIsSubmitting(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="flex gap-3">
       {user?.picture && (

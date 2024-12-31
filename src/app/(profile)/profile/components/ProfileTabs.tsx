@@ -10,7 +10,6 @@ interface ProfileTabsProps {
 }
 
 export function ProfileTabs({ currentTab }: ProfileTabsProps) {
-  console.log('cr',currentTab)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tabs = [
@@ -23,14 +22,8 @@ export function ProfileTabs({ currentTab }: ProfileTabsProps) {
   const currentTabInfo = tabs.find(tab => tab.id === currentTab);
   const CurrentIcon = currentTabInfo?.icon;
 
-  useEffect(()=>{
-    console.log('open',isDropdownOpen)
-    console.log('info',tabs)
-  },[isDropdownOpen])
-
   return (
     <div className="mb-4">
-      {/* Mobile/Tablet Dropdown */}
       <div className="md:hidden relative">
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}

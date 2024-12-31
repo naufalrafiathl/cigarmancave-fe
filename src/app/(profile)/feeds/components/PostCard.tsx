@@ -22,78 +22,12 @@ import { CommentForm } from "../../posts/[postId]/components/CommentForm";
 import { CommentThread } from "../../posts/[postId]/components/CommentThread";
 import { useRouter } from "next/navigation"; // Changed this line
 import { Comment } from "@/types/feeds";
+import { Post } from "@/types/feed";
 
 interface PostCardProps {
-  post: {
-    id: number;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-    userId: number;
-    reviewId?: number;
-    user: {
-      id: number;
-      fullName: string;
-      profileImageUrl: string;
-    };
-    review?: {
-      id: number;
-      createdAt: string;
-      updatedAt: string;
-      date: string;
-      duration: number;
-      price: number | null;
-      strength: string;
-      constructionScore: number;
-      drawScore: number;
-      flavorScore: number;
-      burnScore: number;
-      impressionScore: number;
-      overallScore: number;
-      notes: string;
-      buyAgain: boolean;
-      userId: number;
-      cigarId: number;
-      images: any[];
-      cigar: {
-        id: number;
-        name: string;
-        brand: {
-          id: number;
-          name: string;
-        };
-      };
-      pairings: Array<{
-        id: number;
-        reviewId: number;
-        pairingId: number;
-        notes: string | null;
-        pairing: {
-          id: number;
-          name: string;
-          type: string;
-        };
-      }>;
-    };
-    comments: Comment[];
-    images: Array<{
-      id: number;
-      url: string;
-    }>;
-    likes: Array<{
-      user: {
-        id: number;
-        fullName: string;
-      };
-    }>;
-    engagement: {
-      totalLikes: number;
-      totalComments: number;
-      totalEngagement: number;
-      hasMoreComments: boolean;
-    };
-  };
+  post: Post;
   isDetailView: boolean;
+  refetchPost?: () => void; // Optional prop
 }
 
 interface ReviewWithFlavorScores {
@@ -133,10 +67,13 @@ const buildCommentTree = (comments: Comment[]) => {
   return topLevel;
 };
 
-export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
+export const PostCard = ({
+  post,
+  isDetailView = false,
+  refetchPost,
+}: PostCardProps) => {
   const { user, isLoading, error } = useUser();
   const router = useRouter();
-
   const [isLiked, setIsLiked] = useState(() => {
     if (user && post.likes) {
       return post.likes.some((like) => like.user.id === user.id);
@@ -144,7 +81,22 @@ export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
     return false;
   });
 
-  const [likesCount, setLikesCount] = useState(post.engagement.totalLikes);
+  const getCounts = () => {
+    if (isDetailView && post._count) {
+      return {
+        likes: post._count.likes,
+        comments: post._count.comments,
+      };
+    }
+    return {
+      likes: post.engagement?.totalLikes ?? 0,
+      comments: post.engagement?.totalComments ?? 0,
+    };
+  };
+
+  console.log("from feed page", post);
+
+  const [likesCount, setLikesCount] = useState(getCounts().likes);
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
   const { toggleLike, deletePost, reportPost } = useFeedOperations();
 
@@ -155,9 +107,6 @@ export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
   const topLevelComments = buildCommentTree(post.comments);
   const displayComments = topLevelComments.slice(0, 2);
   const hasMoreComments = post.comments.length > 2;
-
-  console.log("All comments:", post.comments);
-  console.log("Top level comments:", topLevelComments);
 
   useEffect(() => {
     if (user && post.likes) {
@@ -331,10 +280,10 @@ export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
           <Link
             href={`/posts/${post.id}`}
             className="flex items-center gap-2 text-[#B9B9B9] hover:text-white 
-              transition-colors duration-300"
+            transition-colors duration-300"
           >
             <MessageCircle className="w-5 h-5" />
-            <span>{post.engagement.totalComments}</span>
+            <span>{getCounts().comments}</span>
           </Link>
 
           <button
@@ -346,29 +295,30 @@ export const PostCard = ({ post, isDetailView = false }: PostCardProps) => {
           </button>
         </div>
 
-        {!isDetailView && (
-          <div className="space-y-3 pt-3 border-t border-white/10">
-            <CommentForm postId={post.id} />
+        <div className="space-y-3 pt-3 border-t border-white/10">
+          <CommentForm
+            postId={post.id}
+            refetchPost={refetchPost} // This will be undefined in feed page
+          />
 
-            {displayComments.map((comment) => (
-              <CommentThread
-                key={comment.id}
-                comment={comment}
-                postId={post.id}
-              />
-            ))}
+          {displayComments.map((comment) => (
+            <CommentThread
+              key={comment.id}
+              comment={comment}
+              postId={post.id}
+            />
+          ))}
 
-            {hasMoreComments && (
-              <button
-                onClick={handleViewAllComments}
-                className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
+          {hasMoreComments && (
+            <button
+              onClick={handleViewAllComments}
+              className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
                   transition-colors duration-300"
-              >
-                View all comments
-              </button>
-            )}
-          </div>
-        )}
+            >
+              View all comments
+            </button>
+          )}
+        </div>
       </div>
 
       {showReviewModal && formattedReview && (

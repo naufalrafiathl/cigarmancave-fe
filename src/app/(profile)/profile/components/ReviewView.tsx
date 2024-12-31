@@ -29,12 +29,7 @@ export function ReviewsView() {
     queryFn: () => getReviews({ page: currentPage, limit: ITEMS_PER_PAGE }),
   });
 
-  console.log("Query Data:", data);
-  console.log("Loading:", isLoading);
-  console.log("Error:", error);
-
   const filteredAndSortedReviews = React.useMemo(() => {
-    console.log("Filtering reviews from data:", data?.data?.reviews);
     const reviews = data?.data?.reviews ?? [];
 
     return reviews
@@ -152,7 +147,6 @@ export function ReviewsView() {
                 review={review}
                 viewMode={viewMode}
                 onView={(review) => {
-                  console.log("test", review);
                   setSelectedReview(review);
                 }}
               />

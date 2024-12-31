@@ -12,6 +12,7 @@ import { PairingStep } from "./PairingStep";
 import { TimerStep } from "./TimerStep";
 import { ReviewForm } from "./ReviewForm";
 import { useReviewOperations } from "@/hooks/useReviewOperations";
+import { CigarAssistant } from "./CigarAssistant";
 
 interface ReviewModalProps {
   cigar: {
@@ -58,6 +59,8 @@ const ReviewModal = ({
     burnScore: 3,
     impressionScore: 3,
   });
+
+  console.log("cigar", cigar);
 
   const [flavorProfiles, setFlavorProfiles] = useState({
     flavorPepperScore: 0,
@@ -144,14 +147,14 @@ const ReviewModal = ({
         ...scores,
         ...flavorProfiles,
         notes,
-        buyAgain: buyAgain === null ? undefined : buyAgain, 
+        buyAgain: buyAgain === null ? undefined : buyAgain,
         pairings,
         images: imageUrl ? [imageUrl] : [],
       };
       await createReview(reviewData);
 
       toast.success("Review submitted successfully!");
-      onSubmit?.(reviewData); 
+      onSubmit?.(reviewData);
       onClose();
 
       setTimeout(() => {
@@ -172,6 +175,8 @@ const ReviewModal = ({
           </DialogTitle>
           <p className="text-sm text-gray-400 mt-1">{cigar.brand}</p>
         </DialogHeader>
+
+        <CigarAssistant cigar={cigar} showReviewForm={showReviewForm} />
 
         {showImagePrompt && (
           <ImageStep
