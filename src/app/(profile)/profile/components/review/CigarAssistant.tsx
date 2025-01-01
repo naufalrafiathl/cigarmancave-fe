@@ -94,7 +94,7 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
             </div>
             <div className="flex items-center gap-2">
               <Crown className="w-4 h-4 text-amber-500" />
-              <span className="text-xs text-amber-500">Premium Feature</span>
+              <span className="text-xs text-amber-500"></span>
             </div>
           </div>
           <p className="text-gray-400 text-sm">{error}</p>
@@ -116,7 +116,7 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Crown className="w-4 h-4 text-amber-500" />
-            <span className="text-xs text-amber-500">Premium Feature</span>
+            <span className="text-xs text-amber-500"></span>
             <button
               onClick={toggleCollapse}
               className="p-1 hover:bg-white/5 rounded-full transition-colors ml-2"

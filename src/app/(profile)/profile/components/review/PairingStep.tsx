@@ -38,7 +38,7 @@ export const PairingStep = ({
 }: PairingStepProps) => (
   <div className="flex flex-col items-center gap-6 p-8">
     <h2 className="text-2xl font-semibold text-center">
-      Perfect Pairings Make Perfect Moments 🍸
+      Perfect Pairings Make Perfect Moments
     </h2>
     <p className="text-center text-gray-400">
       What's complementing your cigar today?

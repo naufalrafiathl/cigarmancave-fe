@@ -11,7 +11,7 @@ export const ImageStep = ({ onImageUpload, onSkip }: ImageStepProps) => (
   <div className="flex flex-col items-center gap-6 p-8">
     <Camera className="w-16 h-16 text-[#EFA427]" />
     <h2 className="text-2xl font-semibold text-center">
-      Capture the Moment ✨
+      Capture the Moment
     </h2>
     <p className="text-center text-gray-400">
       Let's preserve this masterpiece before the experience begins.
