@@ -48,7 +48,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
     return (
       <div 
-        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+        className="fixed inset-0 bg-black/90 z-10 flex items-center justify-center"
         onClick={() => setIsModalOpen(false)}
       >
         {/* Close button */}
@@ -110,7 +110,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   // Main carousel
   return (
     <>
-      <div className="relative w-full my-4 overflow-hidden">
+      <div className="relative w-full my-4 z-10 overflow-hidden">
         <div 
           className="relative w-full aspect-[16/9] max-h-[600px] overflow-hidden cursor-pointer"
           onClick={() => setIsModalOpen(true)}
@@ -133,7 +133,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               src={images[currentIndex].url}
               alt={`Post image ${currentIndex + 1}`}
               fill
-              className="object-contain z-10"
+              className="object-contain -z-0"
               sizes="(max-width: 768px) 100vw, 800px"
               priority={currentIndex === 0}
             />

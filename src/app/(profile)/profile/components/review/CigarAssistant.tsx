@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Crown, Bot, Sparkles, ChevronUp, ChevronDown } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Crown, Bot, Sparkles, ChevronUp, ChevronDown, Lock } from "lucide-react";
+import Link from "next/link";
+import { useAssistOperations } from "@/hooks/useAssistantOperations";
+import { toast } from "sonner";
 
 interface CigarAssistantProps {
   cigar: {
@@ -10,74 +13,63 @@ interface CigarAssistantProps {
   showReviewForm: boolean;
 }
 
-interface CigarInsights {
-  history: string;
-  blend: string;
-  notes: string;
-}
-
 const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Start as false
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [insights, setInsights] = useState<CigarInsights | null>(null);
+  const [insights, setInsights] = useState<{ history: string; blend: string; notes: string; } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  console.log('ini cigarnye', cigar)
+  
+  const { getInsights, isPremium } = useAssistOperations();
+
+  // Only fetch insights if user is premium and component should be shown
   useEffect(() => {
-    const fetchCigarInsights = async () => {
+    if (!isPremium || !showReviewForm || !cigar.id) {
+      return;
+    }
+
+    let isSubscribed = true;
+
+    const fetchInsights = async () => {
+      if (isLoading) return;
+
       setIsLoading(true);
       setError(null);
 
       try {
-        const prompt = `As a cigar expert, provide a JSON response about the "${cigar.name}" with exactly this format:
-        {
-          "history": "2-3 sentences about the brand and cigar history",
-          "blend": "2-3 sentences about the cigar's construction, wrapper, and origin",
-          "notes": "2-3 sentences about expected flavor profile and smoking experience"
+        const insightsData = await getInsights(cigar.id);
+        if (isSubscribed) {
+          setInsights(insightsData);
         }
-        
-        Return ONLY the JSON object with string values - no nested objects or arrays.`;
-
-        const response = await fetch("/api/openai/insights/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompt,
-            cigarName: cigar.name,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch cigar insights");
-        }
-
-        const data = await response.json();
-        const parsedInsights = typeof data.insights === "string"
-          ? JSON.parse(data.insights)
-          : data.insights;
-
-        setInsights(parsedInsights);
       } catch (err) {
-        console.error("Error fetching cigar insights:", err);
-        setError("Unable to load cigar insights at this time");
+        if (!isSubscribed) return;
+        
+        const message = err instanceof Error ? err.message : "Failed to fetch insights";
+        setError(message);
+        
+        if (!message.toLowerCase().includes('premium')) {
+          toast.error("Failed to load cigar insights. Please try again later.");
+        }
       } finally {
-        setIsLoading(false);
+        if (isSubscribed) {
+          setIsLoading(false);
+        }
       }
     };
 
-    if (showReviewForm) {
-      fetchCigarInsights();
-    }
-  }, [cigar.name, showReviewForm]);
+    fetchInsights();
 
+    return () => {
+      isSubscribed = false;
+    };
+  }, [cigar.id, isPremium, showReviewForm, getInsights]);
+
+  // Early return if not showing review form
   if (!showReviewForm) return null;
 
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-  if (error) {
+  // Premium gate component
+  if (!isPremium) {
     return (
       <div className="mb-6">
         <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-lg border border-amber-500/20 p-4">
@@ -89,11 +81,23 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
               </h3>
             </div>
             <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-amber-500" />
               <Crown className="w-4 h-4 text-amber-500" />
-              <span className="text-xs text-amber-500"></span>
             </div>
           </div>
-          <p className="text-gray-400 text-sm">{error}</p>
+          <div className="text-center py-4">
+            <p className="text-gray-300 mb-3">
+              Unlock expert cigar insights with Mancave Premium
+            </p>
+            <Link
+              href="/profile?tab=subscription"
+              className="inline-flex items-center px-4 py-2 bg-amber-500 text-black rounded-lg 
+                hover:bg-amber-400 transition-colors font-medium"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Upgrade to Premium
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -111,7 +115,6 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Crown className="w-4 h-4 text-amber-500" />
-            <span className="text-xs text-amber-500"></span>
             <button
               onClick={toggleCollapse}
               className="p-1 hover:bg-white/5 rounded-full transition-colors ml-2"
@@ -137,6 +140,8 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
                 Analyzing cigar profile...
               </span>
             </div>
+          ) : error ? (
+            <p className="text-red-400 text-center py-4">{error}</p>
           ) : insights ? (
             <div className="space-y-3 text-sm">
               <p className="text-gray-300">

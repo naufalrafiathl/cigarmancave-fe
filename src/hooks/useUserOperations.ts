@@ -8,6 +8,7 @@ interface User {
   fullName: string;
   email: string;
   profileImageUrl?: string;
+  isPremium?: boolean
 }
 
 export function useUserOperations() {

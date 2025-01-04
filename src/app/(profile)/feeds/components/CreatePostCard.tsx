@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from 'react-dom';
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 import { Camera, X, Plus, Check } from "lucide-react";
@@ -312,8 +313,8 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
       </div>
 
       {/* Review Selection Modal */}
-      {isSelectingReview && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      {isSelectingReview && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
           <div
             className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/10 
       p-4 max-w-xl w-full max-h-[80vh] overflow-y-auto m-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
@@ -370,7 +371,8 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
               )}
             </div>
           </div>
-        </div>
+        </div>,  
+        document.body
       )}
     </div>
   );
