@@ -1,5 +1,9 @@
-import { NextRequest } from 'next/server';
-import { handleAuth, handleLogin, handleLogout, handleCallback } from '@auth0/nextjs-auth0';
+import { 
+  handleAuth, 
+  handleLogin, 
+  handleLogout, 
+  handleCallback 
+} from '@auth0/nextjs-auth0';
 
 export const GET = handleAuth({
   login: handleLogin({
@@ -11,11 +15,7 @@ export const GET = handleAuth({
   logout: handleLogout({
     returnTo: '/',
   }),
-  callback: handleCallback({
-    afterCallback: (_req, _res, session) => {
-      return session;
-    },
-  }),
+  callback: handleCallback()
 });
 
 // Enable POST method for form submissions

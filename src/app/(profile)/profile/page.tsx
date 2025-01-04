@@ -19,7 +19,10 @@ export default async function ProfilePage({
     redirect("/api/auth/login");
   }
 
+
   const profile = await getUserProfile();
+  console.log('ini profile',profile)
+  console.log('ini seess',session)
   const currentTab: TabType = isValidTab(searchParams.tab)
     ? searchParams.tab
     : TABS.humidor;
@@ -27,7 +30,7 @@ export default async function ProfilePage({
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-8rem)]">
       <div className="bg-[#222222] rounded-3xl w-full p-3 md:p-5 flex flex-col md:flex-row flex-1 mb-16 md:mb-0">
-        <ProfileSidebar user={profile.user} />
+        <ProfileSidebar user={profile.data} />
         <div className="w-full md:w-[75%] rounded-3xl p-0 lg:p-4 pt-8 lg:pt-0">
           <ProfileTabs currentTab={currentTab} />
           <TabContent currentTab={currentTab} />

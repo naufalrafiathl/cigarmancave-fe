@@ -11,7 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 
 interface UserProfile {
-  user: {
+  data: {
     profileImageUrl?: string;
     fullName?: string;
     email: string;
@@ -103,7 +103,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
               <div className="flex items-center">
                 <Image
                   src={
-                    profile.user.profileImageUrl || "/placeholder-avatar.png"
+                    profile.data.profileImageUrl || "/placeholder-avatar.png"
                   }
                   width={50}
                   height={50}
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
-                  {profile.user.fullName || profile.user.email}
+                  {profile.data.fullName || profile.data.email}
                 </span>
               </div>
               <Link

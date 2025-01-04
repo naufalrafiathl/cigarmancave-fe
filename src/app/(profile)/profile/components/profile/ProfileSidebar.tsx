@@ -40,7 +40,7 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
           </h2>
           <div className="flex items-center justify-center text-neutral-400 mt-2 text-sm">
             <MapPin className="w-4 h-4 mr-1.5" />
-            <span>New York, USA</span>
+            <span>{user.location}</span>
           </div>
         </div>
       </div>

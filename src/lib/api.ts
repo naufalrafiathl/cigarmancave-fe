@@ -16,20 +16,15 @@ export const getUserProfile = async () => {
   });
   
   try {
-    const response = await api.post('/api/auth/profile', {
+    const response = await api.post('/api/profile', {
       user: session.user
     });
     return response.data;
   } catch (error: any) {
     if (error.response?.status === 404) {
       try {
-        // Try to create/update the user profile
-        const callbackResponse = await api.post('/api/auth/callback', {
-          user: session.user
-        });
-        
         // Then fetch the profile again
-        const retryResponse = await api.get('/api/auth/profile');
+        const retryResponse = await api.get('/api/profile');
         return retryResponse.data;
       } catch (callbackError) {
         console.error("Callback error:", callbackError);

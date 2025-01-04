@@ -10,30 +10,32 @@ interface CigarAssistantProps {
   showReviewForm: boolean;
 }
 
+interface CigarInsights {
+  history: string;
+  blend: string;
+  notes: string;
+}
+
 const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [insights, setInsights] = useState<{
-    history: string;
-    blend: string;
-    notes: string;
-  } | null>(null);
+  const [insights, setInsights] = useState<CigarInsights | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  console.log('apa?',showReviewForm);
-
+  console.log('ini cigarnye', cigar)
   useEffect(() => {
     const fetchCigarInsights = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const prompt = `As a cigar expert, provide detailed information about the "${cigar.name}" in JSON format with three sections:
-        1. history: Brief history of the brand and this specific cigar (2-3 sentences)
-        2. blend: Details about the cigar's construction, wrapper, and origin (2-3 sentences)
-        3. notes: Expected flavor profile and smoking experience (2-3 sentences)
+        const prompt = `As a cigar expert, provide a JSON response about the "${cigar.name}" with exactly this format:
+        {
+          "history": "2-3 sentences about the brand and cigar history",
+          "blend": "2-3 sentences about the cigar's construction, wrapper, and origin",
+          "notes": "2-3 sentences about expected flavor profile and smoking experience"
+        }
         
-        Focus on being accurate and concise. If this is a limited edition or special release, mention that context.`;
+        Return ONLY the JSON object with string values - no nested objects or arrays.`;
 
         const response = await fetch("/api/openai/insights/", {
           method: "POST",
@@ -51,17 +53,9 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
         }
 
         const data = await response.json();
-
-        let parsedInsights;
-        try {
-          parsedInsights =
-            typeof data.insights === "string"
-              ? JSON.parse(data.insights)
-              : data.insights;
-        } catch (e) {
-          console.error("Failed to parse OpenAI response:", e);
-          throw new Error("Invalid response format");
-        }
+        const parsedInsights = typeof data.insights === "string"
+          ? JSON.parse(data.insights)
+          : data.insights;
 
         setInsights(parsedInsights);
       } catch (err) {
@@ -72,8 +66,10 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
       }
     };
 
-    fetchCigarInsights();
-  }, [cigar.name]);
+    if (showReviewForm) {
+      fetchCigarInsights();
+    }
+  }, [cigar.name, showReviewForm]);
 
   if (!showReviewForm) return null;
 
@@ -104,14 +100,13 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
   }
 
   return (
-   showReviewForm &&  
     <div className="mb-6 animate-fade-in">
       <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-lg border border-amber-500/20 p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-amber-500" />
             <h3 className="text-amber-500 font-medium">
-            Mancave Assistant
+              Mancave Assistant
             </h3>
           </div>
           <div className="flex items-center gap-2">

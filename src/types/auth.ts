@@ -4,6 +4,7 @@ export interface User {
     email: string;
     fullName?: string;
     profileImageUrl?: string;
+    location?: string;
   }
   
   export interface AuthState {
