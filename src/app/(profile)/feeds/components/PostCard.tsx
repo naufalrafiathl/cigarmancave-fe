@@ -27,7 +27,7 @@ import { Post } from "@/types/feed";
 interface PostCardProps {
   post: Post;
   isDetailView: boolean;
-  refetchPost?: () => void; // Optional prop
+  onCommentSuccess?: () => void;
 }
 
 interface ReviewWithFlavorScores {
@@ -70,7 +70,7 @@ const buildCommentTree = (comments: Comment[]) => {
 export const PostCard = ({
   post,
   isDetailView = false,
-  refetchPost,
+  onCommentSuccess,
 }: PostCardProps) => {
   const { user, isLoading, error } = useUser();
   const router = useRouter();
@@ -295,30 +295,38 @@ export const PostCard = ({
           </button>
         </div>
 
+        {post.comments.length > 0 && (
         <div className="space-y-3 pt-3 border-t border-white/10">
-          <CommentForm
-            postId={post.id}
-            refetchPost={refetchPost} // This will be undefined in feed page
-          />
-
-          {displayComments.map((comment) => (
+          {post.comments.map((comment) => (
             <CommentThread
               key={comment.id}
               comment={comment}
               postId={post.id}
+              isDetailView={isDetailView}
             />
           ))}
 
-          {hasMoreComments && (
-            <button
-              onClick={handleViewAllComments}
+          {!isDetailView && post.engagement.hasMoreComments && (
+            <Link
+              href={`/posts/${post.id}`}
               className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
-                  transition-colors duration-300"
+              transition-colors duration-300"
             >
-              View all comments
-            </button>
+              View more comments
+            </Link>
           )}
         </div>
+      )}
+
+      {/* Comment Form */}
+      <div className="mt-4 pt-3 border-t border-white/10">
+        <CommentForm
+          postId={post.id}
+          onSuccess={onCommentSuccess}
+          isDetailView={isDetailView}
+        />
+      </div>
+
       </div>
 
       {showReviewModal && formattedReview && (

@@ -109,12 +109,16 @@ export function useFeedOperations() {
     return handleApiResponse(response);
   };
 
-  const getPost = async (postId: number) => {
+  const getPost = async (postId: number, isDetailView = false) => {
     const headers = await getAuthHeaders();
-    const response = await fetch(getApiUrl(`/posts/${postId}`), {
-      headers,
-      credentials: "include",
-    });
+    const response = await fetch(
+      getApiUrl(`/posts/${postId}?isDetailView=${isDetailView}`),
+      {
+        headers,
+        credentials: 'include',
+      }
+    );
+
     return handleApiResponse(response);
   };
 

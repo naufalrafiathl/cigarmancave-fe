@@ -8,31 +8,45 @@ import { PostCard } from '../../feeds/components/PostCard';
 import { CreatePostCard } from '../../feeds/components/CreatePostCard';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Post } from '@/types/feed';
 
 interface PostPageClientProps {
   postId: string;
+}
+
+interface PostResponse {
+  status: string;
+  data: Post
 }
 
 const PostPageClient = ({ postId }: PostPageClientProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useUser();
-  const { getPost, addComment } = useFeedOperations();
+  const { getPost } = useFeedOperations();
 
-  // Post Query
+  // Post Query with enabled refetching
   const {
     data: postResponse,
     isLoading: isPostLoading,
     error: postError,
-  } = useQuery({
-    queryKey: ['post', postId],
+    refetch
+  } = useQuery<any, Error>({
+    queryKey: ['post', postId, 'detail'],
     queryFn: async () => {
       if (!postId) throw new Error('No post ID provided');
-      const response = await getPost(Number(postId));
+      const response = await getPost(Number(postId), true); 
       return response;
     },
     enabled: !!postId,
+    staleTime: 0,
   });
+
+  const handleCommentSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['post', postId] });
+    await queryClient.invalidateQueries({ queryKey: ['feed'] });
+    await refetch();
+  };
 
   if (isPostLoading) {
     return (
@@ -44,7 +58,7 @@ const PostPageClient = ({ postId }: PostPageClientProps) => {
 
   if (postError) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-4">
+      <div className="flex flex-col items-center justify-center py-12 px-12">
         <div className="text-red-500 text-center mb-2">Failed to load post</div>
         <button 
           onClick={() => router.back()}
@@ -87,7 +101,11 @@ const PostPageClient = ({ postId }: PostPageClientProps) => {
 
           {/* Post and Comments */}
           <div className="space-y-6">
-            <PostCard post={postResponse.data} isDetailView={true} />
+            <PostCard 
+              post={postResponse.data} 
+              isDetailView={true}
+              onCommentSuccess={handleCommentSuccess} // Pass the handler down
+            />
           </div>
         </div>
 

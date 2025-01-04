@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Send } from 'lucide-react';
-import { useUser } from '@auth0/nextjs-auth0/client';
-import { toast } from 'sonner';
-import { useFeedOperations } from '@/hooks/useFeedOperations';
+import React, { useState } from "react";
+import Image from "next/image";
+import { Send } from "lucide-react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { toast } from "sonner";
+import { useFeedOperations } from "@/hooks/useFeedOperations";
 
 interface CommentFormProps {
-    postId: number;
-    parentId?: number;
-    onSuccess?: () => void;
-    refetchPost?: () => void; // Optional prop
-  }
+  postId: number;
+  parentId?: number;
+  onSuccess?: () => void;
+  isDetailView?: boolean;
+}
 
-
-export const CommentForm = ({ postId, parentId, onSuccess,refetchPost  }: CommentFormProps) => {
+export const CommentForm = ({
+  postId,
+  parentId,
+  onSuccess,
+  isDetailView = false,
+}: CommentFormProps) => {
   const { user } = useUser();
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addComment } = useFeedOperations();
 
@@ -30,13 +34,14 @@ export const CommentForm = ({ postId, parentId, onSuccess,refetchPost  }: Commen
         content: content.trim(),
         parentId,
       });
-      setContent('');
+      setContent("");
       // Call both callbacks if they exist
       onSuccess?.();
-      refetchPost?.();
-      toast.success(parentId ? 'Reply added successfully' : 'Comment added successfully');
+      toast.success(
+        parentId ? "Reply added successfully" : "Comment added successfully"
+      );
     } catch (error) {
-      toast.error('Failed to add comment');
+      toast.error("Failed to add comment");
     } finally {
       setIsSubmitting(false);
     }
@@ -47,7 +52,7 @@ export const CommentForm = ({ postId, parentId, onSuccess,refetchPost  }: Commen
         <div className="relative w-8 h-8 flex-shrink-0">
           <Image
             src={user.picture}
-            alt={user.name || 'User'}
+            alt={user.name || "User"}
             fill
             className="rounded-full object-cover"
           />
@@ -67,8 +72,8 @@ export const CommentForm = ({ postId, parentId, onSuccess,refetchPost  }: Commen
           disabled={!content.trim() || isSubmitting}
           className={`p-2 rounded-full transition-colors ${
             content.trim() && !isSubmitting
-              ? 'bg-[#EFA427] text-white hover:bg-[#EFA427]/90'
-              : 'bg-[#363636] text-[#B9B9B9] cursor-not-allowed'
+              ? "bg-[#EFA427] text-white hover:bg-[#EFA427]/90"
+              : "bg-[#363636] text-[#B9B9B9] cursor-not-allowed"
           }`}
         >
           {isSubmitting ? (

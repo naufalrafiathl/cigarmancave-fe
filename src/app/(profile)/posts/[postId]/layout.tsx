@@ -5,7 +5,7 @@ export default function PostLayout({
   }) {
     return (
       <div className="min-h-screen bg-[#1A1A1A]">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-0">
           {children}
         </div>
       </div>
