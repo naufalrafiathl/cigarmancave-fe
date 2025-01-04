@@ -10,12 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFeedOperations } from "@/hooks/useFeedOperations";
 import { useImageUpload } from "@/hooks/useImageUploadOperations";
 import { SimpleReviewCard } from "./SimpleReviewCard";
-import {
-  validateFile,
-  validateFileWithDetails,
-  FileValidationError,
-  type FileValidationOptions,
-} from "@/utils/validateFIle";
+import { validateFile } from "@/utils/validateFIle";
 
 interface CreatePostCardProps {
   onClose?: () => void;
@@ -81,7 +76,6 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
           return [...prevReviews, ...reviewData];
         });
 
-        // Check if we're on the last page
         setHasMore(page < pagination.pages);
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
@@ -109,8 +103,6 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
       alert("Maximum 4 images allowed");
       return;
     }
-
-    // Validate files before adding them
     try {
       files.forEach((file) => validateFile(file));
     } catch (error) {
@@ -142,7 +134,6 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
 
     setIsLoading(true);
     try {
-      // Upload images using the new hook
       const uploadedImageUrls = await Promise.all(
         images.map(async (image) => {
           const response = await directUpload({
@@ -160,7 +151,6 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
         reviewId: selectedReview?.id,
       });
 
-      // Clear form
       setContent("");
       setImages([]);
       setImageUrls([]);
@@ -168,8 +158,7 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
 
       onClose?.();
     } catch (error) {
-      console.error("Failed to create post:", error);
-      alert("Failed to create post. Please try again.");
+      setContent("");
     } finally {
       setIsLoading(false);
     }
