@@ -8,7 +8,14 @@ import {
 } from "@/hooks/useReviewOperations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFeedOperations } from "@/hooks/useFeedOperations";
+import { useImageUpload } from "@/hooks/useImageUploadOperations";
 import { SimpleReviewCard } from "./SimpleReviewCard";
+import {
+  validateFile,
+  validateFileWithDetails,
+  FileValidationError,
+  type FileValidationOptions,
+} from "@/utils/validateFIle";
 
 interface CreatePostCardProps {
   onClose?: () => void;
@@ -17,6 +24,8 @@ interface CreatePostCardProps {
 export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
   const { user } = useUser();
   const { createPost, isCreating } = useFeedOperations();
+  const { directUpload, isUploading, error: uploadError } = useImageUpload();
+
   const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
@@ -101,6 +110,14 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
       return;
     }
 
+    // Validate files before adding them
+    try {
+      files.forEach((file) => validateFile(file));
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Invalid file");
+      return;
+    }
+
     setImages((prev) => [...prev, ...files]);
 
     files.forEach((file) => {
@@ -125,10 +142,15 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
 
     setIsLoading(true);
     try {
+      // Upload images using the new hook
       const uploadedImageUrls = await Promise.all(
         images.map(async (image) => {
-          const url = await uploadImage(image);
-          return url;
+          const response = await directUpload({
+            file: image,
+            generateVariants: true,
+            folder: "posts",
+          });
+          return response.data.original;
         })
       );
 
@@ -138,6 +160,7 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
         reviewId: selectedReview?.id,
       });
 
+      // Clear form
       setContent("");
       setImages([]);
       setImageUrls([]);
@@ -151,6 +174,12 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (uploadError) {
+      alert(uploadError.message);
+    }
+  }, [uploadError]);
 
   const handleClose = () => {
     setContent("");
@@ -267,20 +296,21 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
             onClick={handlePost}
             disabled={
               isLoading ||
+              isUploading ||
               (!content.trim() && !images.length && !selectedReview)
             }
             className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2
-              transition-all duration-300
-              ${
-                isLoading
-                  ? "bg-[#363636] text-[#B9B9B9] cursor-not-allowed"
-                  : "bg-[#EFA427] text-white hover:bg-[#EFA427]/90"
-              }`}
+      transition-all duration-300
+      ${
+        isLoading || isUploading
+          ? "bg-[#363636] text-[#B9B9B9] cursor-not-allowed"
+          : "bg-[#EFA427] text-white hover:bg-[#EFA427]/90"
+      }`}
           >
-            {isLoading ? (
+            {isLoading || isUploading ? (
               <>
                 <span className="animate-spin">⏳</span>
-                Posting...
+                {isUploading ? "Uploading..." : "Posting..."}
               </>
             ) : (
               <>

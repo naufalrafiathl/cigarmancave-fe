@@ -23,6 +23,7 @@ import { CommentThread } from "../../posts/[postId]/components/CommentThread";
 import { useRouter } from "next/navigation"; // Changed this line
 import { Comment } from "@/types/feeds";
 import { Post } from "@/types/feed";
+import ImageCarousel from "./ImageCarousel";
 
 interface PostCardProps {
   post: Post;
@@ -238,18 +239,7 @@ export const PostCard = ({
         {post.content && <div className="text-[#E5E5E5]">{post.content}</div>}
 
         {post.images && post.images.length > 0 && (
-          <div className="grid grid-cols-2 gap-2">
-            {post.images.map((image) => (
-              <div key={image.id} className="relative aspect-square">
-                <Image
-                  src={image.url}
-                  alt="Post image"
-                  fill
-                  className="rounded-lg object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          <ImageCarousel images={post.images} />
         )}
 
         {formattedReview && (
@@ -296,37 +286,36 @@ export const PostCard = ({
         </div>
 
         {post.comments.length > 0 && (
-        <div className="space-y-3 pt-3 border-t border-white/10">
-          {post.comments.map((comment) => (
-            <CommentThread
-              key={comment.id}
-              comment={comment}
-              postId={post.id}
-              isDetailView={isDetailView}
-            />
-          ))}
+          <div className="space-y-3 pt-3 border-t border-white/10">
+            {post.comments.map((comment) => (
+              <CommentThread
+                key={comment.id}
+                comment={comment}
+                postId={post.id}
+                isDetailView={isDetailView}
+              />
+            ))}
 
-          {!isDetailView && post.engagement.hasMoreComments && (
-            <Link
-              href={`/posts/${post.id}`}
-              className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
+            {!isDetailView && post.engagement.hasMoreComments && (
+              <Link
+                href={`/posts/${post.id}`}
+                className="text-[#EFA427] text-sm hover:text-[#EFA427]/80 
               transition-colors duration-300"
-            >
-              View more comments
-            </Link>
-          )}
+              >
+                View more comments
+              </Link>
+            )}
+          </div>
+        )}
+
+        {/* Comment Form */}
+        <div className="mt-4 pt-3 border-t border-white/10">
+          <CommentForm
+            postId={post.id}
+            onSuccess={onCommentSuccess}
+            isDetailView={isDetailView}
+          />
         </div>
-      )}
-
-      {/* Comment Form */}
-      <div className="mt-4 pt-3 border-t border-white/10">
-        <CommentForm
-          postId={post.id}
-          onSuccess={onCommentSuccess}
-          isDetailView={isDetailView}
-        />
-      </div>
-
       </div>
 
       {showReviewModal && formattedReview && (
