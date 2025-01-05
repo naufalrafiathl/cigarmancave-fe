@@ -21,14 +21,14 @@ export const TimerStep = ({ onStartTimer, onSkip }: TimerStepProps) => (
         onClick={onStartTimer}
         className="w-full text-black"
       >
-        Start Timer
+        Use Live Timer While Smoking
       </Button>
       <Button
         variant="outline"
         onClick={onSkip}
         className="w-full"
       >
-        Skip
+        Manual Entry
       </Button>
     </div>
   </div>

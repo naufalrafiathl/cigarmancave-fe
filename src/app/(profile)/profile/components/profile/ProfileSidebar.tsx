@@ -49,11 +49,11 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
           </div>
 
           {/* Name and Location */}
-          <div className="mt-4 text-center">
-            <h2 className="text-white text-xl font-semibold break-words max-w-[90%] mx-auto">
+          <div className="md:mt-4 text-left md:text-center flex-grow md:flex-grow-0">
+            <h2 className="text-white text-lg sm:text-xl font-semibold">
               {user?.fullName}
             </h2>
-            <div className="flex items-center justify-center text-neutral-400 mt-2 text-sm">
+            <div className="flex items-center md:justify-center text-neutral-400 mt-1 md:mt-2 text-sm">
               <MapPin className="w-4 h-4 mr-1.5" />
               <span>{user?.location}</span>
             </div>
