@@ -173,7 +173,7 @@ export default function FeedPageClient() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Feed Column */}
           <div className="flex-1">
-            <div className="mb-6 bg-[#1A1A1A] md:bg-[#1A1A1A]/95 md:backdrop-blur-sm pt-4 pb-4 px-4 md:px-0 -mx-4 md:mx-0">
+            <div className="mb-6 bg-[#1A1A1A] md:bg-[#1A1A1A]/95 md:backdrop-blur-sm pt-4 pb-4 px-4 md:px-0  md:mx-0">
               <div className="flex items-center justify-center gap-4">
                 {isMobile ? (
                   <div className="flex gap-3 w-full mx-4 text-white">

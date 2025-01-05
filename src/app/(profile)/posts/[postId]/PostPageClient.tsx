@@ -85,14 +85,14 @@ const PostPageClient = ({ postId }: PostPageClientProps) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-0 md:px-4 py-6">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Left Column - Back Button and Post Content */}
         <div className="md:col-span-8">
           {/* Back Button */}
           <Link 
             href="/feeds" 
-            className="flex items-center gap-2 text-[#EFA427] hover:text-[#EFA427]/80 
+            className="ml-3 md:ml-0 flex items-center gap-2 text-[#EFA427] hover:text-[#EFA427]/80 
               transition-colors mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -110,7 +110,7 @@ const PostPageClient = ({ postId }: PostPageClientProps) => {
         </div>
 
         {/* Right Column - Create Post and Coming Soon */}
-        <div className="md:col-span-4 space-y-6">
+        <div className="hidden md:block md:col-span-4 space-y-6">
           {user && <CreatePostCard />}
           
           {/* Coming Soon Card */}
