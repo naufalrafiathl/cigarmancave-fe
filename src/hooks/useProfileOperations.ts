@@ -101,17 +101,29 @@ export function useProfileOperations() {
     },
   });
 
+  
   const deleteImageMutation = useMutation({
-    mutationFn: async (): Promise<void> => {
-      const headers = await getAuthHeaders();
+    mutationFn: async () => {
+      const tokenResponse = await fetch("/api/auth/token");
+      if (!tokenResponse.ok) {
+        throw new Error("Failed to get authentication token");
+      }
+      const { accessToken } = await tokenResponse.json();
 
       const response = await fetch(`${config.apiUrl}/api/profile/image`, {
         method: "DELETE",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
         credentials: "include",
       });
 
-      return handleApiResponse<void>(response);
+      if (!response.ok) {
+        throw new Error('Failed to delete image');
+      }
+
+      return true;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });

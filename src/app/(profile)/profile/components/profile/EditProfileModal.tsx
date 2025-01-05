@@ -65,8 +65,6 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
     e.preventDefault();
 
     try {
-      if (!user) throw new Error('No user found');
-
       let profileImageUrl = currentProfile.profileImageUrl;
 
       // Upload new image if selected
@@ -78,12 +76,13 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
       // Update profile data
       await updateProfile({
         ...formData,
+        profileImageUrl
       });
       
       toast.success('Profile updated successfully');
       onClose();
+      window.location.reload();
     } catch (error) {
-      console.error('Error updating profile:', error);
       toast.error('Failed to update profile');
     }
   };
