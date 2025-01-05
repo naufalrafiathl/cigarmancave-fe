@@ -277,7 +277,7 @@ export function HumidorView() {
           <div
             className={
               cigarViewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>*]:min-w-[280px]"
                 : "flex flex-col gap-4"
             }
           >
@@ -423,7 +423,7 @@ export function HumidorView() {
         <div
           className={
             humidorViewMode === "grid"
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              ? "max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 [&>*]:min-w-[250px]"
               : "flex flex-col gap-4"
           }
         >

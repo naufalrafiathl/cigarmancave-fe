@@ -118,11 +118,16 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
               </div>
 
               {/* Notes */}
-              <div className="bg-black/20 rounded-xl p-4 mb-6">
-                <h3 className="text-white font-semibold mb-4">Notes</h3>
-                <p className="text-[#B9B9B9] italic">
-                  "{review.notes || "No notes available"}"
-                </p>
+              {/* Notes - Improved for better readability */}
+              <div className="bg-black/20 rounded-xl p-4">
+                <h3 className="text-white font-semibold mb-4 max-sm:mb-3">
+                  Notes
+                </h3>
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-[#B9B9B9] italic break-words whitespace-pre-wrap text-sm md:text-base">
+                    "{review.notes || "No notes available"}"
+                  </p>
+                </div>
               </div>
             </div>
 

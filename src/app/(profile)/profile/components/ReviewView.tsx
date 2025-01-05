@@ -79,7 +79,7 @@ export function ReviewsView() {
                   placeholder="Search reviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full h-12 bg-[#2A2A2A] border border-white/10 rounded-xl text-white"
+                  className="pl-10 w-full h-12 bg-[#2A2A2A] border border-white/10 rounded-lg text-white"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export function ReviewsView() {
           </div>
         ) : filteredAndSortedReviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="bg-[#2A2A2A] rounded-xl p-8 max-w-md w-full text-center">
+            <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
               <div className="mb-4">
                 <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
                   <PlusCircle className="w-8 h-8 text-gray-400" />
@@ -135,11 +135,11 @@ export function ReviewsView() {
           </div>
         ) : (
           <div
-            className={
-              viewMode === "grid"
-                ? "max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8"
-                : "flex flex-col gap-4"
-            }
+          className={
+            viewMode === "grid"
+              ? "max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 [&>*]:min-w-[280px]"
+              : "flex flex-col gap-4"
+          }
           >
             {filteredAndSortedReviews.map((review) => (
               <ReviewCard

@@ -7,6 +7,7 @@ import {
   MapPin,
   FileText,
 } from "lucide-react";
+import { calculateAgingDays } from "@/lib/calculateAgingDays";
 
 interface Cigar {
   id: number;
@@ -177,6 +178,18 @@ const CigarInfoModal = ({
                     </p>
                   </div>
 
+                  {hasValue(humidorData.purchaseDate) && (
+                    <div className="bg-[#222222] p-4 rounded-xl">
+                      <div className="flex items-center gap-2 text-[#EFA427]">
+                        <Calendar className="w-5 h-5" />
+                        <span>Aging</span>
+                      </div>
+                      <p className="mt-1 text-lg font-semibold">
+                        {calculateAgingDays(humidorData.purchaseDate)} days
+                      </p>
+                    </div>
+                  )}
+
                   {hasValue(humidorData.purchasePrice) && (
                     <div className="bg-[#222222] p-4 rounded-xl">
                       <div className="flex items-center gap-2 text-[#EFA427]">
@@ -189,17 +202,6 @@ const CigarInfoModal = ({
                     </div>
                   )}
 
-                  {hasValue(humidorData.purchaseDate) && (
-                    <div className="bg-[#222222] p-4 rounded-xl">
-                      <div className="flex items-center gap-2 text-[#EFA427]">
-                        <Calendar className="w-5 h-5" />
-                        <span>Purchase Date</span>
-                      </div>
-                      <p className="mt-1 text-lg font-semibold">
-                        {formatDate(humidorData.purchaseDate)}
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">

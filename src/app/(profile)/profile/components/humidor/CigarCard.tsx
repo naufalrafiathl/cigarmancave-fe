@@ -1,22 +1,31 @@
-import React from 'react';
-import { Edit2, Trash2, MoreVertical, BookOpen } from 'lucide-react';
-import { CigarDisplay,Cigar } from '@/types/humidor';
+import React from "react";
+import { Edit2, Trash2, MoreVertical, BookOpen } from "lucide-react";
+import { CigarDisplay, Cigar } from "@/types/humidor";
+import { calculateAgingDays } from "@/lib/calculateAgingDays";
 
 interface CigarCardProps {
-  humidorCigar: CigarDisplay
+  humidorCigar: CigarDisplay;
   cigar: Cigar;
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   onEdit: (cigar: CigarDisplay) => void;
   onDelete: (cigar: CigarDisplay) => void;
   onView: (cigar: CigarDisplay) => void;
   onReview: (cigar: CigarDisplay) => void;
 }
 
-export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onView, onReview }: CigarCardProps) {
+export function CigarCard({
+  humidorCigar,
+  cigar,
+  viewMode,
+  onEdit,
+  onDelete,
+  onView,
+  onReview,
+}: CigarCardProps) {
   const [showDropdown, setShowDropdown] = React.useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if (!(e.target as HTMLElement).closest('button')) {
+    if (!(e.target as HTMLElement).closest("button")) {
       onView(humidorCigar);
     }
   };
@@ -30,7 +39,11 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowDropdown(false);
-    if (window.confirm('Are you sure you want to remove this cigar from your humidor?')) {
+    if (
+      window.confirm(
+        "Are you sure you want to remove this cigar from your humidor?"
+      )
+    ) {
       onDelete(humidorCigar);
     }
   };
@@ -66,9 +79,9 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
     </div>
   );
 
-  if (viewMode === 'list') {
+  if (viewMode === "list") {
     return (
-      <div 
+      <div
         onClick={handleCardClick}
         className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl border border-white/10 p-4 hover:border-[#EFA427] transition-all duration-300 cursor-pointer group"
       >
@@ -76,9 +89,9 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
           {/* Image Section */}
           <div className="w-20 h-20 bg-black/40 rounded-xl overflow-hidden flex-shrink-0">
             {cigar.imageUrl ? (
-              <img 
-                src={humidorCigar.imageUrl} 
-                alt={humidorCigar.name} 
+              <img
+                src={humidorCigar.imageUrl}
+                alt={humidorCigar.name}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -92,8 +105,12 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-white text-lg">{humidorCigar.name}</h3>
-                <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
+                <h3 className="font-semibold text-white text-lg">
+                  {humidorCigar.name}
+                </h3>
+                <p className="text-[#EFA427] font-medium">
+                  {humidorCigar.brand}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-white/60 text-sm bg-black/30 px-3 py-1 rounded-full">
@@ -101,13 +118,23 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
-              <span>{cigar.length}" × {cigar.ringGauge}</span>
+              <span>
+                {cigar.length}" × {cigar.ringGauge}
+              </span>
               <span>•</span>
               <span>{cigar.strength}</span>
               <span>•</span>
               <span>{cigar.country}</span>
+              {humidorCigar.purchaseDate && (
+                <>
+                  <span>•</span>
+                  <span>
+                    Aging: {calculateAgingDays(humidorCigar.purchaseDate)} days
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
@@ -120,7 +147,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
               <BookOpen className="w-4 h-4" />
               Review
             </button>
-            
+
             <div className="relative">
               <button
                 onClick={handleDropdownToggle}
@@ -128,7 +155,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
               >
                 <MoreVertical className="w-5 h-5" />
               </button>
-              
+
               {showDropdown && <DropdownMenu />}
             </div>
           </div>
@@ -138,16 +165,16 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
   }
 
   return (
-    <div 
+    <div
       onClick={handleCardClick}
       className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#EFA427] transition-all duration-300 shadow-lg group"
     >
       {/* Image Section */}
       <div className="h-48 bg-black/40">
         {cigar.imageUrl ? (
-          <img 
-            src={humidorCigar.imageUrl} 
-            alt={humidorCigar.name} 
+          <img
+            src={humidorCigar.imageUrl}
+            alt={humidorCigar.name}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -156,15 +183,17 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
           </div>
         )}
       </div>
-      
+
       <div className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="font-semibold text-white text-lg">{humidorCigar.name}</h3>
+            <h3 className="font-semibold text-white text-lg">
+              {humidorCigar.name}
+            </h3>
             <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
           </div>
-          
+
           <div className="relative">
             <button
               onClick={handleDropdownToggle}
@@ -172,7 +201,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
             >
               <MoreVertical className="w-5 h-5" />
             </button>
-            
+
             {showDropdown && <DropdownMenu />}
           </div>
         </div>
@@ -181,7 +210,9 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
         <div className="grid grid-cols-2 gap-2 mb-4">
           <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Size</span>
-            <p className="text-white font-medium">{cigar.length}" × {cigar.ringGauge}</p>
+            <p className="text-white font-medium">
+              {cigar.length}" × {cigar.ringGauge}
+            </p>
           </div>
           <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Strength</span>
@@ -195,6 +226,14 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
             <span className="text-gray-400 text-sm">Quantity</span>
             <p className="text-white font-medium">{humidorCigar.quantity}</p>
           </div>
+          {humidorCigar.purchaseDate && (
+            <div className="bg-black/20 rounded-xl p-2 col-span-2">
+              <span className="text-gray-400 text-sm">Aging</span>
+              <p className="text-white font-medium">
+                {calculateAgingDays(humidorCigar.purchaseDate)} days
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Price & Notes */}
@@ -206,7 +245,9 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
               </div>
             )}
             {humidorCigar.notes && (
-              <p className="text-gray-400 text-sm line-clamp-2">{humidorCigar.notes}</p>
+              <p className="text-gray-400 text-sm line-clamp-2">
+                {humidorCigar.notes}
+              </p>
             )}
           </div>
         )}
