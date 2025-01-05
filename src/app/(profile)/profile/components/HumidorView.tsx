@@ -177,6 +177,7 @@ export function HumidorView() {
         editingHumidorCigar.humidorCigar.id,
         data
       );
+      await refreshSelectedHumidor(selectedHumidor.id); // Add this line to refresh the data
       setEditingHumidorCigar(null);
     } catch (err) {
       console.error("Failed to update cigar:", err);

@@ -167,7 +167,7 @@ export function CigarCard({
   return (
     <div
       onClick={handleCardClick}
-      className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#EFA427] transition-all duration-300 shadow-lg group"
+      className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#EFA427] transition-all duration-300 shadow-lg group  flex flex-col h-full"
     >
       {/* Image Section */}
       <div className="h-48 bg-black/40">
@@ -184,78 +184,92 @@ export function CigarCard({
         )}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 h-full flex flex-col justify-between">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="font-semibold text-white text-lg">
-              {humidorCigar.name}
-            </h3>
-            <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
-          </div>
 
-          <div className="relative">
-            <button
-              onClick={handleDropdownToggle}
-              className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-            >
-              <MoreVertical className="w-5 h-5" />
-            </button>
+        <div>
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="font-semibold text-white text-lg">
+                {humidorCigar.name}
+              </h3>
+              <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
+            </div>
 
-            {showDropdown && <DropdownMenu />}
-          </div>
-        </div>
+            <div className="relative">
+              <button
+                onClick={handleDropdownToggle}
+                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+              >
+                <MoreVertical className="w-5 h-5" />
+              </button>
 
-        {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-black/20 rounded-xl p-2">
-            <span className="text-gray-400 text-sm">Size</span>
-            <p className="text-white font-medium">
-              {cigar.length}" × {cigar.ringGauge}
-            </p>
+              {showDropdown && <DropdownMenu />}
+            </div>
           </div>
-          <div className="bg-black/20 rounded-xl p-2">
-            <span className="text-gray-400 text-sm">Strength</span>
-            <p className="text-white font-medium">{cigar.strength}</p>
-          </div>
-          <div className="bg-black/20 rounded-xl p-2">
-            <span className="text-gray-400 text-sm">Origin</span>
-            <p className="text-white font-medium">{cigar.country}</p>
-          </div>
-          <div className="bg-black/20 rounded-xl p-2">
-            <span className="text-gray-400 text-sm">Quantity</span>
-            <p className="text-white font-medium">{humidorCigar.quantity}</p>
-          </div>
-          {humidorCigar.purchaseDate && (
-            <div className="bg-black/20 rounded-xl p-2 col-span-2">
-              <span className="text-gray-400 text-sm">Aging</span>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="bg-black/20 rounded-xl p-2">
+              <span className="text-gray-400 text-sm">Size</span>
               <p className="text-white font-medium">
-                {calculateAgingDays(humidorCigar.purchaseDate)} days
+                {cigar.length}" × {cigar.ringGauge}
               </p>
+            </div>
+            <div className="bg-black/20 rounded-xl p-2">
+              <span className="text-gray-400 text-sm">Strength</span>
+              <p className="text-white font-medium">{cigar.strength}</p>
+            </div>
+            <div className="bg-black/20 rounded-xl p-2">
+              <span className="text-gray-400 text-sm">Origin</span>
+              <p className="text-white font-medium">{cigar.country}</p>
+            </div>
+            <div className="bg-black/20 rounded-xl p-2">
+              <span className="text-gray-400 text-sm">Quantity</span>
+              <p className="text-white font-medium">{humidorCigar.quantity}</p>
+            </div>
+            {humidorCigar.purchaseDate && (
+              <div className="bg-black/20 rounded-xl p-2 col-span-2">
+                <span className="text-gray-400 text-sm">Aging</span>
+                <p className="text-white font-medium">
+                  {calculateAgingDays(humidorCigar.purchaseDate)} days
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Specs Grid */}
+
+          {/* Price & Notes */}
+          {(humidorCigar.purchasePrice || humidorCigar.notes) && (
+            <div className="mb-4 space-y-2">
+              {humidorCigar.purchasePrice && (
+                <div className="text-[#EFA427] font-medium">
+                  ${humidorCigar.purchasePrice.toFixed(2)}
+                  <span className="text-sm text-white"> / stick</span>
+                </div>
+              )}
+              {humidorCigar.purchasePrice && (
+                <div className="text-[#EFA427] font-medium">
+                  <span className=" text-white"> Total: </span>$
+                  {(humidorCigar.purchasePrice * humidorCigar.quantity).toFixed(
+                    2
+                  )}
+                </div>
+              )}
+              {humidorCigar.notes && (
+                <div className="bg-[#303030] p-2 rounded-xl">
+                <p className="text-white">Notes: </p>
+                  <p className="text-gray-400 text-sm line-clamp-2">
+                    {humidorCigar.notes}
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Price & Notes */}
-        {(humidorCigar.purchasePrice || humidorCigar.notes) && (
-          <div className="mb-4 space-y-2">
-            {humidorCigar.purchasePrice && (
-              <div className="text-[#EFA427] font-medium">
-                ${humidorCigar.purchasePrice.toFixed(2)}
-              </div>
-            )}
-            {humidorCigar.notes && (
-              <p className="text-gray-400 text-sm line-clamp-2">
-                {humidorCigar.notes}
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Action Button */}
         <button
           onClick={handleReviewClick}
-          className="w-full bg-[#EFA427] hover:bg-amber-600 text-black text-md py-2.5 px-4 rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-[#EFA427] hover:bg-amber-600 text-black text-md py-2.5 px-4 rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2 mt-4"
         >
           <BookOpen className="w-5 h-5" />
           Write Review

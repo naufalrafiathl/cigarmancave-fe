@@ -66,9 +66,10 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
           <div className="bg-neutral-700/30 rounded-2xl p-4">
             <div className="flex items-center mb-3">
               <Award className="w-5 h-5 text-amber-500 mr-2" />
-              <h3 className="text-white text-sm font-medium">Achievements</h3>
+              <h3 className="text-white text-sm font-medium">Badges</h3>
             </div>
             <AchievementBadges />
+            <div className="text-white text-sm mt-5 justify-end text-center underline bg-red bg-[#222222] mx-auto p-2 rounded-xl">View all achievements</div>
           </div>
 
           {/* Followers Info */}
