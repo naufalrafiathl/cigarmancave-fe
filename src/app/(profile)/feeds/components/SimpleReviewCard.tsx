@@ -35,7 +35,7 @@ export const SimpleReviewCard = ({ review }: SimpleReviewCardProps) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border border-white/10 rounded-lg hover:border-[#EFA427] transition-all duration-300">
+    <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border border-white/10 rounded-xl hover:border-[#EFA427] transition-all duration-300">
       <div className="p-3">
         <div className="flex justify-between items-start gap-2 mb-2">
           <div>

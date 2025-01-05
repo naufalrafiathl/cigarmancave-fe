@@ -26,7 +26,7 @@ export const ImageStep = ({ onImageUpload, onSkip }: ImageStepProps) => (
       />
       <label
         htmlFor="cigar-image"
-        className="w-full px-6 py-3 bg-[#EFA427] text-white rounded-lg cursor-pointer hover:bg-[#EFA427]/90 transition-colors text-center font-medium"
+        className="w-full px-6 py-3 bg-[#EFA427] text-white rounded-xl cursor-pointer hover:bg-[#EFA427]/90 transition-colors text-center font-medium"
       >
         Take Photo
       </label>

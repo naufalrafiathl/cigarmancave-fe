@@ -51,7 +51,7 @@ export const PairingStep = ({
             <input
               type="text"
               placeholder="Name"
-              className="w-full px-3 py-2 bg-[#2A2A2A] rounded-lg border border-white/10"
+              className="w-full px-3 py-2 bg-[#2A2A2A] rounded-xl border border-white/10"
               value={pairing.name}
               onChange={(e) => onUpdatePairing(index, 'name', e.target.value)}
             />

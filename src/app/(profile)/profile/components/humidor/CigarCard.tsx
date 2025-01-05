@@ -48,7 +48,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
 
   // Dropdown Menu Content
   const DropdownMenu = () => (
-    <div className="absolute right-0 mt-2 w-48 bg-[#2A2A2A] rounded-lg shadow-lg z-10 border border-white/10 overflow-hidden">
+    <div className="absolute right-0 mt-2 w-48 bg-[#2A2A2A] rounded-xl shadow-lg z-10 border border-white/10 overflow-hidden">
       <button
         onClick={handleEditClick}
         className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/5 flex items-center gap-2"
@@ -70,11 +70,11 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
     return (
       <div 
         onClick={handleCardClick}
-        className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-lg border border-white/10 p-4 hover:border-[#EFA427] transition-all duration-300 cursor-pointer group"
+        className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl border border-white/10 p-4 hover:border-[#EFA427] transition-all duration-300 cursor-pointer group"
       >
         <div className="flex items-center gap-6">
           {/* Image Section */}
-          <div className="w-20 h-20 bg-black/40 rounded-lg overflow-hidden flex-shrink-0">
+          <div className="w-20 h-20 bg-black/40 rounded-xl overflow-hidden flex-shrink-0">
             {cigar.imageUrl ? (
               <img 
                 src={humidorCigar.imageUrl} 
@@ -115,7 +115,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
           <div className="flex items-center gap-2 ml-4">
             <button
               onClick={handleReviewClick}
-              className="px-4 py-2 bg-[#EFA427] text-black font-medium rounded-lg hover:bg-[#EFA427]/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-[#EFA427] text-black font-medium rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center gap-2"
             >
               <BookOpen className="w-4 h-4" />
               Review
@@ -124,7 +124,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
             <div className="relative">
               <button
                 onClick={handleDropdownToggle}
-                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               >
                 <MoreVertical className="w-5 h-5" />
               </button>
@@ -168,7 +168,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
           <div className="relative">
             <button
               onClick={handleDropdownToggle}
-              className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+              className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
             >
               <MoreVertical className="w-5 h-5" />
             </button>
@@ -179,19 +179,19 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
 
         {/* Specs Grid */}
         <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-black/20 rounded-lg p-2">
+          <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Size</span>
             <p className="text-white font-medium">{cigar.length}" × {cigar.ringGauge}</p>
           </div>
-          <div className="bg-black/20 rounded-lg p-2">
+          <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Strength</span>
             <p className="text-white font-medium">{cigar.strength}</p>
           </div>
-          <div className="bg-black/20 rounded-lg p-2">
+          <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Origin</span>
             <p className="text-white font-medium">{cigar.country}</p>
           </div>
-          <div className="bg-black/20 rounded-lg p-2">
+          <div className="bg-black/20 rounded-xl p-2">
             <span className="text-gray-400 text-sm">Quantity</span>
             <p className="text-white font-medium">{humidorCigar.quantity}</p>
           </div>
@@ -214,7 +214,7 @@ export function CigarCard({ humidorCigar, cigar, viewMode, onEdit, onDelete, onV
         {/* Action Button */}
         <button
           onClick={handleReviewClick}
-          className="w-full bg-[#EFA427] text-black font-medium py-2.5 px-4 rounded-lg hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-[#EFA427] hover:bg-amber-600 text-black text-md py-2.5 px-4 rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2"
         >
           <BookOpen className="w-5 h-5" />
           Write Review

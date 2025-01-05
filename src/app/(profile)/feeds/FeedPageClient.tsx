@@ -176,17 +176,17 @@ export default function FeedPageClient() {
             <div className="mb-6 bg-[#1A1A1A] md:bg-[#1A1A1A]/95 md:backdrop-blur-sm pt-4 pb-4 px-4 md:px-0  md:mx-0">
               <div className="flex items-center justify-center gap-4">
                 {isMobile ? (
-                  <div className="flex gap-3 w-full mx-4 text-white">
+                  <div className="flex gap-3 w-full mx-4 text-black">
                     <Select
                       value={sortBy}
                       onValueChange={(value: FeedSortType) => setSortBy(value)}
                     >
-                      <SelectTrigger className="w-full bg-[#2A2A2A] border-white/5">
+                      <SelectTrigger className="w-full bg-[#EFA427] border-white/5">
                         {sortBy === "recent" && "Most Recent"}
                         {sortBy === "top" && "Most Popular"}
                         {sortBy === "hot" && "Trending"}
                       </SelectTrigger>
-                      <SelectContent className="bg-[#2A2A2A] border-white/10">
+                      <SelectContent className="bg-[#EFA427] border-white/10">
                         <SelectItem value="recent">Most Recent</SelectItem>
                         <SelectItem value="top">Most Popular</SelectItem>
                         <SelectItem value="hot">Trending</SelectItem>
@@ -199,13 +199,13 @@ export default function FeedPageClient() {
                         setFilterBy(value)
                       }
                     >
-                      <SelectTrigger className="w-full bg-[#2A2A2A] border-white/5">
+                      <SelectTrigger className="w-full bg-[#EFA427] border-white/5">
                         {filterBy === "all" && "All Posts"}
                         {filterBy === "reviews" && "Reviews"}
                         {filterBy === "general" && "General"}
                       </SelectTrigger>
-                      <SelectContent className="bg-[#2A2A2A] border-white/10 text-white">
-                        <SelectItem value="all" className="text-white">
+                      <SelectContent className="bg-[#EFA427] border-white/10 text-black">
+                        <SelectItem value="all" className="text-black">
                           All Posts
                         </SelectItem>
                         <SelectItem value="reviews">Reviews</SelectItem>
@@ -215,15 +215,15 @@ export default function FeedPageClient() {
                   </div>
                 ) : (
                   // Desktop Filters - Centered
-                  <div className="flex gap-4 text-white">
+                  <div className="flex gap-4 text-black">
                     <Select
                       value={sortBy}
                       onValueChange={(value: FeedSortType) => setSortBy(value)}
                     >
-                      <SelectTrigger className="w-[140px] bg-[#2A2A2A] border-white/5 hover:border-white/10">
+                      <SelectTrigger className="w-[140px] bg-[#EFA427] border-white/5 text-black hover:border-white/10">
                         <SelectValue placeholder="Sort by" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#2A2A2A] border-white/10">
+                      <SelectContent className="bg-[#EFA427] text-black border-white/10">
                         <SelectItem value="recent">Most Recent</SelectItem>
                         <SelectItem value="top">Most Popular</SelectItem>
                         <SelectItem value="hot">Trending</SelectItem>
@@ -236,10 +236,10 @@ export default function FeedPageClient() {
                         setFilterBy(value)
                       }
                     >
-                      <SelectTrigger className="w-[140px] bg-[#2A2A2A] border-white/5 hover:border-white/10">
+                      <SelectTrigger className="w-[140px] bg-[#EFA427] border-white/5 hover:border-white/10">
                         <SelectValue placeholder="Filter by" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#2A2A2A] border-white/10 text-white">
+                      <SelectContent className="bg-[#EFA427] border-white/10 text-black">
                         <SelectItem value="all">All Posts</SelectItem>
                         <SelectItem value="reviews">Reviews</SelectItem>
                         <SelectItem value="general">General</SelectItem>

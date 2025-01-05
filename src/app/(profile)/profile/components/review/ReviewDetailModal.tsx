@@ -83,7 +83,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
             {/* Left Column */}
             <div>
               {/* Basic Scores */}
-              <div className="bg-black/20 rounded-lg p-4 mb-6">
+              <div className="bg-black/20 rounded-xl p-4 mb-6">
                 <h3 className="text-white font-semibold mb-4">Scores</h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -118,7 +118,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
               </div>
 
               {/* Notes */}
-              <div className="bg-black/20 rounded-lg p-4 mb-6">
+              <div className="bg-black/20 rounded-xl p-4 mb-6">
                 <h3 className="text-white font-semibold mb-4">Notes</h3>
                 <p className="text-[#B9B9B9] italic">
                   "{review.notes || "No notes available"}"
@@ -128,7 +128,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
             {/* Right Column */}
             <div>
-              <div className="bg-black/20 rounded-lg p-4 mb-6">
+              <div className="bg-black/20 rounded-xl p-4 mb-6">
                 <button
                   onClick={() => setIsFlavorExpanded(!isFlavorExpanded)}
                   className="w-full flex items-center justify-between text-white font-semibold mb-4"
@@ -171,7 +171,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
               </div>
 
               {/* Additional Info */}
-              <div className="bg-black/20 rounded-lg p-4">
+              <div className="bg-black/20 rounded-xl p-4">
                 <h3 className="text-white font-semibold mb-4">
                   Additional Information
                 </h3>
@@ -199,7 +199,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
               {/* Pairings Section */}
               {review.pairings && review.pairings.length > 0 && (
-                <div className="bg-black/20 mt-4 rounded-lg p-4">
+                <div className="bg-black/20 mt-4 rounded-xl p-4">
                   <button
                     onClick={() => setIsPairingsExpanded(!isPairingsExpanded)}
                     className="w-full flex items-center justify-between text-white font-semibold mb-4"
@@ -226,7 +226,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                       {review.pairings.map((pairingItem) => (
                         <div
                           key={pairingItem.id}
-                          className="bg-black/20 rounded-lg p-3"
+                          className="bg-black/20 rounded-xl p-3"
                         >
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-white font-medium">

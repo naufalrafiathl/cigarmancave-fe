@@ -7,7 +7,7 @@ interface BuyAgainSectionProps {
   }
   
   export const BuyAgainSection = ({ value, onChange }: BuyAgainSectionProps) => (
-    <section className="border border-white/10 rounded-lg p-4">
+    <section className="border border-white/10 rounded-xl p-4">
       <h3 className="text-lg font-semibold mb-4">Would you buy this cigar again?</h3>
       <div className="flex gap-4">
         <Button

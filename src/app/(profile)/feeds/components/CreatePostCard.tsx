@@ -210,7 +210,7 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
             placeholder="Share your thoughts..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="flex-1 bg-[#363636] rounded-lg p-3 text-white resize-none h-24 
+            className="flex-1 bg-[#363636] rounded-xl p-3 text-white resize-none h-24 
               placeholder:text-[#B9B9B9] focus:outline-none focus:ring-1 focus:ring-white/10
               border border-white/5 transition-all duration-300"
           />
@@ -225,7 +225,7 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
                   src={url}
                   alt={`Upload preview ${index + 1}`}
                   fill
-                  className="rounded-lg object-cover"
+                  className="rounded-xl object-cover"
                 />
                 <button
                   onClick={() => removeImage(index)}
@@ -289,12 +289,12 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
               isUploading ||
               (!content.trim() && !images.length && !selectedReview)
             }
-            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2
-      transition-all duration-300
+            className={`px-4 py-2 rounded-xl font-medium flex items-center gap-2
+      transition-all duration-300 text-black
       ${
         isLoading || isUploading
-          ? "bg-[#363636] text-[#B9B9B9] cursor-not-allowed"
-          : "bg-[#EFA427] text-white hover:bg-[#EFA427]/90"
+          ? "bg-[#363636] text-black cursor-not-allowed"
+          : "bg-[#EFA427] text-black hover:bg-[#EFA427]/90"
       }`}
           >
             {isLoading || isUploading ? (

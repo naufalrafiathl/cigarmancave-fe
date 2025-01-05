@@ -26,7 +26,7 @@ export const FlavorProfile = ({
   };
 
   return (
-    <section className="border border-white/10 rounded-lg overflow-hidden">
+    <section className="border border-white/10 rounded-xl overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-4 hover:bg-white/5"

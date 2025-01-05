@@ -93,7 +93,7 @@ export default function EditHumidorCigarModal({
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
       <div
-        className={`bg-[#2A2A2A] rounded-lg mx-4 p-6 w-full max-w-md border border-white/10 ${
+        className={`bg-[#2A2A2A] rounded-xl mx-4 p-6 w-full max-w-md border border-white/10 ${
           selectedResult ? "h-[60%] overflow-auto" : ""
         }`}
       >
@@ -124,14 +124,14 @@ export default function EditHumidorCigarModal({
                   setSearchQuery(e.target.value);
                   debouncedSearch(e.target.value);
                 }}
-                className="pl-10 w-full h-12 bg-[#222222] border border-white/10 rounded-lg text-white"
+                className="pl-10 w-full h-12 bg-[#222222] border border-white/10 rounded-xl text-white"
               />
             </div>
 
             {isSearching ? (
               <div className="mt-4 text-center text-white/60">Searching...</div>
             ) : searchResults.length > 0 && !selectedResult ? (
-              <div className="mt-4 max-h-60 overflow-y-auto border border-white/10 rounded-lg">
+              <div className="mt-4 max-h-60 overflow-y-auto border border-white/10 rounded-xl">
                 {searchResults.map((result, index) => (
                   <button
                     key={index}
@@ -157,7 +157,7 @@ export default function EditHumidorCigarModal({
         {(selectedResult || humidorCigar) && (
           <form onSubmit={handleSubmit} className="space-y-5">
             {selectedResult && (
-              <div className="mb-6 p-4 bg-[#222222] rounded-lg border border-white/10">
+              <div className="mb-6 p-4 bg-[#222222] rounded-xl border border-white/10">
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="text-white font-medium">
@@ -199,7 +199,7 @@ export default function EditHumidorCigarModal({
                           key={variant.id}
                           type="button"
                           onClick={() => setSelectedVariant(variant)}
-                          className={`p-2 text-sm rounded-lg border ${
+                          className={`p-2 text-sm rounded-xl border ${
                             selectedVariant?.id === variant.id
                               ? "border-[#EFA427] bg-[#EFA427]/10 text-white"
                               : "border-white/10 text-white/60 hover:border-white/20"
@@ -228,7 +228,7 @@ export default function EditHumidorCigarModal({
                   })
                 }
                 min="1"
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
+                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
                 required
               />
             </div>
@@ -247,7 +247,7 @@ export default function EditHumidorCigarModal({
                     purchasePrice: parseFloat(e.target.value),
                   })
                 }
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
+                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
               />
             </div>
 
@@ -261,7 +261,7 @@ export default function EditHumidorCigarModal({
                 onChange={(e) =>
                   setFormData({ ...formData, purchaseDate: e.target.value })
                 }
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
+                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
               />
             </div>
 
@@ -275,7 +275,7 @@ export default function EditHumidorCigarModal({
                 onChange={(e) =>
                   setFormData({ ...formData, purchaseLocation: e.target.value })
                 }
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white"
+                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
               />
             </div>
 
@@ -288,7 +288,7 @@ export default function EditHumidorCigarModal({
                 onChange={(e) =>
                   setFormData({ ...formData, notes: e.target.value })
                 }
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg text-white min-h-[100px] resize-none"
+                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white min-h-[100px] resize-none"
               />
             </div>
 
@@ -296,13 +296,13 @@ export default function EditHumidorCigarModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-[#B9B9B9] bg-transparent border border-white/10 rounded-lg hover:bg-white/5"
+                className="px-4 py-2 text-sm font-medium text-[#B9B9B9] bg-transparent border border-white/10 rounded-xl hover:bg-white/5"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-[#EFA427] rounded-lg hover:bg-[#d89421] disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium text-black bg-[#EFA427] rounded-xl hover:bg-[#d89421] disabled:opacity-50"
                 disabled={!humidorCigar && !selectedVariant}
               >
                 {humidorCigar ? "Save Changes" : "Add to Humidor"}

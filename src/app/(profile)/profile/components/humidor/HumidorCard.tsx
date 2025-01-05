@@ -85,19 +85,19 @@ export function HumidorCard({
         <div className="flex items-center gap-2 mt-4">
           <button
             onClick={() => onView(humidor)}
-            className="flex-1 bg-[#EFA427] hover:bg-[#EFA427]/90 text-black font-medium py-2 px-4 rounded-lg transition-colors"
+            className="flex-1 bg-[#EFA427] hover:bg-amber-600 text-black text-md py-2 px-4 rounded-xl transition-colors"
           >
             View Humidor
           </button>
           <button
             onClick={handleEditClick}
-            className="p-2 text-gray-400 hover:text-white hover:bg-[#222222] rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-[#222222] rounded-xl transition-colors"
           >
             <Edit2 className="w-5 h-5" />
           </button>
           <button
             onClick={handleDeleteClick}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-[#222222]  rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-red-500 hover:bg-[#222222]  rounded-xl transition-colors"
           >
             <Trash2 className="w-5 h-5" />
           </button>

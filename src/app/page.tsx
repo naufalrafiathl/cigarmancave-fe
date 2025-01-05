@@ -77,7 +77,7 @@ export default async function Home() {
               {!session ? (
                 <>
                   <a href="/api/auth/login?screen_hint=signup" 
-                     className="rounded-md bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f06941] transition-colors">
+                     className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f06941] transition-colors">
                     Get started
                   </a>
                   <a href="/api/auth/login" 
@@ -87,7 +87,7 @@ export default async function Home() {
                 </>
               ) : (
                 <a href="/dashboard" 
-                   className="rounded-md bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E25931] hover:text-white transition-colors">
+                   className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E25931] hover:text-white transition-colors">
                   Go to Dashboard
                 </a>
               )}
@@ -117,7 +117,7 @@ export default async function Home() {
               ].map((feature) => (
                 <div key={feature.title} className="relative pl-16 group">
                   <dt className="text-base font-semibold leading-7 text-[#EFA427] group-hover:text-[#E25931] transition-colors">
-                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-[#404040] group-hover:bg-[#E25931] transition-colors">
+                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-[#404040] group-hover:bg-[#E25931] transition-colors">
                       <feature.icon className="h-6 w-6 text-[#EFA427] group-hover:text-white transition-colors" />
                     </div>
                     {feature.title}

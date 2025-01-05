@@ -79,7 +79,7 @@ export function ReviewsView() {
                   placeholder="Search reviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full h-12 bg-[#2A2A2A] border border-white/10 rounded-lg text-white"
+                  className="pl-10 w-full h-12 bg-[#2A2A2A] border border-white/10 rounded-xl text-white"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export function ReviewsView() {
           </div>
         ) : filteredAndSortedReviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
+            <div className="bg-[#2A2A2A] rounded-xl p-8 max-w-md w-full text-center">
               <div className="mb-4">
                 <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
                   <PlusCircle className="w-8 h-8 text-gray-400" />
@@ -126,7 +126,7 @@ export function ReviewsView() {
               </p>
               <Link
                 href="?tab=humidor"
-                className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-md text-white font-medium"
+                className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-xl text-white font-medium"
               >
                 <PlusCircle className="w-4 h-4 mr-2" />
                 Add Your First Review

@@ -73,7 +73,7 @@ export const NotesSection = ({
               value={notes}
               onChange={(e) => onNotesChange(e.target.value)}
               placeholder="Record your thoughts, flavors, and overall experience..."
-              className="w-full h-48 p-3 bg-[#2A2A2A] rounded-lg border border-white/10 resize-none focus:outline-none focus:ring-2 focus:ring-[#EFA427] focus:border-transparent text-white placeholder-gray-400"
+              className="w-full h-48 p-3 bg-[#2A2A2A] rounded-xl border border-white/10 resize-none focus:outline-none focus:ring-2 focus:ring-[#EFA427] focus:border-transparent text-white placeholder-gray-400"
             />
           </div>
         </DialogContent>

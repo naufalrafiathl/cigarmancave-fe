@@ -35,7 +35,7 @@ export function EditHumidorModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-[#2A2A2A] rounded-lg p-6 mx-4 w-full max-w-md border border-white/10">
+      <div className="bg-[#2A2A2A] rounded-xl p-6 mx-4 w-full max-w-md border border-white/10">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">
             {humidor ? "Edit Humidor" : "Create New Humidor"}
@@ -55,7 +55,7 @@ export function EditHumidorModal({
             </label>
             <input
               {...form.register("name")}
-              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg 
+              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl 
                 text-white placeholder-gray-400 
                 focus:outline-none focus:ring-1 focus:ring-[#EFA427] focus:border-[#EFA427]
                 transition-colors"
@@ -74,7 +74,7 @@ export function EditHumidorModal({
             </label>
             <textarea
               {...form.register("description")}
-              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-lg 
+              className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl 
                 text-white placeholder-gray-400 
                 focus:outline-none focus:ring-1 focus:ring-[#EFA427] focus:border-[#EFA427]
                 transition-colors min-h-[100px] resize-none"
@@ -92,15 +92,15 @@ export function EditHumidorModal({
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-[#B9B9B9] bg-transparent 
-                border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
+                border border-white/10 rounded-xl hover:bg-white/5 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#EFA427] 
-                rounded-lg hover:bg-[#d89421] disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-black bg-[#EFA427] 
+                rounded-xl hover:bg-amber-600 disabled:opacity-50 transition-colors"
             >
               {humidor ? "Save Changes" : "Create Humidor"}
             </button>

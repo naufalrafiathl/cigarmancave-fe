@@ -164,7 +164,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                className="w-full bg-[#363636] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
+                className="w-full bg-[#363636] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
                 placeholder="Your full name"
               />
             </div>
@@ -178,7 +178,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                className="w-full bg-[#363636] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
+                className="w-full bg-[#363636] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
                 placeholder="Your location"
               />
             </div>
@@ -189,7 +189,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-white bg-transparent border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
+              className="px-4 py-2 text-white bg-transparent border border-white/10 rounded-xl hover:bg-white/5 transition-colors"
             >
               Cancel
             </button>
@@ -197,7 +197,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
             <button
               type="submit"
               disabled={isUpdating || isUploading || isDeleting}
-              className="px-4 py-2 bg-[#EFA427] text-white rounded-lg hover:bg-[#EFA427]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#EFA427] text-white rounded-xl hover:bg-[#EFA427]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {(isUpdating || isUploading || isDeleting) ? (
                 <>

@@ -19,8 +19,8 @@ export const PostCardSkeleton = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <div className="aspect-square rounded-lg bg-white/10 animate-pulse" />
-        <div className="aspect-square rounded-lg bg-white/10 animate-pulse" />
+        <div className="aspect-square rounded-xl bg-white/10 animate-pulse" />
+        <div className="aspect-square rounded-xl bg-white/10 animate-pulse" />
       </div>
 
       <div className="flex items-center gap-6 pt-2 border-t border-white/10">
@@ -38,7 +38,7 @@ export const PostCardSkeleton = () => {
       </div>
 
       <div className="space-y-3 pt-3 border-t border-white/10">
-        <div className="h-10 bg-white/10 rounded-lg animate-pulse" />
+        <div className="h-10 bg-white/10 rounded-xl animate-pulse" />
         {[1, 2].map((i) => (
           <div key={i} className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />

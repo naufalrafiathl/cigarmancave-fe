@@ -116,7 +116,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
       <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-4 md:mb-6 flex-grow">
         {/* Scores Section */}
         <div className="w-full md:flex-1">
-          <div className="bg-black/20 rounded-lg p-3 md:p-4">
+          <div className="bg-black/20 rounded-xl p-3 md:p-4">
             <span className="text-white font-semibold">Overall Score</span>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center flex-wrap">
@@ -164,7 +164,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
             e.stopPropagation();
             onView(review);
           }}
-          className="w-full sm:w-auto px-4 py-2 bg-[#2A2A2A] text-white hover:text-[#EFA427] border border-white/10 hover:border-[#EFA427] font-medium rounded-md transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+          className="w-full sm:w-auto px-4 py-2 bg-[#2A2A2A] text-white hover:text-[#EFA427] border border-white/10 hover:border-[#EFA427] font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm"
         >
           View Details
           <svg

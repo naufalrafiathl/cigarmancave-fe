@@ -33,7 +33,7 @@ export const MobileNav: React.FC<NavProps> = () => {
           href="/feeds"
           className={`flex flex-col items-center px-4 ${
             isLinkActive(pathname, '/profile')
-              ? 'text-[#222222] rounded-lg'
+              ? 'text-[#222222] rounded-xl'
               : 'text-[#222222]'
           }`}
         >
@@ -44,7 +44,7 @@ export const MobileNav: React.FC<NavProps> = () => {
           href="/profile"
           className={`flex flex-col items-center px-4 ${
             isLinkActive(pathname, '/dashboard/profile')
-              ? 'text-[#222222] rounded-lg'
+              ? 'text-[#222222] rounded-xl'
               : 'text-[#222222]'
           }`}
         >

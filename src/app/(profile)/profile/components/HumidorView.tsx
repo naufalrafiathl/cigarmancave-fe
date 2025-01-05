@@ -224,7 +224,7 @@ export function HumidorView() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setSelectedHumidor(null)}
-                  className="text-white hover:text-[#EFA427] transition-colors p-2 rounded-lg hover:bg-white/5"
+                  className="text-white hover:text-[#EFA427] transition-colors p-2 rounded-xl hover:bg-white/5"
                 >
                   <ArrowLeft className="w-6 h-6" />
                 </button>
@@ -240,7 +240,7 @@ export function HumidorView() {
                       cigar: { id: 0, name: "", brand: "", imageUrl: "" },
                     })
                   }
-                  className="h-10 px-4 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
+                  className="h-10 px-4 bg-[#EFA427] text-black rounded-xl hover:bg-amber-600 transition-colors flex items-center gap-2"
                 >
                   <Plus size={20} />
                   <span className="hidden sm:inline">Add New Cigar</span>
@@ -267,7 +267,7 @@ export function HumidorView() {
                   placeholder="Search cigar in humidor..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full h-12 bg-[#2A2A2A] border-white/10 rounded-lg text-white"
+                  className="pl-10 w-full h-12 bg-[#2A2A2A] border-white/10 rounded-xl text-white"
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export function HumidorView() {
                 onClick={() =>
                   setEditingHumidor({ name: "", description: "", imageUrl: "" })
                 }
-                className="h-10 px-4 bg-[#EFA427] text-white rounded-lg hover:bg-[#d89421] transition-colors flex items-center gap-2"
+                className="h-10 px-4 bg-[#EFA427] hover:bg-amber-600 text-black rounded-xl transition-colors text-md flex items-center gap-2"
               >
                 <Plus size={20} />
                 <span className="hidden sm:inline">Add New Humidor</span>
@@ -433,7 +433,7 @@ export function HumidorView() {
             </div>
           ) : humidors.length === 0 ? (
             <div className="col-span-full flex flex-col items-center py-12">
-              <div className="bg-[#2A2A2A] rounded-lg p-8 max-w-md w-full text-center">
+              <div className="bg-[#2A2A2A] rounded-xl p-8 max-w-md w-full text-center">
                 <div className="mb-4">
                   <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
                     <PlusCircle className="w-8 h-8 text-gray-400" />
@@ -454,7 +454,7 @@ export function HumidorView() {
                       imageUrl: "",
                     })
                   }
-                  className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-md text-white font-medium"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-xl text-white text-md"
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Your First Humidor

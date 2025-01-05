@@ -85,7 +85,7 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
         <div className="mt-6 flex-shrink-0">
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-medium rounded-full py-2.5 px-4 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-neutral-800"
+            className="text-black w-full bg-amber-500 hover:bg-amber-600 font-medium rounded-xl py-2.5 px-4 text-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-neutral-800"
           >
             Edit Profile
           </button>

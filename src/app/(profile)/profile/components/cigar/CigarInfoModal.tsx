@@ -111,7 +111,7 @@ const CigarInfoModal = ({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-white hover:text-[#EFA427] hover:bg-white/5 rounded-lg transition-colors"
+                className="p-2 text-white hover:text-[#EFA427] hover:bg-white/5 rounded-xl transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -119,7 +119,7 @@ const CigarInfoModal = ({
 
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="w-full lg:w-1/2">
-                <div className="bg-[#222222] rounded-lg overflow-hidden aspect-square w-full">
+                <div className="bg-[#222222] rounded-xl overflow-hidden aspect-square w-full">
                   {cigar.imageUrl ? (
                     <img
                       src={cigar.imageUrl}
@@ -167,7 +167,7 @@ const CigarInfoModal = ({
               <div className="mt-6 space-y-4">
                 <h3 className="text-lg font-medium">Inventory Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  <div className="bg-[#222222] p-4 rounded-lg">
+                  <div className="bg-[#222222] p-4 rounded-xl">
                     <div className="flex items-center gap-2 text-[#EFA427]">
                       <Package className="w-5 h-5" />
                       <span>Quantity</span>
@@ -178,7 +178,7 @@ const CigarInfoModal = ({
                   </div>
 
                   {hasValue(humidorData.purchasePrice) && (
-                    <div className="bg-[#222222] p-4 rounded-lg">
+                    <div className="bg-[#222222] p-4 rounded-xl">
                       <div className="flex items-center gap-2 text-[#EFA427]">
                         <DollarSign className="w-5 h-5" />
                         <span>Purchase Price</span>
@@ -190,7 +190,7 @@ const CigarInfoModal = ({
                   )}
 
                   {hasValue(humidorData.purchaseDate) && (
-                    <div className="bg-[#222222] p-4 rounded-lg">
+                    <div className="bg-[#222222] p-4 rounded-xl">
                       <div className="flex items-center gap-2 text-[#EFA427]">
                         <Calendar className="w-5 h-5" />
                         <span>Purchase Date</span>
@@ -204,7 +204,7 @@ const CigarInfoModal = ({
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {hasValue(humidorData.purchaseLocation) && (
-                    <div className="bg-[#222222] p-4 rounded-lg">
+                    <div className="bg-[#222222] p-4 rounded-xl">
                       <div className="flex items-center gap-2 text-[#EFA427]">
                         <MapPin className="w-5 h-5" />
                         <span>Purchase Location</span>
@@ -214,7 +214,7 @@ const CigarInfoModal = ({
                   )}
 
                   {hasValue(humidorData.notes) && (
-                    <div className="bg-[#222222] p-4 rounded-lg">
+                    <div className="bg-[#222222] p-4 rounded-xl">
                       <div className="flex items-center gap-2 text-[#EFA427]">
                         <FileText className="w-5 h-5" />
                         <span>Notes</span>

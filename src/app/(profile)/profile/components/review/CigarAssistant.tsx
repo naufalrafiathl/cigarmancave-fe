@@ -72,7 +72,7 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
   if (!isPremium) {
     return (
       <div className="mb-6">
-        <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-lg border border-amber-500/20 p-4">
+        <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-xl border border-amber-500/20 p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-amber-500" />
@@ -91,7 +91,7 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
             </p>
             <Link
               href="/profile?tab=subscription"
-              className="inline-flex items-center px-4 py-2 bg-amber-500 text-black rounded-lg 
+              className="inline-flex items-center px-4 py-2 bg-amber-500 text-black rounded-xl 
                 hover:bg-amber-400 transition-colors font-medium"
             >
               <Crown className="w-4 h-4 mr-2" />
@@ -105,7 +105,7 @@ const CigarAssistant = ({ cigar, showReviewForm }: CigarAssistantProps) => {
 
   return (
     <div className="mb-6 animate-fade-in">
-      <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-lg border border-amber-500/20 p-4">
+      <div className="bg-gradient-to-r from-[#2A2A2A] to-[#232323] rounded-xl border border-amber-500/20 p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-amber-500" />

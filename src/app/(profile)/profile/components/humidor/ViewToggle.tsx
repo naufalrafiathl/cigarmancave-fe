@@ -7,12 +7,12 @@ interface ViewToggleProps {
 
 export function ViewToggle({ viewMode, setViewMode }: ViewToggleProps) {
   return (
-    <div className="flex gap-2 bg-[#2A2A2A] rounded-lg p-1">
+    <div className="flex gap-2 bg-[#2A2A2A] rounded-xl p-1">
       <button
         onClick={() => setViewMode('grid')}
-        className={`p-2 rounded-md transition-colors ${
+        className={`p-2 rounded-xl transition-colors ${
           viewMode === 'grid'
-            ? 'bg-[#EFA427] text-white'
+            ? 'bg-[#EFA427] text-black'
             : 'text-gray-400 hover:text-white hover:bg-white/5'
         }`}
         aria-label="Grid view"
@@ -21,9 +21,9 @@ export function ViewToggle({ viewMode, setViewMode }: ViewToggleProps) {
       </button>
       <button
         onClick={() => setViewMode('list')}
-        className={`p-2 rounded-md transition-colors ${
+        className={`p-2 rounded-xl transition-colors ${
           viewMode === 'list'
-            ? 'bg-[#EFA427] text-white'
+            ? 'bg-[#EFA427] text-black'
             : 'text-gray-400 hover:text-white hover:bg-white/5'
         }`}
         aria-label="List view"

@@ -53,7 +53,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
         <nav className="flex-1 p-4 space-y-1">
         <Link
             href="/feeds"
-            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+            className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
               isLinkActive(pathname, "/dashboard/profile")
                 ? "bg-gray-100 text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
@@ -64,7 +64,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
           </Link>
           <Link
             href="/profile?tab=humidor"
-            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+            className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
               isLinkActive(pathname, "/dashboard/profile")
                 ? "bg-gray-100 text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
@@ -75,7 +75,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
           </Link>
           <Link
             href="/profile?tab=reviews"
-            className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+            className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
               isLinkActive(pathname, "/dashboard/profile")
                 ? "bg-gray-100 text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
@@ -94,13 +94,13 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
               width={240}
               height={120}
               alt="Layout Cigar"
-              className="w-full rounded-lg"
+              className="w-full rounded-xl"
             />
           </div>
 
           <div className="p-4 border-t border-gray-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
+              <div className="flex items-center truncate">
                 <Image
                   src={
                     profile?.data?.profileImageUrl || "/placeholder-avatar.png"
@@ -116,7 +116,7 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
               </div>
               <Link
                 href="/api/auth/logout"
-                className="p-2 text-[#B9B9B9] rounded-lg hover:bg-gray-100 hover:text-gray-800"
+                className="p-2 text-[#B9B9B9] rounded-xl hover:bg-[#EFA427] hover:text-gray-800"
                 title="Logout"
               >
                 <LogOut className="w-5 h-5" />

@@ -134,7 +134,6 @@ export function OnboardingModal({
       );
 
       window.location.reload();
-
     } catch (error) {
       console.error("Profile update error:", error);
     } finally {
@@ -242,7 +241,7 @@ export function OnboardingModal({
                   }))
                 }
                 placeholder="Full Name"
-                className="w-full px-4 py-2 bg-neutral-700 rounded-lg text-white"
+                className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
               />
               <input
                 type="text"
@@ -254,7 +253,7 @@ export function OnboardingModal({
                   }))
                 }
                 placeholder="Location"
-                className="w-full px-4 py-2 bg-neutral-700 rounded-lg text-white"
+                className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
               />
             </div>
           )}

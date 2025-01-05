@@ -19,7 +19,7 @@ export const TimerStep = ({ onStartTimer, onSkip }: TimerStepProps) => (
       <Button
         variant="default"
         onClick={onStartTimer}
-        className="w-full"
+        className="w-full text-black"
       >
         Start Timer
       </Button>
