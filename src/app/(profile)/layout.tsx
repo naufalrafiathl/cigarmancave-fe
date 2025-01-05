@@ -1,6 +1,7 @@
 import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/lib/api";
+import { useProfileOperations } from "@/hooks/useProfileOperations";
 import { Sidebar } from "../../components/layout/Sidebar";
 import { MobileNav } from "../../components/layout/MobileNav";
 import { SearchHeader } from "./profile/components/SearchHeader";

@@ -5,6 +5,7 @@ export interface User {
     fullName?: string;
     profileImageUrl?: string;
     location?: string;
+    isOnboarded?: boolean
   }
   
   export interface AuthState {

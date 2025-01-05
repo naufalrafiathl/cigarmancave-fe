@@ -39,6 +39,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "s.gravatar.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "*.amazonaws.com",
         port: "",
         pathname: "/**",

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import Image from "next/image";
 import { UserCircle, MapPin, Award, Users } from "lucide-react";
@@ -6,6 +6,7 @@ import { User } from "@/types/auth";
 import { AchievementBadges } from "./AchievementBadges";
 import { FollowersInfo } from "./FollowersInfo";
 import EditProfileModal from "./EditProfileModal";
+import { OnboardingModal } from "./OnboardingModal";
 
 interface ProfileSidebarProps {
   user: User;
@@ -14,6 +15,13 @@ interface ProfileSidebarProps {
 
 export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(!user?.isOnboarded);
+
+  const handleOnboardingComplete = async () => {
+    // Here you would typically make an API call to update the user's onboarded status
+    // await updateUserOnboardingStatus(user.id);
+    setShowOnboarding(false);
+  };
 
   return (
     <>
@@ -24,10 +32,10 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
         <div className="flex flex-col items-center flex-shrink-0">
           {/* Profile Image */}
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border border-neutral-600 transition-transform hover:scale-105">
-            {user.profileImageUrl ? (
+            {user?.profileImageUrl ? (
               <Image
-                src={user.profileImageUrl}
-                alt={`${user.fullName}'s profile picture`}
+                src={user?.profileImageUrl}
+                alt={`${user?.fullName}'s profile picture`}
                 fill
                 className="object-cover"
                 priority
@@ -43,11 +51,11 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
           {/* Name and Location */}
           <div className="mt-4 text-center">
             <h2 className="text-white text-xl font-semibold break-words max-w-[90%] mx-auto">
-              {user.fullName}
+              {user?.fullName}
             </h2>
             <div className="flex items-center justify-center text-neutral-400 mt-2 text-sm">
               <MapPin className="w-4 h-4 mr-1.5" />
-              <span>{user.location}</span>
+              <span>{user?.location}</span>
             </div>
           </div>
         </div>
@@ -75,18 +83,32 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
 
         {/* Edit Profile Button */}
         <div className="mt-6 flex-shrink-0">
-          <button onClick={()=> setIsEditModalOpen(true)} className="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-medium rounded-full py-2.5 px-4 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-neutral-800">
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-medium rounded-full py-2.5 px-4 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-neutral-800"
+          >
             Edit Profile
           </button>
         </div>
       </aside>
+
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         currentProfile={{
-          fullName: user.fullName,
-          location: user.location,
-          profileImageUrl: user.profileImageUrl,
+          fullName: user?.fullName,
+          location: user?.location,
+          profileImageUrl: user?.profileImageUrl,
+        }}
+      />
+
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onComplete={handleOnboardingComplete}
+        currentProfile={{
+          fullName: user?.fullName || "",
+          location: user?.location || "",
+          profileImageUrl: user?.profileImageUrl || "",
         }}
       />
     </>

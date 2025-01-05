@@ -1,6 +1,7 @@
 /* eslint-disable */
-import axios from 'axios';
-import { getSession } from '@auth0/nextjs-auth0';
+import axios from "axios";
+import { getSession } from "@auth0/nextjs-auth0";
+import { config } from "@/config";
 
 export const getUserProfile = async () => {
   const session = await getSession();
@@ -9,37 +10,41 @@ export const getUserProfile = async () => {
   }
 
   const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-    headers: session.accessToken ? {
-      Authorization: `Bearer ${session.accessToken}`
-    } : {}
+    baseURL: config.apiUrl,
+    headers: session.accessToken
+      ? {
+          Authorization: `Bearer ${session.accessToken}`,
+        }
+      : {},
   });
-  
+
   try {
-    const response = await api.post('/api/profile', {
-      user: session.user
-    });
+    // First attempt: try to get existing profile
+    const response = await api.get("/api/profile");
+    console.log("Found existing profile:", response.data);
     return response.data;
   } catch (error: any) {
-    if (error.response?.status === 404) {
-      try {
-        // Then fetch the profile again
-        const retryResponse = await api.get('/api/profile');
-        return retryResponse.data;
-      } catch (callbackError) {
-        console.error("Callback error:", callbackError);
-      }
+    console.log("Profile fetch error, trying callback:", error);
+    try {
+      // No profile found or error, try to sync/create with Auth0 data
+      await api.post("/api/auth/callback", {
+        user: session.user,
+      });
+      // After callback, try to get profile again
+      const retryResponse = await api.get("/api/profile");
+      return retryResponse.data;
+    } catch (callbackError) {
+      console.error("Callback error:", callbackError);
+      // If everything fails, fallback to session data
+      return {
+        user: {
+          fullName: session.user.name,
+          email: session.user.email,
+          picture: session.user.picture,
+          emailVerified: session.user.email_verified,
+          locale: session.user.locale,
+        },
+      };
     }
-
-    // Fallback to session user data if API calls fail
-    return {
-      user: {
-        fullName: session.user.name,
-        email: session.user.email,
-        picture: session.user.picture,
-        emailVerified: session.user.email_verified,
-        locale: session.user.locale
-      }
-    };
   }
 };
