@@ -1,6 +1,6 @@
 // components/review/sections/NotesSection.tsx
 import React from 'react';
-import { MessageCircle, MinusCircle, X } from 'lucide-react';
+import { MessageCircle, MinusCircle, X,NotebookTextIcon,Notebook,NotebookText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,7 +36,7 @@ export const NotesSection = ({
           }`}
           title={isMinimized ? "Continue writing notes" : "Add tasting notes"}
         >
-          <MessageCircle className="w-6 h-6" />
+          <NotebookText className="w-6 h-6" />
         </button>
       </div>
 

@@ -16,17 +16,21 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
     });
   };
 
+  const convertScore = (score: number) => score / 10;
+
   const renderStars = (score: number) => {
+    // Convert to 5-star scale
+    const convertedScore = convertScore(score);
     const stars = [];
 
     for (let i = 0; i < 5; i++) {
-      if (i < Math.floor(score)) {
+      if (i < Math.floor(convertedScore)) {
         stars.push(
           <span key={i} className="text-[#EFA427]">
             ★
           </span>
         );
-      } else if (i === Math.floor(score) && score % 1 !== 0) {
+      } else if (i === Math.floor(convertedScore) && convertedScore % 1 !== 0) {
         stars.push(
           <div key={i} className="relative inline-block">
             <span className="text-gray-400">★</span>
@@ -59,6 +63,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
     }
     return `${minutes}m`;
   };
+
   const ScoreComponent = ({
     label,
     score,
@@ -75,7 +80,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
           {renderStars(score)}
         </div>
         <span className="text-white font-medium text-sm md:text-base whitespace-nowrap">
-          {score.toFixed(1)}
+          {convertScore(score).toFixed(1)}
         </span>
       </div>
     </div>
@@ -92,7 +97,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
   return (
     <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border-[#EFA427] rounded-xl hover:border-[#EFA427] hover:border transition-all duration-300 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-1">
       <div className="p-4 md:p-6 flex flex-col h-full">
-      <div className="border-b border-white/10 pb-4 mb-4">
+        <div className="border-b border-white/10 pb-4 mb-4">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2">
             <div className="min-w-0">
               <h3 className="font-semibold text-white text-lg md:text-xl mb-1 truncate">
@@ -137,7 +142,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
                     {renderStars(review.overallScore)}
                   </div>
                   <span className="text-[#EFA427] text-lg md:text-xl font-bold">
-                    {review.overallScore.toFixed(1)}
+                    {convertScore(review.overallScore).toFixed(1)}
                   </span>
                 </div>
               </div>
@@ -210,8 +215,12 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
               // Without Image Layout
               review.notes && (
                 <div className="h-max bg-black/20 rounded-xl p-4 truncate">
-                  <p className="text-[#EFA427] font-medium mb-2 truncate">Notes:</p>
-                  <p className="italic text-[#B9B9B9] pl-2 truncate">"{review.notes}"</p>
+                  <p className="text-[#EFA427] font-medium mb-2 truncate">
+                    Notes:
+                  </p>
+                  <p className="italic text-[#B9B9B9] pl-2 truncate">
+                    "{review.notes}"
+                  </p>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

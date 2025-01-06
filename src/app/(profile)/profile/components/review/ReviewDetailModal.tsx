@@ -1,7 +1,7 @@
 import { ReviewResponse } from "@/hooks/useReviewOperations";
-import { FlavorScoreBar } from "./FlavorScoreBar";
 import Image from "next/image";
 import { useState } from "react";
+import { ReviewFlavorDisplay } from "./ReviewFlavorDisplay";
 
 interface ReviewDetailModalProps {
   review: ReviewResponse;
@@ -132,47 +132,15 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
             </div>
 
             {/* Right Column */}
-            <div>
-              <div className="bg-black/20 rounded-xl p-4 mb-6">
-                <button
-                  onClick={() => setIsFlavorExpanded(!isFlavorExpanded)}
-                  className="w-full flex items-center justify-between text-white font-semibold mb-4"
-                >
-                  <span>Flavor Profile ({flavorScores.length})</span>
-                  <svg
-                    className={`w-5 h-5 transform transition-transform ${
-                      isFlavorExpanded ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isFlavorExpanded && (
-                  <div className="space-y-3">
-                    {flavorScores.map(({ name, score }) => (
-                      <div
-                        key={name}
-                        className="flex items-center justify-between"
-                      >
-                        <span className="text-[#B9B9B9]">{name}</span>
-                        <div className="flex items-center gap-3">
-                          <FlavorScoreBar score={score} />
-                          <span className="text-[#EFA427] font-semibold w-4 text-right">
-                            {score}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+            <div className="">
+              <div className="mb-6 bg-black/20 rounded-xl">
+                <ReviewFlavorDisplay
+                  FirstThird={review.FirstThird}
+                  SecondThird={review.SecondThird}
+                  FinalThird={review.FinalThird}
+                  isCollapsed={!isFlavorExpanded}
+                  onToggle={() => setIsFlavorExpanded(!isFlavorExpanded)}
+                />
               </div>
 
               {/* Additional Info */}

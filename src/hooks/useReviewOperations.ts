@@ -62,6 +62,9 @@ export interface ReviewResponse {
     constructionScore: number;
     drawScore: number;
     flavorScore: number;
+    FirstThird: string[];
+    SecondThird: string[];
+    FinalThird: string[];
     burnScore:number;
     impressionScore: number;
     notes: string;
@@ -154,6 +157,7 @@ export function useReviewOperations() {
   const createReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData): Promise<ReviewResponse> => {
       const headers = await getAuthHeaders();
+      console.log('inin review masuk ke ops',reviewData)
 
       const response = await fetch(`${config.apiUrl}/api/reviews`, {
         method: "POST",

@@ -47,9 +47,9 @@ const ReviewModal = ({
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
   // Pairing states
-  const [pairings, setPairings] = useState<Array<{ name: string; type: string }>>(
-    []
-  );
+  const [pairings, setPairings] = useState<
+    Array<{ name: string; type: string }>
+  >([]);
 
   // Timer states
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -65,27 +65,17 @@ const ReviewModal = ({
   });
 
   const [scores, setScores] = useState({
-    constructionScore: 3,
-    drawScore: 3,
-    flavorScore: 3,
-    burnScore: 3,
-    impressionScore: 3,
+    constructionScore: 0,
+    drawScore: 0,
+    flavorScore: 0,
+    burnScore: 0,
+    impressionScore: 0,
   });
 
   const [flavorProfiles, setFlavorProfiles] = useState({
-    flavorPepperScore: 0,
-    flavorChocolateScore: 0,
-    flavorCreamyScore: 0,
-    flavorLeatherScore: 0,
-    flavorWoodyScore: 0,
-    flavorEarthyScore: 0,
-    flavorNuttyScore: 0,
-    flavorSweetScore: 0,
-    flavorFruityScore: 0,
-    flavorGrassyScore: 0,
-    flavorBerryScore: 0,
-    flavorCoffeeScore: 0,
-    flavorBittersScore: 0,
+    FirstThird: [] as string[],
+    SecondThird: [] as string[],
+    FinalThird: [] as string[],
   });
 
   const [showNotesModal, setShowNotesModal] = useState(false);
@@ -151,11 +141,20 @@ const ReviewModal = ({
         imageUrls = [response.data.original];
       }
 
+      // Convert scores from 1-5 scale to 1-50 scale
+      const convertedScores = Object.entries(scores).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: Math.round(value * 10), // Simply multiply by 10
+        }),
+        {}
+      );
+
       const reviewData = {
         cigarId: cigar.id,
         duration: isTimerRunning ? Math.ceil(elapsedTime / 60) : manualDuration,
         strength: cigarStrength,
-        ...scores,
+        ...convertedScores,
         ...flavorProfiles,
         notes,
         buyAgain: buyAgain === null ? undefined : buyAgain,
@@ -234,7 +233,11 @@ const ReviewModal = ({
         {showReviewForm && (
           <ReviewForm
             scores={scores}
-            flavorProfiles={flavorProfiles}
+            flavorProfiles={{
+              FirstThird: flavorProfiles.FirstThird,
+              SecondThird: flavorProfiles.SecondThird,
+              FinalThird: flavorProfiles.FinalThird,
+            }}
             isTimerRunning={isTimerRunning}
             elapsedTime={elapsedTime}
             manualDuration={manualDuration}
@@ -247,8 +250,8 @@ const ReviewModal = ({
             onScoreChange={(key, value) =>
               setScores((prev) => ({ ...prev, [key]: value }))
             }
-            onFlavorProfileChange={(key, value) =>
-              setFlavorProfiles((prev) => ({ ...prev, [key]: value }))
+            onFlavorProfileChange={(third: 'FirstThird' | 'SecondThird' | 'FinalThird', flavors: string[]) =>
+              setFlavorProfiles(prev => ({ ...prev, [third]: flavors }))
             }
             onCigarStrengthChange={setCigarStrength}
             onManualDurationChange={setManualDuration}

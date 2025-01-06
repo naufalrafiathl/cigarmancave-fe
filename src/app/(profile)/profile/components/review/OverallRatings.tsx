@@ -33,15 +33,14 @@ export const OverallRatings = ({
       <div className="p-4 border-t border-white/10 space-y-6">
         {Object.entries(scores).map(([key, value]) => (
           <div key={key} className="space-y-2">
-            <label className="text-sm text-gray-400">
+            <label className="text-sm text-gray-400 capitalize">
               {key.replace('Score', '')}
             </label>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center">
               <StarRating
                 value={value}
                 onChange={(newValue) => onScoreChange(key, newValue)}
               />
-              <span className="text-sm text-gray-400">{value}/5</span>
             </div>
           </div>
         ))}
