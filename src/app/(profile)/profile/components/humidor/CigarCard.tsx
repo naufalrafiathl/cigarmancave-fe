@@ -2,6 +2,7 @@ import React from "react";
 import { Edit2, Trash2, MoreVertical, BookOpen } from "lucide-react";
 import { CigarDisplay, Cigar } from "@/types/humidor";
 import { calculateAgingDays } from "@/lib/calculateAgingDays";
+import Image from "next/image";
 
 interface CigarCardProps {
   humidorCigar: CigarDisplay;
@@ -83,16 +84,24 @@ export function CigarCard({
     return (
       <div
         onClick={handleCardClick}
-        className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl border border-white/10 p-4 hover:border-[#EFA427] transition-all duration-300 cursor-pointer group"
+        className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl border border-white/10 p-6 hover:border-[#EFA427] transition-all duration-300 cursor-pointer group"
       >
-        <div className="flex items-center gap-6">
-          {/* Image Section */}
-          <div className="w-20 h-20 bg-black/40 rounded-xl overflow-hidden flex-shrink-0">
-            {cigar.imageUrl ? (
-              <img
+        <div className="flex gap-8">
+          {/* Left: Image */}
+          <div className="w-40 h-40 bg-black/40 rounded-xl overflow-hidden flex-shrink-0 relative">
+            {/* Quantity Badge */}
+            <div className="absolute top-3 right-3 z-10">
+              <span className="bg-black/60 backdrop-blur-sm text-white/90 px-4 py-1.5 rounded-full text-sm font-medium border border-white/10">
+                Quantity:{humidorCigar.quantity}
+              </span>
+            </div>
+
+            {humidorCigar.imageUrl ? (
+              <Image
                 src={humidorCigar.imageUrl}
                 alt={humidorCigar.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-black/40 to-black/20">
@@ -101,62 +110,94 @@ export function CigarCard({
             )}
           </div>
 
-          {/* Content Section */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between">
+          {/* Right: Content */}
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-semibold text-white text-lg">
+                <h3 className="font-semibold text-white text-xl mb-1">
                   {humidorCigar.name}
                 </h3>
-                <p className="text-[#EFA427] font-medium">
+                <p className="text-[#EFA427] font-medium text-lg">
                   {humidorCigar.brand}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-white/60 text-sm bg-black/30 px-3 py-1 rounded-full">
-                  Qty: {humidorCigar.quantity}
-                </span>
+              <div className="relative">
+                <button
+                  onClick={handleDropdownToggle}
+                  className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+                {showDropdown && <DropdownMenu />}
               </div>
             </div>
 
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
-              <span>
-                {cigar.length}" × {cigar.ringGauge}
-              </span>
-              <span>•</span>
-              <span>{cigar.strength}</span>
-              <span>•</span>
-              <span>{cigar.country}</span>
+            {/* Main Info Grid */}
+            <div className="grid grid-cols-4 gap-3 mb-4">
+              <div className="bg-black/20 rounded-xl p-2.5">
+                <span className="text-gray-400 text-sm">Size</span>
+                <p className="text-white font-medium">
+                  {cigar.length}" × {cigar.ringGauge}
+                </p>
+              </div>
+              <div className="bg-black/20 rounded-xl p-2.5">
+                <span className="text-gray-400 text-sm">Strength</span>
+                <p className="text-white font-medium">{cigar.strength}</p>
+              </div>
+              <div className="bg-black/20 rounded-xl p-2.5">
+                <span className="text-gray-400 text-sm">Origin</span>
+                <p className="text-white font-medium">{cigar.country}</p>
+              </div>
               {humidorCigar.purchaseDate && (
-                <>
-                  <span>•</span>
-                  <span>
-                    Aging: {calculateAgingDays(humidorCigar.purchaseDate)} days
-                  </span>
-                </>
+                <div className="bg-black/20 rounded-xl p-2.5">
+                  <span className="text-gray-400 text-sm">Aging</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-white font-medium">
+                      {calculateAgingDays(humidorCigar.purchaseDate)}
+                    </span>
+                    <span className="text-gray-400 text-sm">days</span>
+                  </div>
+                </div>
               )}
             </div>
-          </div>
 
-          {/* Actions Section */}
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={handleReviewClick}
-              className="px-4 py-2 bg-[#EFA427] text-black font-medium rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center gap-2"
-            >
-              <BookOpen className="w-4 h-4" />
-              Review
-            </button>
+            {/* Price & Notes */}
+            <div className="flex gap-4 mb-4">
+              {humidorCigar.purchasePrice && (
+                <div className="flex-1 bg-black/20 rounded-xl p-2.5">
+                  <span className="text-gray-400 text-sm">Price Details</span>
+                  <div className="text-[#EFA427] font-medium">
+                    ${humidorCigar.purchasePrice.toFixed(2)}/stick
+                    <span className="text-white text-sm ml-2">
+                      (Total: $
+                      {(
+                        humidorCigar.purchasePrice * humidorCigar.quantity
+                      ).toFixed(2)}
+                      )
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            <div className="relative">
+            {/* Notes & Review Button */}
+            <div className="flex items-end justify-between mt-auto">
+              {humidorCigar.notes && (
+                <div className="flex-1 bg-black/20 rounded-xl p-2.5 mr-4">
+                  <span className="text-gray-400 text-sm">Notes</span>
+                  <p className="text-white text-sm line-clamp-2 mt-1">
+                    {humidorCigar.notes}
+                  </p>
+                </div>
+              )}
               <button
-                onClick={handleDropdownToggle}
-                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                onClick={handleReviewClick}
+                className="px-6 py-2.5 bg-[#EFA427] text-black font-medium rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center gap-2 whitespace-nowrap"
               >
-                <MoreVertical className="w-5 h-5" />
+                <BookOpen className="w-5 h-5" />
+                Write Review
               </button>
-
-              {showDropdown && <DropdownMenu />}
             </div>
           </div>
         </div>
@@ -167,15 +208,22 @@ export function CigarCard({
   return (
     <div
       onClick={handleCardClick}
-      className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#EFA427] transition-all duration-300 shadow-lg group  flex flex-col h-full"
+      className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl overflow-hidden hover:ring-2 hover:ring-[#EFA427] transition-all duration-300 shadow-lg group flex flex-col"
     >
       {/* Image Section */}
-      <div className="h-48 bg-black/40">
-        {cigar.imageUrl ? (
-          <img
+      <div className="h-64 bg-black/40 relative">
+        <div className="absolute top-4 right-4 z-10">
+          <span className="bg-black/60 backdrop-blur-sm text-white/90 px-4 py-1.5 rounded-full text-sm font-medium border border-white/10">
+            Quantity: {humidorCigar.quantity}
+          </span>
+        </div>
+        {humidorCigar.imageUrl ? (
+          <Image
             src={humidorCigar.imageUrl}
             alt={humidorCigar.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-black/40 to-black/20">
@@ -184,94 +232,82 @@ export function CigarCard({
         )}
       </div>
 
-      <div className="p-4 h-full flex flex-col justify-between">
+      <div className="p-4">
         {/* Header */}
-
-        <div>
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h3 className="font-semibold text-white text-lg">
-                {humidorCigar.name}
-              </h3>
-              <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
-            </div>
-
-            <div className="relative">
-              <button
-                onClick={handleDropdownToggle}
-                className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-              >
-                <MoreVertical className="w-5 h-5" />
-              </button>
-
-              {showDropdown && <DropdownMenu />}
-            </div>
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <h3 className="font-semibold text-white text-lg mb-1">
+              {humidorCigar.name}
+            </h3>
+            <p className="text-[#EFA427] font-medium">{humidorCigar.brand}</p>
           </div>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <div className="bg-black/20 rounded-xl p-2">
-              <span className="text-gray-400 text-sm">Size</span>
-              <p className="text-white font-medium">
-                {cigar.length}" × {cigar.ringGauge}
-              </p>
-            </div>
-            <div className="bg-black/20 rounded-xl p-2">
-              <span className="text-gray-400 text-sm">Strength</span>
-              <p className="text-white font-medium">{cigar.strength}</p>
-            </div>
-            <div className="bg-black/20 rounded-xl p-2">
-              <span className="text-gray-400 text-sm">Origin</span>
-              <p className="text-white font-medium">{cigar.country}</p>
-            </div>
-            <div className="bg-black/20 rounded-xl p-2">
-              <span className="text-gray-400 text-sm">Quantity</span>
-              <p className="text-white font-medium">{humidorCigar.quantity}</p>
-            </div>
-            {humidorCigar.purchaseDate && (
-              <div className="bg-black/20 rounded-xl p-2 col-span-2">
-                <span className="text-gray-400 text-sm">Aging</span>
-                <p className="text-white font-medium">
-                  {calculateAgingDays(humidorCigar.purchaseDate)} days
-                </p>
+          <div className="relative">
+            <button
+              onClick={handleDropdownToggle}
+              className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            {showDropdown && <DropdownMenu />}
+          </div>
+        </div>
+
+        {/* Main Info */}
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="bg-black/20 rounded-xl p-2">
+            <span className="text-gray-400 text-xs">Size</span>
+            <p className="text-white text-sm">
+              {cigar.length}" × {cigar.ringGauge}
+            </p>
+          </div>
+          <div className="bg-black/20 rounded-xl p-2">
+            <span className="text-gray-400 text-xs">Strength</span>
+            <p className="text-white text-sm">{cigar.strength}</p>
+          </div>
+          <div className="bg-black/20 rounded-xl p-2">
+            <span className="text-gray-400 text-xs">Origin</span>
+            <p className="text-white text-sm">{cigar.country}</p>
+          </div>
+        </div>
+
+        {/* Price & Aging */}
+        <div className="flex flex-col gap-2 mb-3">
+          {humidorCigar.purchaseDate && (
+            <div className="bg-black/20 rounded-xl p-2 flex items-center justify-between">
+              <span className="text-gray-400 text-sm">Aging</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-white font-medium">
+                  {calculateAgingDays(humidorCigar.purchaseDate)}
+                </span>
+                <span className="text-gray-400 text-sm">days</span>
               </div>
-            )}
-          </div>
-
-          {/* Specs Grid */}
-
-          {/* Price & Notes */}
-          {(humidorCigar.purchasePrice || humidorCigar.notes) && (
-            <div className="mb-4 space-y-2">
-              {humidorCigar.purchasePrice && (
-                <div className="text-[#EFA427] font-medium">
-                  ${humidorCigar.purchasePrice.toFixed(2)}
-                  <span className="text-sm text-white"> / stick</span>
-                </div>
-              )}
-              {humidorCigar.purchasePrice && (
-                <div className="text-[#EFA427] font-medium">
-                  <span className=" text-white"> Total: </span>$
-                  {(humidorCigar.purchasePrice * humidorCigar.quantity).toFixed(
-                    2
-                  )}
-                </div>
-              )}
-              {humidorCigar.notes && (
-                <div className="bg-[#303030] p-2 rounded-xl">
-                <p className="text-white">Notes: </p>
-                  <p className="text-gray-400 text-sm line-clamp-2">
-                    {humidorCigar.notes}
-                  </p>
-                </div>
-              )}
+            </div>
+          )}
+          {humidorCigar.purchasePrice && (
+            <div className="bg-black/20 rounded-xl p-2 flex items-center justify-between">
+              <span className="text-gray-400 text-sm">Purchase Price</span>
+              <div className="text-[#EFA427] font-medium text-sm">
+                ${humidorCigar.purchasePrice.toFixed(2)}/stick
+              </div>
             </div>
           )}
         </div>
 
+        {/* Notes (if they exist) */}
+        {humidorCigar.notes && (
+          <div className="mb-3">
+            <p className="text-gray-400 text-sm line-clamp-2">
+              {humidorCigar.notes}
+            </p>
+          </div>
+        )}
+
+        {/* Review Button */}
         <button
           onClick={handleReviewClick}
-          className="w-full bg-[#EFA427] hover:bg-amber-600 text-black text-md py-2.5 px-4 rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2 mt-4"
+          className="w-full bg-[#EFA427] text-black font-medium py-2.5 px-4 rounded-xl hover:bg-[#EFA427]/90 transition-colors flex items-center justify-center gap-2"
         >
-          <BookOpen className="w-5 h-5" />
+          <BookOpen className="w-4 h-4" />
           Write Review
         </button>
       </div>

@@ -8,6 +8,7 @@ import {
   FileText,
 } from "lucide-react";
 import { calculateAgingDays } from "@/lib/calculateAgingDays";
+import Image from "next/image";
 
 interface Cigar {
   id: number;
@@ -32,6 +33,7 @@ interface HumidorCigar {
   purchaseLocation?: string | null;
   notes?: string | null;
   cigar: Cigar;
+  imageUrl: string;
 }
 
 interface CigarInfoModalProps {
@@ -120,12 +122,14 @@ const CigarInfoModal = ({
 
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="w-full lg:w-1/2">
-                <div className="bg-[#222222] rounded-xl overflow-hidden aspect-square w-full">
-                  {cigar.imageUrl ? (
-                    <img
-                      src={cigar.imageUrl}
-                      alt={cigar.name}
-                      className="w-full h-full object-cover"
+                <div className="bg-[#222222] rounded-xl overflow-hidden aspect-square w-full relative">
+                  {humidorData?.imageUrl ? (
+                    <Image
+                      src={humidorData?.imageUrl}
+                      alt={cigar?.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -135,31 +139,47 @@ const CigarInfoModal = ({
                 </div>
               </div>
 
-              <div className="w-full lg:w-1/2 space-y-6">
+              <div className="w-full lg:w-1/2 space-y-6 flex-1">
                 {cigarDetails.length > 0 && (
-                  <section>
-                    <h3 className="text-lg font-medium mb-3">Cigar Details</h3>
-                    <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[#B9B9B9]">
+                  <div className="bg-[#222222] rounded-xl p-5 w-full">
+                    <h3 className="text-lg font-medium mb-4 text-[#EFA427]">
+                      Cigar Details
+                    </h3>
+                    <div className="space-y-3.5">
                       {cigarDetails.map((detail) => (
-                        <p key={detail.label}>
-                          {detail.label}: {detail.value}
-                        </p>
+                        <div
+                          key={detail.label}
+                          className="flex justify-between items-center py-1 w-full"
+                        >
+                          <span className="text-[#B9B9B9]">{detail.label}</span>
+                          <span className="text-white font-medium">
+                            {detail.value}
+                          </span>
+                        </div>
                       ))}
                     </div>
-                  </section>
+                  </div>
                 )}
 
                 {constructionDetails.length > 0 && (
-                  <section>
-                    <h3 className="text-lg font-medium mb-3">Construction</h3>
-                    <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[#B9B9B9]">
+                  <div className="bg-[#222222] rounded-xl p-5 w-full">
+                    <h3 className="text-lg font-medium mb-4 text-[#EFA427]">
+                      Construction
+                    </h3>
+                    <div className="space-y-3.5">
                       {constructionDetails.map((detail) => (
-                        <p key={detail.label}>
-                          {detail.label}: {detail.value}
-                        </p>
+                        <div
+                          key={detail.label}
+                          className="flex justify-between items-center py-1 w-full"
+                        >
+                          <span className="text-[#B9B9B9]">{detail.label}</span>
+                          <span className="text-white font-medium">
+                            {detail.value}
+                          </span>
+                        </div>
                       ))}
                     </div>
-                  </section>
+                  </div>
                 )}
               </div>
             </div>
@@ -201,7 +221,6 @@ const CigarInfoModal = ({
                       </p>
                     </div>
                   )}
-
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">

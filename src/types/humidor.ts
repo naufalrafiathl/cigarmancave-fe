@@ -21,6 +21,7 @@ export interface HumidorCigar {
   purchaseDate?: string;
   purchaseLocation?: string;
   notes?: string;
+  imageUrl?: string;
   cigar: Cigar;
 }
 

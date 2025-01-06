@@ -30,6 +30,7 @@ interface AddCigarData {
   purchaseDate?: string;
   purchaseLocation?: string;
   notes?: string;
+  imageUrl?: string;
 }
 
 interface UpdateCigarData {
@@ -41,6 +42,7 @@ interface UpdateCigarData {
 }
 
 const formatCigarData = (data: AddCigarData): AddCigarData => {
+  console.log("MASUK FORMAT DATA CIGARE:",data)
   return {
     ...data,
     purchasePrice: data?.purchasePrice,
@@ -296,6 +298,11 @@ export function useHumidorOperations() {
     setError(null);
 
     try {
+      console.log('ini yang masuk ke ops data humidorCigarId',humidorCigarId)
+      console.log('ini yang masuk ke ops data update',data)
+
+      console.log('ini yang masuk ke ops data humidorId',humidorId)
+
       const headers = await getAuthHeaders();
       const response = await fetch(
         `${config.apiUrl}/api/humidors/${humidorId}/cigars/${humidorCigarId}`,

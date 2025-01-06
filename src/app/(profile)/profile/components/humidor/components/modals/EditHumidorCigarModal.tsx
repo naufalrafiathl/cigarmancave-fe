@@ -1,7 +1,14 @@
-import React, { useState } from "react";
-import { Search } from "lucide-react";
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { Search, Camera, Upload, Trash, Loader2 } from "lucide-react";
+import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useCigarOperations } from "@/hooks/useCigarOperations";
+import { useImageUpload } from "@/hooks/useImageUploadOperations";
+import { validateFile } from "@/utils/validateFIle";
+import Image from "next/image";
+import { toast } from "sonner";
 
 interface Variant {
   id: number;
@@ -25,6 +32,7 @@ interface HumidorCigar {
   purchaseDate?: string;
   purchaseLocation?: string;
   notes?: string;
+  imageUrl?: string;
 }
 
 interface SearchApiResponse {
@@ -39,11 +47,99 @@ interface EditHumidorCigarModalProps {
   onClose: () => void;
 }
 
+interface CropModalProps {
+  imageUrl: string;
+  onCrop: (croppedImage: string) => void;
+  onClose: () => void;
+}
+
+const ImageCropModal = ({ imageUrl, onCrop, onClose }: CropModalProps) => {
+  const [crop, setCrop] = useState<Crop>({
+    unit: "%",
+    width: 90,
+    height: 90,
+    x: 5,
+    y: 5,
+  });
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const getCroppedImg = () => {
+    if (!imgRef.current) return;
+
+    const image = imgRef.current;
+    const canvas = document.createElement("canvas");
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    canvas.width = crop.width * scaleX;
+    canvas.height = crop.height * scaleY;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width * scaleX,
+      crop.height * scaleY
+    );
+
+    const base64Image = canvas.toDataURL("image/jpeg");
+    onCrop(base64Image);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+      <div className="bg-[#2A2A2A] p-6 rounded-xl max-w-2xl w-full mx-4">
+        <h3 className="text-xl font-semibold text-white mb-4">Adjust Image</h3>
+
+        <div className="mb-4">
+          <ReactCrop
+            crop={crop}
+            onChange={(c) => setCrop(c)}
+            aspect={1}
+            className="max-h-[60vh]"
+          >
+            <img
+              ref={imgRef}
+              src={imageUrl}
+              alt="Crop preview"
+              className="max-w-full h-auto"
+            />
+          </ReactCrop>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-[#B9B9B9] bg-transparent border border-white/10 rounded-xl hover:bg-white/5"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={getCroppedImg}
+            className="px-4 py-2 text-sm font-medium text-black bg-[#EFA427] rounded-xl hover:bg-[#EFA427]/90"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function EditHumidorCigarModal({
   humidorCigar,
   onSubmit,
   onClose,
 }: EditHumidorCigarModalProps) {
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(
@@ -60,6 +156,12 @@ export default function EditHumidorCigarModal({
   });
 
   const { searchCigars, isLoading: isSearching } = useCigarOperations();
+  const { directUpload, isUploading, error: uploadError } = useImageUpload();
+
+  const [cigarImage, setCigarImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>(
+    humidorCigar?.imageUrl || ""
+  );
 
   const debouncedSearch = useDebounce(async (query: string) => {
     if (!query) {
@@ -82,13 +184,40 @@ export default function EditHumidorCigarModal({
     }
   }, 300);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      ...formData,
-      cigarId: selectedVariant?.id,
-    });
+
+    try {
+      let uploadedImageUrl = humidorCigar?.imageUrl;
+
+      if (cigarImage) {
+        const response = await directUpload({
+          file: cigarImage,
+          generateVariants: true,
+          folder: "humidor",
+        });
+        uploadedImageUrl = response.data.original;
+      }
+
+      onSubmit({
+        ...formData,
+        cigarId: selectedVariant?.id || humidorCigar?.cigarId,
+        imageUrl: uploadedImageUrl,
+        variantId: selectedVariant?.id,
+      });
+
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update cigar");
+      console.error("Error:", error);
+    }
   };
+
+  useEffect(() => {
+    if (uploadError) {
+      toast.error(uploadError.message);
+    }
+  }, [uploadError]);
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
@@ -213,6 +342,96 @@ export default function EditHumidorCigarModal({
                 )}
               </div>
             )}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative w-32 h-32">
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt="Cigar preview"
+                    fill
+                    className="rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-xl bg-[#363636] flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-[#B9B9B9]" />
+                  </div>
+                )}
+
+                <div className="absolute -bottom-2 -right-2 flex gap-2">
+                  <label
+                    htmlFor="cigar-image"
+                    className="w-8 h-8 bg-[#EFA427] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#EFA427]/90 transition-colors"
+                  >
+                    <Upload className="w-4 h-4 text-white" />
+                  </label>
+
+                  {imageUrl && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCigarImage(null);
+                        setImageUrl("");
+                      }}
+                      className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                    >
+                      <Trash className="w-4 h-4 text-white" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <input
+                id="cigar-image"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    try {
+                      validateFile(file);
+                      const fileUrl = URL.createObjectURL(file);
+                      setTempImageUrl(fileUrl);
+                      setShowCropModal(true);
+                      setCigarImage(file);
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error ? error.message : "Invalid file"
+                      );
+                    }
+                  }
+                }}
+                className="hidden"
+              />
+
+              <p className="text-sm text-[#B9B9B9]">
+                Recommended: Square image, max 5MB
+              </p>
+            </div>
+
+            {/* Add the crop modal */}
+            {showCropModal && (
+              <ImageCropModal
+                imageUrl={tempImageUrl}
+                onCrop={(croppedImage) => {
+                  setImageUrl(croppedImage);
+                  setShowCropModal(false);
+
+                  // Convert base64 to File object
+                  fetch(croppedImage)
+                    .then((res) => res.blob())
+                    .then((blob) => {
+                      const file = new File([blob], "cropped-image.jpg", {
+                        type: "image/jpeg",
+                      });
+                      setCigarImage(file);
+                    });
+                }}
+                onClose={() => {
+                  setShowCropModal(false);
+                  URL.revokeObjectURL(tempImageUrl);
+                }}
+              />
+            )}
 
             <div>
               <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
@@ -251,19 +470,21 @@ export default function EditHumidorCigarModal({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
-                Purchase Date
-              </label>
-              <input
-                type="date"
-                value={formData.purchaseDate || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, purchaseDate: e.target.value })
-                }
-                className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
-              />
-            </div>
+            {!humidorCigar && (
+              <div>
+                <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
+                  Purchase Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.purchaseDate || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, purchaseDate: e.target.value })
+                  }
+                  className="w-full px-3 py-2.5 bg-[#222222] border border-white/10 rounded-xl text-white"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-[#B9B9B9] mb-1.5">
@@ -302,10 +523,17 @@ export default function EditHumidorCigarModal({
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-black bg-[#EFA427] rounded-xl hover:bg-[#d89421] disabled:opacity-50"
-                disabled={!humidorCigar && !selectedVariant}
+                className="px-4 py-2 text-sm font-medium text-black bg-[#EFA427] rounded-xl hover:bg-[#EFA427]/90 disabled:opacity-50 flex items-center gap-2"
+                disabled={(!humidorCigar && !selectedVariant) || isUploading}
               >
-                {humidorCigar ? "Save Changes" : "Add to Humidor"}
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>{humidorCigar ? "Save Changes" : "Add to Humidor"}</>
+                )}
               </button>
             </div>
           </form>

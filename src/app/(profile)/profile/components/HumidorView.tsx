@@ -110,7 +110,7 @@ export function HumidorView() {
       id: humidorCigar.id,
       name: humidorCigar.cigar.name,
       brand: humidorCigar.cigar.brand,
-      imageUrl: humidorCigar.cigar.imageUrl,
+      imageUrl: humidorCigar.imageUrl,
       quantity: humidorCigar.quantity,
       purchasePrice: humidorCigar.purchasePrice,
       purchaseDate: humidorCigar.purchaseDate,
@@ -151,6 +151,7 @@ export function HumidorView() {
     purchaseDate?: string;
     purchaseLocation?: string;
     notes?: string;
+    imageUrl?: string;
   }) => {
     if (!selectedHumidor || !editingHumidorCigar) return;
     try {
@@ -161,6 +162,7 @@ export function HumidorView() {
         purchaseDate: data.purchaseDate,
         purchaseLocation: data.purchaseLocation,
         notes: data.notes,
+        imageUrl: data.imageUrl,
       });
       await refreshSelectedHumidor(selectedHumidor.id);
       setEditingHumidorCigar(null);
@@ -278,7 +280,7 @@ export function HumidorView() {
           <div
             className={
               cigarViewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 [&>*]:min-w-[280px]"
+                ? "max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 [&>*]:min-w-[280px]"
                 : "flex flex-col gap-4"
             }
           >
@@ -318,6 +320,36 @@ export function HumidorView() {
               />
             ))}
 
+            {paginatedCigars.length === 0 && (
+              <div className="col-span-full flex flex-col items-center py-12">
+                <div className="bg-[#2A2A2A] rounded-xl p-8 max-w-md w-full text-center">
+                  <div className="mb-4">
+                    <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
+                      <PlusCircle className="w-8 h-8 text-gray-400" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    No Cigars in This Humidor
+                  </h3>
+                  <p className="text-gray-400 mb-6">
+                    Start adding cigars to your humidor to track your
+                    collection.
+                  </p>
+                  <button
+                    onClick={() =>
+                      setEditingHumidorCigar({
+                        cigar: { id: 0, name: "", brand: "", imageUrl: "" },
+                      })
+                    }
+                    className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-xl text-white text-md"
+                  >
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    Add Your First Cigar
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Add the ReviewModal */}
             {selectedCigarForReview && (
               <ReviewModal
@@ -331,9 +363,7 @@ export function HumidorView() {
                   setReviewModalOpen(false);
                   setSelectedCigarForReview(null);
                 }}
-                onSubmit={(reviewData) => {
-                  console.log(reviewData);
-                }}
+                onSubmit={() => {}}
               />
             )}
           </div>
@@ -378,6 +408,7 @@ export function HumidorView() {
                     purchaseDate?: string;
                     purchaseLocation?: string;
                     notes?: string;
+                    imageUrl?: string;
                   }
                 );
               }
