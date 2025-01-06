@@ -90,6 +90,7 @@ export interface ReviewResponse {
       name: string;
       brand: string;
     };
+    images: String[]
   }
 
 export interface ReviewsResponse {

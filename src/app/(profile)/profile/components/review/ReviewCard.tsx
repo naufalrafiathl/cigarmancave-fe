@@ -1,7 +1,5 @@
-import {
-  useReviewOperations,
-  ReviewResponse,
-} from "@/hooks/useReviewOperations";
+import { ReviewResponse } from "@/hooks/useReviewOperations";
+import Image from "next/image";
 
 interface ReviewCardProps {
   review: ReviewResponse;
@@ -82,11 +80,19 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
       </div>
     </div>
   );
+
+  const hasImage = review.images && review.images.length > 0;
+
+  const truncateNotes = (notes: string, maxLength: number = 100) => {
+    if (!notes) return "";
+    if (notes.length <= maxLength) return notes;
+    return notes.slice(0, maxLength) + "...";
+  };
+
   return (
     <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border-[#EFA427] rounded-xl hover:border-[#EFA427] hover:border transition-all duration-300 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-1">
       <div className="p-4 md:p-6 flex flex-col h-full">
-        {/* Header */}
-        <div className="border-b border-white/10 pb-4 mb-4">
+      <div className="border-b border-white/10 pb-4 mb-4">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2">
             <div className="min-w-0">
               <h3 className="font-semibold text-white text-lg md:text-xl mb-1 truncate">
@@ -144,6 +150,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
                     score={review.constructionScore}
                   />
                   <ScoreComponent label="Draw" score={review.drawScore} />
+                  <ScoreComponent label="Burn" score={review.burnScore} />
                   <ScoreComponent label="Flavor" score={review.flavorScore} />
                   <ScoreComponent
                     label="Impression"
@@ -154,19 +161,84 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
             </div>
           </div>
 
-          {/* Notes Section */}
-          {review.notes && (
-            <div className="w-full md:w-1/2">
-              <h4 className="text-white font-medium mb-2">Notes</h4>
-              <div className="bg-black/20 rounded-xl p-3 md:p-4 h-[200px] overflow-hidden">
-                <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#EFA427] scrollbar-track-transparent pr-2">
-                  <p className="text-[#B9B9B9] text-sm italic break-words">
-                    "{review.notes || "No notes available"}"
-                  </p>
+          {/* Right Side: Image and Truncated Notes OR Full Notes */}
+          <div className="w-full md:w-1/2">
+            {hasImage ? (
+              // With Image Layout
+              <div className="flex flex-col gap-3">
+                <div className="aspect-square rounded-xl overflow-hidden relative">
+                  <Image
+                    src={review.images[0].url}
+                    alt={`Review image for ${review.cigar.name}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
                 </div>
+                {review.notes && (
+                  <div className="flex-1 bg-black/20 rounded-xl p-3">
+                    <p className="text-[#B9B9B9] text-sm italic mb-2">
+                      "{truncateNotes(review.notes)}"
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onView(review);
+                      }}
+                      className="text-[#EFA427] text-sm hover:underline flex items-center gap-1"
+                    >
+                      View details
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            ) : (
+              // Without Image Layout
+              review.notes && (
+                <div className="h-max bg-black/20 rounded-xl p-4 truncate">
+                  <p className="text-[#EFA427] font-medium mb-2 truncate">Notes:</p>
+                  <p className="italic text-[#B9B9B9] pl-2 truncate">"{review.notes}"</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onView(review);
+                    }}
+                    className="text-[#EFA427] text-sm hover:underline flex items-center gap-1 mt-3"
+                  >
+                    View details
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )
+            )}
+          </div>
         </div>
 
         {/* Footer */}

@@ -13,6 +13,7 @@ import { TimerStep } from "./TimerStep";
 import { ReviewForm } from "./ReviewForm";
 import { useReviewOperations } from "@/hooks/useReviewOperations";
 import { CigarAssistant } from "./CigarAssistant";
+import { useImageUpload } from "@/hooks/useImageUploadOperations";
 
 interface ReviewModalProps {
   cigar: {
@@ -32,21 +33,32 @@ const ReviewModal = ({
   onSubmit,
 }: ReviewModalProps) => {
   const router = useRouter();
-  const { createReview, uploadImage, isCreating } = useReviewOperations();
+  const { createReview, isCreating } = useReviewOperations();
+  const { directUpload } = useImageUpload();
+
+  // Step visibility states
   const [showImagePrompt, setShowImagePrompt] = useState(true);
   const [showPairingPrompt, setShowPairingPrompt] = useState(false);
   const [showTimerPrompt, setShowTimerPrompt] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+
+  // Image states
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [pairings, setPairings] = useState<
-    Array<{ name: string; type: string }>
-  >([]);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
+  // Pairing states
+  const [pairings, setPairings] = useState<Array<{ name: string; type: string }>>(
+    []
+  );
+
+  // Timer states
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [manualDuration, setManualDuration] = useState(0);
   const timerInterval = useRef<NodeJS.Timeout | null>(null);
-  const [cigarStrength, setCigarStrength] = useState("MILD");
 
+  // Review form states
+  const [cigarStrength, setCigarStrength] = useState("MILD");
   const [sectionsCollapsed, setSectionsCollapsed] = useState({
     overall: false,
     flavor: false,
@@ -59,8 +71,6 @@ const ReviewModal = ({
     burnScore: 3,
     impressionScore: 3,
   });
-
-  console.log("cigar", cigar);
 
   const [flavorProfiles, setFlavorProfiles] = useState({
     flavorPepperScore: 0,
@@ -83,7 +93,7 @@ const ReviewModal = ({
   const [notes, setNotes] = useState("");
   const [buyAgain, setBuyAgain] = useState<boolean | null>(null);
 
-  // Timer management
+  // Timer effect
   useEffect(() => {
     if (isTimerRunning) {
       timerInterval.current = setInterval(() => {
@@ -117,13 +127,10 @@ const ReviewModal = ({
     const file = e.target.files?.[0];
     if (file) {
       try {
+        const fileUrl = URL.createObjectURL(file);
         setImageFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result as string;
-          moveToNextStep();
-        };
-        reader.readAsDataURL(file);
+        setPreviewUrl(fileUrl);
+        moveToNextStep();
       } catch (error) {
         toast.error("Failed to process image");
         console.error("Image upload error:", error);
@@ -133,11 +140,15 @@ const ReviewModal = ({
 
   const handleSubmit = async () => {
     try {
-      let imageUrl: string | undefined;
+      let imageUrls: string[] = [];
 
       if (imageFile) {
-        // Upload image first if we have one
-        imageUrl = await uploadImage(imageFile);
+        const response = await directUpload({
+          file: imageFile,
+          generateVariants: true,
+          folder: "reviews",
+        });
+        imageUrls = [response.data.original];
       }
 
       const reviewData = {
@@ -149,10 +160,10 @@ const ReviewModal = ({
         notes,
         buyAgain: buyAgain === null ? undefined : buyAgain,
         pairings,
-        images: imageUrl ? [imageUrl] : [],
+        images: imageUrls,
       };
-      await createReview(reviewData);
 
+      await createReview(reviewData);
       toast.success("Review submitted successfully!");
       onSubmit?.(reviewData);
       onClose();
