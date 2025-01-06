@@ -126,7 +126,7 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
         <div className="flex flex-col md:flex-row gap-4 flex-grow">
           {/* Scores Section */}
           <div className="w-full md:w-1/2">
-            <div className="bg-black/20 rounded-xl p-3 md:p-4">
+            <div className="bg-black/20 rounded-xl p-3 md:p-4 h-full">
               {/* Overall Score */}
               <div className="mb-3">
                 <span className="text-white font-semibold block mb-2">

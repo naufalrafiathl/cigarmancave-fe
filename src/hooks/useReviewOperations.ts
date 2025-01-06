@@ -90,7 +90,13 @@ export interface ReviewResponse {
       name: string;
       brand: string;
     };
-    images: String[]
+    images: CigarImage[]
+  }
+
+  interface CigarImage {
+    id: number;
+    url: string;
+    reviewId: number;
   }
 
 export interface ReviewsResponse {
