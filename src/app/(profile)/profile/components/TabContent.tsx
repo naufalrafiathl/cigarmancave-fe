@@ -2,6 +2,7 @@
 import { TabType, TABS } from "@/types/profile";
 import { HumidorView } from "./HumidorView";
 import { ReviewsView } from "./ReviewView";
+import { AchievementView } from "./AchievementView";
 
 interface TabContentProps {
   currentTab: TabType;
@@ -20,11 +21,8 @@ export function TabContent({ currentTab }: TabContentProps) {
       </div>
     ),
     [TABS.achievements]: (
-      <div className="p-4 text-[#B9B9B9]">
-        <h2 className="text-xl font-semibold text-white mb-4">
-          My Achievements
-        </h2>
-        <p>Complete activities to earn achievements!</p>
+      <div className="overflow-y-auto">
+        <AchievementView></AchievementView>
       </div>
     ),
     [TABS.subscription]: (
