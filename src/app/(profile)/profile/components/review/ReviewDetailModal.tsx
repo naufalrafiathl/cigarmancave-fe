@@ -1,5 +1,4 @@
 import { ReviewResponse } from "@/hooks/useReviewOperations";
-import Image from "next/image";
 import { useState } from "react";
 import { ReviewFlavorDisplay } from "./ReviewFlavorDisplay";
 
@@ -15,35 +14,6 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
   const [isFlavorExpanded, setIsFlavorExpanded] = useState(false);
   const [isPairingsExpanded, setIsPairingsExpanded] = useState(false);
 
-  const flavorScores = [
-    { name: "Pepper", score: review.flavorPepperScore },
-    { name: "Chocolate", score: review.flavorChocolateScore },
-    { name: "Creamy", score: review.flavorCreamyScore },
-    { name: "Leather", score: review.flavorLeatherScore },
-    { name: "Woody", score: review.flavorWoodyScore },
-    { name: "Earthy", score: review.flavorEarthyScore },
-    { name: "Nutty", score: review.flavorNuttyScore },
-    { name: "Sweet", score: review.flavorSweetScore },
-    { name: "Fruity", score: review.flavorFruityScore },
-    { name: "Grassy", score: review.flavorGrassyScore },
-    { name: "Berry", score: review.flavorBerryScore },
-    { name: "Coffee", score: review.flavorCoffeeScore },
-    { name: "Bitters", score: review.flavorBittersScore },
-  ].filter(({ score }) => score > 0);
-
-  const renderFlavorScore = (name: string, score: number) => {
-    if (score > 0) {
-      return (
-        <div className="flex items-center justify-between py-2">
-          <span className="text-[#B9B9B9]">{name}</span>
-          <div className="flex items-center">
-            <span className="text-[#EFA427] font-semibold">{score}</span>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -89,30 +59,30 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Overall</span>
                     <span className="text-[#EFA427] font-bold text-xl">
-                      {review.overallScore.toFixed(1)}
+                      {(review.overallScore/10).toFixed(1)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Construction</span>
                     <span className="text-white">
-                      {review.constructionScore}
+                      {review.constructionScore/10}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Draw</span>
-                    <span className="text-white">{review.drawScore}</span>
+                    <span className="text-white">{review.drawScore/10}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Flavor</span>
-                    <span className="text-white">{review.flavorScore}</span>
+                    <span className="text-white">{review.flavorScore/10}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Burn</span>
-                    <span className="text-white">{review.burnScore}</span>
+                    <span className="text-white">{review.burnScore/10}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Impression</span>
-                    <span className="text-white">{review.impressionScore}</span>
+                    <span className="text-white">{review.impressionScore/10}</span>
                   </div>
                 </div>
               </div>

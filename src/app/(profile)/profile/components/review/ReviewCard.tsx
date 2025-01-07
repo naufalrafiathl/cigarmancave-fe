@@ -98,8 +98,8 @@ export const ReviewCard = ({ review, viewMode, onView }: ReviewCardProps) => {
     <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] border-[#EFA427] rounded-xl hover:border-[#EFA427] hover:border transition-all duration-300 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-1">
       <div className="p-4 md:p-6 flex flex-col h-full">
         <div className="border-b border-white/10 pb-4 mb-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2">
-            <div className="min-w-0">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2 truncate">
+            <div className="min-w-0 truncate">
               <h3 className="font-semibold text-white text-lg md:text-xl mb-1 truncate">
                 {review.cigar.name}
               </h3>
