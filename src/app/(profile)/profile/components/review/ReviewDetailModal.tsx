@@ -14,7 +14,6 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
   const [isFlavorExpanded, setIsFlavorExpanded] = useState(false);
   const [isPairingsExpanded, setIsPairingsExpanded] = useState(false);
 
-
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-[#2A2A2A] to-[#222222] rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
@@ -56,33 +55,101 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
               <div className="bg-black/20 rounded-xl p-4 mb-6">
                 <h3 className="text-white font-semibold mb-4">Scores</h3>
                 <div className="space-y-2">
+                  {/* Score rows with conditional colors */}
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Overall</span>
-                    <span className="text-[#EFA427] font-bold text-xl">
-                      {(review.overallScore/10).toFixed(1)}
+                    <span
+                      className={`font-bold text-xl ${
+                        review.overallScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.overallScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.overallScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
                     </span>
                   </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Construction</span>
-                    <span className="text-white">
-                      {review.constructionScore/10}
+                    <span
+                      className={`${
+                        review.constructionScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.constructionScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.constructionScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
                     </span>
                   </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Draw</span>
-                    <span className="text-white">{review.drawScore/10}</span>
+                    <span
+                      className={`${
+                        review.drawScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.drawScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.drawScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
+                    </span>
                   </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Flavor</span>
-                    <span className="text-white">{review.flavorScore/10}</span>
+                    <span
+                      className={`${
+                        review.flavorScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.flavorScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.flavorScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
+                    </span>
                   </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Burn</span>
-                    <span className="text-white">{review.burnScore/10}</span>
+                    <span
+                      className={`${
+                        review.burnScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.burnScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.burnScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
+                    </span>
                   </div>
+
                   <div className="flex items-center justify-between">
                     <span className="text-[#B9B9B9]">Impression</span>
-                    <span className="text-white">{review.impressionScore/10}</span>
+                    <span
+                      className={`${
+                        review.impressionScore / 10 < 2.5
+                          ? "text-red-500"
+                          : review.impressionScore / 10 < 4
+                          ? "text-yellow-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {(review.impressionScore / 10).toFixed(1)}
+                      <span className="text-sm text-white"> /5.0</span>
+                    </span>
                   </div>
                 </div>
               </div>
