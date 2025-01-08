@@ -52,7 +52,7 @@ export interface ReviewData {
 }
 
 export interface ReviewResponse {
-    data: {};
+    data: {id:string};
     id: number;
     duration: number;
     createdAt: string;

@@ -1,7 +1,7 @@
-import React from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import StarRating from './StarRating';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import StarRating from "./StarRating";
+import { Button } from "@/components/ui/button";
 
 interface OverallRatingsProps {
   scores: Record<string, number>;
@@ -14,7 +14,7 @@ export const OverallRatings = ({
   scores,
   isCollapsed,
   onToggle,
-  onScoreChange
+  onScoreChange,
 }: OverallRatingsProps) => (
   <section className="border border-white/10 rounded-xl overflow-hidden">
     <button
@@ -28,13 +28,13 @@ export const OverallRatings = ({
         <ChevronUp className="w-5 h-5 text-gray-400" />
       )}
     </button>
-    
+
     {!isCollapsed && (
       <div className="p-4 border-t border-white/10 space-y-6">
         {Object.entries(scores).map(([key, value]) => (
           <div key={key} className="space-y-2">
             <label className="text-sm text-gray-400 capitalize">
-              {key.replace('Score', '')}
+              {key.replace("Score", "")}
             </label>
             <div className="flex items-center">
               <StarRating

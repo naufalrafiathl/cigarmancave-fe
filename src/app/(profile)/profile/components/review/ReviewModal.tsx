@@ -14,6 +14,8 @@ import { ReviewForm } from "./ReviewForm";
 import { useReviewOperations } from "@/hooks/useReviewOperations";
 import { CigarAssistant } from "./CigarAssistant";
 import { useImageUpload } from "@/hooks/useImageUploadOperations";
+import { useFeedOperations } from "@/hooks/useFeedOperations";
+import { Button } from "@/components/ui/button";
 
 interface ReviewModalProps {
   humidorCigarId: number;
@@ -36,6 +38,7 @@ const ReviewModal = ({
 }: ReviewModalProps) => {
   const router = useRouter();
   const { createReview, isCreating } = useReviewOperations();
+  const { createPost, isCreating: isCreatingPost } = useFeedOperations();
   const { directUpload } = useImageUpload();
 
   // Step visibility states
@@ -43,6 +46,13 @@ const ReviewModal = ({
   const [showPairingPrompt, setShowPairingPrompt] = useState(false);
   const [showTimerPrompt, setShowTimerPrompt] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showPostPrompt, setShowPostPrompt] = useState(false);
+
+  // Post creation states
+  const [postContent, setPostContent] = useState("");
+  const [submittedReviewId, setSubmittedReviewId] = useState<number | null>(
+    null
+  );
 
   // Image states
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -84,8 +94,9 @@ const ReviewModal = ({
   const [isNotesMinimized, setIsNotesMinimized] = useState(false);
   const [notes, setNotes] = useState("");
   const [buyAgain, setBuyAgain] = useState<boolean | null>(null);
-  const [decreaseHumidorCigar, setDecreaseHumidorCigar] = useState<boolean | null>(true);
-
+  const [decreaseHumidorCigar, setDecreaseHumidorCigar] = useState<
+    boolean | null
+  >(true);
 
   // Timer effect
   useEffect(() => {
@@ -145,16 +156,17 @@ const ReviewModal = ({
         imageUrls = [response.data.original];
       }
 
-      // Convert scores from 1-5 scale to 1-50 scale
       const convertedScores = Object.entries(scores).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          [key]: Math.round(value * 10), // Simply multiply by 10
+          [key]: Math.round(value * 10),
         }),
         {}
       );
 
-      const isDecreasingHumidorCigar = decreaseHumidorCigar ? humidorCigarId:null
+      const isDecreasingHumidorCigar = decreaseHumidorCigar
+        ? humidorCigarId
+        : null;
 
       const reviewData = {
         humidorCigarId: isDecreasingHumidorCigar,
@@ -169,19 +181,80 @@ const ReviewModal = ({
         images: imageUrls,
       };
 
-      await createReview(reviewData);
+      const response = await createReview(reviewData);
+      // Need to access id through response.data as that's how it comes from the API
+      if (!response.data || typeof response.data !== 'object' || !('id' in response.data)) {
+        throw new Error('Review ID not found in response');
+      }
+      setSubmittedReviewId((response.data as { id: number }).id);
       toast.success("Review submitted successfully!");
       onSubmit?.(reviewData);
-      onClose();
 
-      setTimeout(() => {
-        router.push("/profile?tab=reviews");
-      }, 100);
+      // Show post creation prompt instead of closing
+      setShowPostPrompt(true);
     } catch (error) {
       toast.error("Failed to submit review");
       console.error("Review submission error:", error);
     }
   };
+
+  const handlePost = async () => {
+    try {
+      if (!submittedReviewId) {
+        throw new Error("Review ID not found");
+      }
+
+      await createPost({
+        content: postContent,
+        reviewId: submittedReviewId,
+      });
+
+      toast.success("Post created successfully!");
+      onClose();
+      router.push("/feeds");
+    } catch (error) {
+      toast.error("Failed to create post");
+      console.error("Post creation error:", error);
+    }
+  };
+
+  const handleSkipPost = () => {
+    onClose();
+    router.push("/profile?tab=reviews");
+  };
+
+  const renderPostPrompt = () => (
+    <div className="space-y-4">
+      <h3 className="text-lg font-medium text-white">Share Your Review</h3>
+      <p className="text-[#B9B9B9]">
+        Would you like to share your review with the community?
+      </p>
+      <textarea
+        value={postContent}
+        onChange={(e) => setPostContent(e.target.value)}
+        placeholder="Add a comment about your experience..."
+        className="w-full h-32 bg-[#363636] rounded-xl p-3 text-white 
+            placeholder:text-[#B9B9B9] focus:outline-none focus:ring-1 
+            focus:ring-white/10 border border-white/5 resize-none"
+      />
+      <div className="flex gap-3 justify-end">
+        <Button
+          onClick={handleSkipPost}
+          variant="outline"
+          className="bg-transparent text-white border-white/10 hover:bg-white/5"
+        >
+          Skip
+        </Button>
+        <Button
+          onClick={handlePost}
+          disabled={isCreatingPost}
+          className="bg-[#EFA427] text-white hover:bg-[#EFA427]/90"
+        >
+          {isCreatingPost ? "Posting..." : "Share Review"}
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -193,7 +266,7 @@ const ReviewModal = ({
           <p className="text-sm text-gray-400 mt-1">{cigar.brand}</p>
         </DialogHeader>
 
-        <CigarAssistant cigar={cigar} showReviewForm={showReviewForm} />
+        { !showPostPrompt && <CigarAssistant cigar={cigar} showReviewForm={showReviewForm} />}
 
         {showImagePrompt && (
           <ImageStep
@@ -237,7 +310,7 @@ const ReviewModal = ({
           />
         )}
 
-        {showReviewForm && (
+        {showReviewForm && !showPostPrompt && (
           <ReviewForm
             scores={scores}
             flavorProfiles={{
@@ -258,9 +331,10 @@ const ReviewModal = ({
             onScoreChange={(key, value) =>
               setScores((prev) => ({ ...prev, [key]: value }))
             }
-            onFlavorProfileChange={(third: 'FirstThird' | 'SecondThird' | 'FinalThird', flavors: string[]) =>
-              setFlavorProfiles(prev => ({ ...prev, [third]: flavors }))
-            }
+            onFlavorProfileChange={(
+              third: "FirstThird" | "SecondThird" | "FinalThird",
+              flavors: string[]
+            ) => setFlavorProfiles((prev) => ({ ...prev, [third]: flavors }))}
             onCigarStrengthChange={setCigarStrength}
             onManualDurationChange={setManualDuration}
             onBuyAgainChange={setBuyAgain}
@@ -278,6 +352,9 @@ const ReviewModal = ({
             isSubmitting={isCreating}
           />
         )}
+
+{showPostPrompt && renderPostPrompt()}
+
       </DialogContent>
     </Dialog>
   );
