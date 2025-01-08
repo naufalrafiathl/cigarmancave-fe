@@ -34,6 +34,7 @@ export interface Humidor {
 }
 
 export interface CigarDisplay {
+  humidorCigarId: number;
   cigarId: number;
   id: number;
   name: string;

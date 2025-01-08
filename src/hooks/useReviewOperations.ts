@@ -23,6 +23,7 @@ interface Pairing {
   }
 
 export interface ReviewData {
+  humidorCigarId:number | null;
   cigarId: number;
   duration: number;
   cigarStrength?: string;

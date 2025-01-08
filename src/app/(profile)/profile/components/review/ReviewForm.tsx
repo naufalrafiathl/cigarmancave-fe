@@ -7,6 +7,7 @@ import { NotesSection } from "./NotesSection";
 import { Button } from "@/components/ui/button";
 import { CigarStrengthSelection } from "./CigarStrengthSelection";
 import { Loader2 } from "lucide-react";
+import { DecreaseHumidorCigar } from "./DecreaseHumidorCigar";
 
 interface ReviewFormProps {
   scores: Record<string, number>;
@@ -20,6 +21,7 @@ interface ReviewFormProps {
   cigarStrength: string;
   manualDuration: number;
   buyAgain: boolean | null;
+  decreaseHumidorCigar: boolean | null;
   notes: string;
   showNotesModal: boolean;
   isNotesMinimized: boolean;
@@ -34,6 +36,7 @@ interface ReviewFormProps {
     flavors: string[]
   ) => void;
   onManualDurationChange: (value: number) => void;
+  onDecreaseHumidorCigarChange: (value: boolean) => void;
   onBuyAgainChange: (value: boolean) => void;
   onNotesChange: (value: string) => void;
   onNotesModalToggle: (value: boolean) => void;
@@ -50,6 +53,7 @@ export const ReviewForm = ({
   elapsedTime,
   manualDuration,
   buyAgain,
+  decreaseHumidorCigar,
   notes,
   showNotesModal,
   isNotesMinimized,
@@ -58,6 +62,7 @@ export const ReviewForm = ({
   isSubmitting = false, // Default to false
   onCigarStrengthChange,
   onScoreChange,
+  onDecreaseHumidorCigarChange,
   onFlavorProfileChange,
   onManualDurationChange,
   onBuyAgainChange,
@@ -102,6 +107,7 @@ export const ReviewForm = ({
       )}
 
       <BuyAgainSection value={buyAgain} onChange={onBuyAgainChange} />
+      <DecreaseHumidorCigar value={decreaseHumidorCigar} onChange={onDecreaseHumidorCigarChange} />
 
       <Button
         className="w-full"

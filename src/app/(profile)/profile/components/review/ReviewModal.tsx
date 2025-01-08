@@ -16,6 +16,7 @@ import { CigarAssistant } from "./CigarAssistant";
 import { useImageUpload } from "@/hooks/useImageUploadOperations";
 
 interface ReviewModalProps {
+  humidorCigarId: number;
   cigar: {
     id: number;
     name: string;
@@ -27,6 +28,7 @@ interface ReviewModalProps {
 }
 
 const ReviewModal = ({
+  humidorCigarId,
   cigar,
   isOpen,
   onClose,
@@ -82,6 +84,8 @@ const ReviewModal = ({
   const [isNotesMinimized, setIsNotesMinimized] = useState(false);
   const [notes, setNotes] = useState("");
   const [buyAgain, setBuyAgain] = useState<boolean | null>(null);
+  const [decreaseHumidorCigar, setDecreaseHumidorCigar] = useState<boolean | null>(true);
+
 
   // Timer effect
   useEffect(() => {
@@ -150,7 +154,10 @@ const ReviewModal = ({
         {}
       );
 
+      const isDecreasingHumidorCigar = decreaseHumidorCigar ? humidorCigarId:null
+
       const reviewData = {
+        humidorCigarId: isDecreasingHumidorCigar,
         cigarId: cigar.id,
         duration: isTimerRunning ? Math.ceil(elapsedTime / 60) : manualDuration,
         strength: cigarStrength,
@@ -242,6 +249,7 @@ const ReviewModal = ({
             elapsedTime={elapsedTime}
             manualDuration={manualDuration}
             buyAgain={buyAgain}
+            decreaseHumidorCigar={decreaseHumidorCigar}
             notes={notes}
             cigarStrength={cigarStrength}
             showNotesModal={showNotesModal}
@@ -256,6 +264,7 @@ const ReviewModal = ({
             onCigarStrengthChange={setCigarStrength}
             onManualDurationChange={setManualDuration}
             onBuyAgainChange={setBuyAgain}
+            onDecreaseHumidorCigarChange={setDecreaseHumidorCigar}
             onNotesChange={setNotes}
             onNotesModalToggle={setShowNotesModal}
             onNotesMinimize={() => setIsNotesMinimized(true)}
