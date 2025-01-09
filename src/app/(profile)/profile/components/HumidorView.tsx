@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, ArrowLeft, PlusCircle } from "lucide-react";
+import { Plus, ArrowLeft, PlusCircle, Upload } from "lucide-react";
 import { Humidor, HumidorCigar, Cigar, CigarDisplay } from "@/types/humidor";
 import { ViewToggle } from "./humidor/ViewToggle";
 import { CigarCard } from "./humidor/CigarCard";
@@ -9,6 +9,7 @@ import { EditHumidorModal } from "./humidor/components/modals/EditHumidorModal";
 import EditHumidorCigarModal from "./humidor/components/modals/EditHumidorCigarModal";
 import { PaginationControls } from "./humidor/PaginationControls";
 import { useHumidorOperations } from "@/hooks/useHumidorOperations";
+import { ImportModal } from "./humidor/components/ImportModal";
 import CigarInfoModal from "./cigar/CigarInfoModal";
 import ReviewModal from "./review/ReviewModal";
 
@@ -18,6 +19,7 @@ const ITEMS_PER_PAGE = {
 };
 
 export function HumidorView() {
+  const [showImportModal, setShowImportModal] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedCigarForReview, setSelectedCigarForReview] =
     useState<CigarDisplay | null>(null);
@@ -84,6 +86,8 @@ export function HumidorView() {
       console.error("Failed to refresh humidor state:", err);
     }
   };
+
+  console.log("selected humidor", selectedHumidor);
 
   useEffect(() => {
     const loadHumidors = async () => {
@@ -250,6 +254,17 @@ export function HumidorView() {
                   <span className="hidden sm:inline">Add New Cigar</span>
                   <span className="sm:hidden">Add New</span>
                 </button>
+                <button
+                  onClick={() => {
+                    console.log("Import button clicked");
+                    setShowImportModal(true);
+                    console.log("showImportModal:", showImportModal);
+                  }}
+                  className="h-10 px-4 bg-[#363636] text-white rounded-xl hover:bg-[#404040] transition-colors flex items-center gap-2"
+                >
+                  <Upload size={20} />
+                  <span className="hidden sm:inline">Import</span>
+                </button>
                 <ViewToggle
                   viewMode={cigarViewMode}
                   setViewMode={setCigarViewMode}
@@ -382,6 +397,16 @@ export function HumidorView() {
           )}
         </div>
         {/* Modals */}
+        {showImportModal && selectedHumidor && (
+          <ImportModal
+            isOpen={showImportModal}
+            onClose={() => setShowImportModal(false)}
+            humidorId={(selectedHumidor as Humidor).id}
+            onSuccess={async () => {
+              await refreshSelectedHumidor((selectedHumidor as Humidor).id);
+            }}
+          />
+        )}
         {editingHumidorCigar && (
           <EditHumidorCigarModal
             humidorCigar={
