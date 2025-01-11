@@ -1,11 +1,10 @@
-// src/app/api/auth/session/route.ts
 import { NextRequest,NextResponse } from 'next/server';
 
+
+//**TODO */
 export async function GET(_: NextRequest) {
   try {
-    // Your session verification logic here
-    // This is just an example - implement your actual session checking logic
-    const hasValidSession = false; // Replace with your session validation
+    const hasValidSession = false; 
 
     if (hasValidSession) {
       return Response.json({

@@ -1,4 +1,3 @@
-// types/humidor.ts
 export interface Cigar {
   id: number;
   name: string;

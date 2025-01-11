@@ -1,4 +1,3 @@
-// src/hooks/useAssistOperations.ts
 import { config } from "@/config";
 import { useUser } from "@/hooks/useUserOperations";
 import { useCallback, useMemo } from 'react';
@@ -17,7 +16,6 @@ interface APIError {
 export function useAssistOperations() {
   const { user } = useUser();
 
-  // Memoize getInsights function
   const getInsights = useCallback(async (cigarId: number): Promise<CigarInsights> => {
     try {
       const tokenResponse = await fetch("/api/auth/token");
@@ -43,9 +41,8 @@ export function useAssistOperations() {
       console.error("Error fetching cigar insights:", error);
       throw error;
     }
-  }, []); // Empty dependency array since it doesn't depend on any external values
+  }, []);
 
-  // Memoize the return values
   const values = useMemo(() => ({
     getInsights,
     isAuthenticated: !!user,

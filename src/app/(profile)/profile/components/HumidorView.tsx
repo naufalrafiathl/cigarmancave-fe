@@ -34,7 +34,6 @@ export function HumidorView() {
     cigar: Cigar;
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredCigars, setFilteredCigars] = useState<HumidorCigar[]>([]);
   const [currentCigarPage, setCurrentCigarPage] = useState(1);
   const [humidorViewMode, setHumidorViewMode] = useState<"grid" | "list">(
     "grid"
@@ -86,8 +85,6 @@ export function HumidorView() {
       console.error("Failed to refresh humidor state:", err);
     }
   };
-
-  console.log("selected humidor", selectedHumidor);
 
   useEffect(() => {
     const loadHumidors = async () => {
@@ -184,7 +181,7 @@ export function HumidorView() {
         editingHumidorCigar.humidorCigar.id,
         data
       );
-      await refreshSelectedHumidor(selectedHumidor.id); // Add this line to refresh the data
+      await refreshSelectedHumidor(selectedHumidor.id);
       setEditingHumidorCigar(null);
     } catch (err) {
       console.error("Failed to update cigar:", err);

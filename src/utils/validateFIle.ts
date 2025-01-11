@@ -1,7 +1,5 @@
-// src/utils/validateFile.ts
-
 export interface FileValidationOptions {
-    maxSize?: number; // in bytes
+    maxSize?: number;
     allowedTypes?: string[];
     maxDimensions?: { width: number; height: number };
     minDimensions?: { width: number; height: number };

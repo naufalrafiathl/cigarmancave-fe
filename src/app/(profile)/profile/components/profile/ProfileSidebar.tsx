@@ -18,8 +18,6 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
   const [showOnboarding, setShowOnboarding] = useState(!user?.isOnboarded);
 
   const handleOnboardingComplete = async () => {
-    // Here you would typically make an API call to update the user's onboarded status
-    // await updateUserOnboardingStatus(user.id);
     setShowOnboarding(false);
   };
 

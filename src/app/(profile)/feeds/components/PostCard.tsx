@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CommentForm } from "../../posts/[postId]/components/CommentForm";
 import { CommentThread } from "../../posts/[postId]/components/CommentThread";
-import { useRouter } from "next/navigation"; // Changed this line
+import { useRouter } from "next/navigation";
 import { Comment } from "@/types/feeds";
 import { Post } from "@/types/feed";
 import ImageCarousel from "./ImageCarousel";
@@ -29,22 +29,6 @@ interface PostCardProps {
   post: Post;
   isDetailView: boolean;
   onCommentSuccess?: () => void;
-}
-
-interface ReviewWithFlavorScores {
-  flavorPepperScore: number;
-  flavorChocolateScore: number;
-  flavorCreamyScore: number;
-  flavorLeatherScore: number;
-  flavorWoodyScore: number;
-  flavorEarthyScore: number;
-  flavorNuttyScore: number;
-  flavorSweetScore: number;
-  flavorFruityScore: number;
-  flavorGrassyScore: number;
-  flavorBerryScore: number;
-  flavorCoffeeScore: number;
-  flavorBittersScore: number;
 }
 
 const buildCommentTree = (comments: Comment[]) => {
@@ -95,7 +79,6 @@ export const PostCard = ({
     };
   };
 
-  console.log("from feed page", post);
 
   const [likesCount, setLikesCount] = useState(getCounts().likes);
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);

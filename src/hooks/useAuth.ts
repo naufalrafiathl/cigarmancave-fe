@@ -20,7 +20,6 @@ export function useAuth(): UseAuthReturn {
     error: null,
   });
 
-  // Check auth status on mount
   useEffect(() => {
     checkAuth();
   }, []);
@@ -51,7 +50,7 @@ export function useAuth(): UseAuthReturn {
   };
 
   const login = async (email: string, password: string) => {
-    setState(prev => ({ ...prev, loading: true, error: null })); // Fixed typo: _error -> error
+    setState(prev => ({ ...prev, loading: true, error: null })); 
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -68,7 +67,6 @@ export function useAuth(): UseAuthReturn {
         throw new Error(data.error || data.message || 'Login failed');
       }
 
-      // Only update state if login was successful
       setState(prev => ({
         ...prev,
         user: data.user,
@@ -95,7 +93,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await fetch('/api/auth/logout', {
         method: 'POST',
-        credentials: 'include', // Added to ensure cookies are sent
+        credentials: 'include', 
       });
 
       if (!response.ok) {

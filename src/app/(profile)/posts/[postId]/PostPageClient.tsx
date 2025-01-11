@@ -14,18 +14,12 @@ interface PostPageClientProps {
   postId: string;
 }
 
-interface PostResponse {
-  status: string;
-  data: Post
-}
-
 const PostPageClient = ({ postId }: PostPageClientProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useUser();
   const { getPost } = useFeedOperations();
 
-  // Post Query with enabled refetching
   const {
     data: postResponse,
     isLoading: isPostLoading,
@@ -104,16 +98,14 @@ const PostPageClient = ({ postId }: PostPageClientProps) => {
             <PostCard 
               post={postResponse.data} 
               isDetailView={true}
-              onCommentSuccess={handleCommentSuccess} // Pass the handler down
+              onCommentSuccess={handleCommentSuccess}
             />
           </div>
         </div>
 
-        {/* Right Column - Create Post and Coming Soon */}
         <div className="hidden md:block md:col-span-4 space-y-6">
           {user && <CreatePostCard />}
           
-          {/* Coming Soon Card */}
           <div className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl 
             border border-white/5 p-6">
             <h3 className="text-xl font-semibold text-white mb-2">

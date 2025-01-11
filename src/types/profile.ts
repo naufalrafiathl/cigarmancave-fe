@@ -1,4 +1,3 @@
-// src/types/profile.ts
 export const TABS = {
     humidor: "humidor",
     reviews: "reviews",

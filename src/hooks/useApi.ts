@@ -1,4 +1,3 @@
-// src/hooks/useApi.ts
 'use client';
 
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -22,7 +21,6 @@ interface ProfileUpdateData {
   fullName?: string;
   picture?: string;
   locale?: string;
-  // Add any other fields that can be updated
 }
 
 export const useApi = () => {
@@ -42,5 +40,4 @@ export const useApi = () => {
   };
 };
 
-// Export the types for use in other components
 export type { UserProfile, ProfileUpdateData };

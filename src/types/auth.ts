@@ -1,4 +1,3 @@
-// src/types/auth.ts
 export interface User {
     id: string;
     email: string;
@@ -24,5 +23,4 @@ export interface User {
   export interface AuthResponse {
     user: User;
     token?: string;
-    // Add any other response properties you need
   }

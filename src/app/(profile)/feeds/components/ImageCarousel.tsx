@@ -37,7 +37,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     }
   };
 
-  // Add keyboard event listeners
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -107,7 +106,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     );
   };
 
-  // Main carousel
   return (
     <>
       <div className="relative w-full my-4 z-10 overflow-hidden">

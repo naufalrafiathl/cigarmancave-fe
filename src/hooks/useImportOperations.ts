@@ -1,8 +1,6 @@
-// src/hooks/useImportOperations.ts
 import { useMutation } from "@tanstack/react-query";
 import { config } from "@/config";
 
-// Types
 export interface ImportResult {
   processingResult: {
     success: boolean;
@@ -47,7 +45,6 @@ export interface ExactMatch {
       id: number;
       name: string;
     };
-    // ... other cigar fields
   };
 }
 
@@ -60,7 +57,6 @@ export interface PossibilityMatch {
       id: number;
       name: string;
     };
-    // ... other cigar fields
   }>;
   scores: Array<{
     similarity: number;
@@ -103,7 +99,6 @@ export interface ImportConfirmationResult {
   errors: string[];
 }
 
-// Helper function to handle API responses
 const handleApiResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({
@@ -119,7 +114,6 @@ const handleApiResponse = async <T>(response: Response): Promise<T> => {
   return response.json();
 };
 
-// Helper function to get auth headers
 const getAuthHeaders = async () => {
   const tokenResponse = await fetch("/api/auth/token");
   if (!tokenResponse.ok) {
