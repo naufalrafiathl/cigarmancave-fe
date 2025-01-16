@@ -60,7 +60,7 @@ const styles: Styles = {
     "flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-xl p-8 hover:border-[#EFA427] transition-colors cursor-pointer",
   button: {
     primary:
-      "px-4 py-2 rounded-lg font-medium bg-[#EFA427] text-black hover:bg-[#E25931] transition-colors flex items-center gap-2",
+      "px-4 flex py-2 rounded-lg font-medium bg-[#EFA427] text-black hover:bg-[#E25931] transition-colors flex items-center gap-2",
     secondary:
       "px-4 py-2 rounded-lg font-medium bg-[#363636] text-white hover:bg-[#404040] transition-colors",
     disabled:
@@ -246,7 +246,8 @@ export const ImportModal = ({
           disabled={!file}
           className={file ? styles.button.primary : styles.button.disabled}
         >
-          Process <ArrowRight className="w-4 h-4" />
+          Process 
+          {/* <ArrowRight className="w-4 h-4" /> */}
         </button>
       </div>
     </div>
@@ -349,7 +350,6 @@ export const ImportModal = ({
           </div>
         )}
 
-        {/* Possibilities */}
         {importResult.matches.possibilities.length > 0 && (
           <div className={styles.section}>
             <h3 className="text-xl mt-16">Possible Matches</h3>
@@ -424,7 +424,6 @@ export const ImportModal = ({
                       </select>
                     </div>
 
-                    {/* Show all fields regardless of selection */}
                     {selection?.importData && (
                       <div className={styles.gridContainer}>
                         <div className={styles.inputGroup}>
@@ -530,7 +529,6 @@ export const ImportModal = ({
           </div>
         )}
 
-        {/* New Entries */}
         {importResult.matches.newEntries.length > 0 && (
           <div className={styles.section}>
             <h3 className="text-xl mt-16">New Cigars</h3>
@@ -712,7 +710,6 @@ export const ImportModal = ({
           </div>
         )}
 
-        {/* Confirmation Buttons */}
         <div className="flex justify-end gap-4 pt-4">
           <button onClick={onClose} className={styles.button.secondary}>
             Cancel

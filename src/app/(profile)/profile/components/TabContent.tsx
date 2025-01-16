@@ -1,8 +1,9 @@
-// src/components/profile/TabContent.tsx
 import { TabType, TABS } from "@/types/profile";
 import { HumidorView } from "./HumidorView";
 import { ReviewsView } from "./ReviewView";
 import { AchievementView } from "./AchievementView";
+import { SubscriptionView } from "./SubscriptionView";
+import { StripeProvider } from "@/providers/StripeProvider";
 
 interface TabContentProps {
   currentTab: TabType;
@@ -26,11 +27,10 @@ export function TabContent({ currentTab }: TabContentProps) {
       </div>
     ),
     [TABS.subscription]: (
-      <div className="p-4 text-[#B9B9B9]">
-        <h2 className="text-xl font-semibold text-white mb-4">
-          My Subscription
-        </h2>
-        <p>Upgrade to Premium to unlock all features!</p>
+      <div className="overflow-y-auto">
+        <StripeProvider>
+          <SubscriptionView />
+        </StripeProvider>
       </div>
     ),
   };

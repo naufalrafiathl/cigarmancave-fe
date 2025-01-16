@@ -48,7 +48,7 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
 
           {/* Name and Location */}
           <div className="md:mt-4 text-left md:text-center flex-grow md:flex-grow-0">
-            <h2 className="text-white text-lg sm:text-xl font-semibold">
+            <h2 className="text-white text-center mt-3 md:mt-0 text-lg sm:text-xl font-semibold">
               {user?.fullName}
             </h2>
             <div className="flex items-center md:justify-center text-neutral-400 mt-1 md:mt-2 text-sm">
