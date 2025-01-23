@@ -52,7 +52,7 @@ export interface ReviewData {
 }
 
 export interface ReviewResponse {
-    data: {id:string};
+    data: {};
     id: number;
     duration: number;
     createdAt: string;
@@ -158,7 +158,6 @@ export function useReviewOperations() {
   const createReviewMutation = useMutation({
     mutationFn: async (reviewData: ReviewData): Promise<ReviewResponse> => {
       const headers = await getAuthHeaders();
-      console.log('inin review masuk ke ops',reviewData)
 
       const response = await fetch(`${config.apiUrl}/api/reviews`, {
         method: "POST",
