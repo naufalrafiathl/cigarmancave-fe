@@ -1,15 +1,12 @@
 /** @type {import('next').NextConfig} */
-
-/** @type {import('next').NextConfig} */
 const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  cacheOnFrontEndNav: true,
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/api\.*/,
+      urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'api-cache',
@@ -21,10 +18,32 @@ const withPWA = require('next-pwa')({
       }
     },
     {
-      urlPattern: /\.(png|jpg|jpeg|svg|gif|webp)$/,
+      urlPattern: /^https:\/\/lh3\.googleusercontent\.com\/.*/,
       handler: 'CacheFirst',
       options: {
-        cacheName: 'image-cache',
+        cacheName: 'google-images',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60 // 24 hours
+        }
+      }
+    },
+    {
+      urlPattern: /^https:\/\/s\.gravatar\.com\/.*/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'gravatar-images',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60 // 24 hours
+        }
+      }
+    },
+    {
+      urlPattern: /^https:\/\/.*\.amazonaws\.com\/.*/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 's3-images',
         expiration: {
           maxEntries: 100,
           maxAgeSeconds: 24 * 60 * 60 // 24 hours
@@ -43,8 +62,7 @@ const withPWA = require('next-pwa')({
       }
     }
   ]
-})
-
+});
 
 const nextConfig = {
   async headers() {
@@ -71,11 +89,10 @@ const nextConfig = {
     return [
       {
         source: "/api/auth/:path*",
-        destination: "http://localhost:3001/api/auth/:path*",
+        destination: "http://cigarmancave.com/api/auth/:path*",
       },
     ];
   },
-  // Add Auth0 domain to images configuration
   images: {
     domains: ["cigarmancave.us.auth0.com"],
     remotePatterns: [
@@ -99,6 +116,5 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig)
-
-export default nextConfig;
+// Wrap the nextConfig with PWA
+export default withPWA(nextConfig);
