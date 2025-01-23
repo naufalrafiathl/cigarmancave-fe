@@ -2,13 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  LogOut,
-  Star,
-  Box,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
+import { LayoutDashboard, LogOut, Star, Box } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface UserProfile {
   data: {
@@ -22,15 +17,31 @@ interface NavProps {
   profile: UserProfile;
 }
 
-const isLinkActive = (pathname: string, href: string) => {
-  if (href === "/dashboard") {
+const isLinkActive = (pathname: string, searchParams: URLSearchParams, href: string) => {
+  // Split the href into path and query parts
+  const [path, query] = href.split('?');
+  
+  if (path === "/dashboard") {
     return pathname === "/dashboard";
   }
-  return pathname.startsWith(href);
+
+  // For feeds
+  if (path === "/app/feeds") {
+    return pathname === "/app/feeds";
+  }
+
+  // For profile pages with tabs
+  if (path === "/app/profile" && query) {
+    const tabParam = query.split('=')[1];
+    return pathname === "/app/profile" && searchParams.get('tab') === tabParam;
+  }
+
+  return pathname.startsWith(path);
 };
 
 export const Sidebar: React.FC<NavProps> = ({ profile }) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   return (
     <div className="hidden md:block m-4 rounded-3xl fixed inset-y-0 left-0 w-64 bg-[#222222]">
@@ -51,11 +62,11 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-        <Link
-            href="/feeds"
+          <Link
+            href="/app/feeds"
             className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
-              isLinkActive(pathname, "/dashboard/profile")
-                ? "bg-gray-100 text-gray-800"
+              isLinkActive(pathname, searchParams, "/app/feeds")
+                ? "bg-[#EFA427] text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
             }`}
           >
@@ -63,10 +74,10 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
             Feeds
           </Link>
           <Link
-            href="/profile?tab=humidor"
+            href="/app/profile?tab=humidor"
             className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
-              isLinkActive(pathname, "/dashboard/profile")
-                ? "bg-gray-100 text-gray-800"
+              isLinkActive(pathname, searchParams, "/app/profile?tab=humidor")
+                ? "bg-[#EFA427] text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
             }`}
           >
@@ -74,10 +85,10 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
             Humidor
           </Link>
           <Link
-            href="/profile?tab=reviews"
+            href="/app/profile?tab=reviews"
             className={`flex items-center px-4 py-2 rounded-xl transition-colors duration-200 ${
-              isLinkActive(pathname, "/dashboard/profile")
-                ? "bg-gray-100 text-gray-800"
+              isLinkActive(pathname, searchParams, "/app/profile?tab=reviews")
+                ? "bg-[#EFA427] text-gray-800"
                 : "text-[#B9B9B9] hover:bg-[#EFA427] hover:text-gray-800"
             }`}
           >
@@ -85,7 +96,6 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
             Reviews
           </Link>
         </nav>
-        
 
         <div className="mt-auto">
           <div className="pl-10 mb-4">

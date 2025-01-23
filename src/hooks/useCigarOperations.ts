@@ -14,6 +14,36 @@ interface Cigar {
   color?: string;
   strength?: string;
 }
+export interface CreateCigarRequest {
+  name: string;
+  brand: string;
+  length?: number | null;
+  ringGauge?: number | null;
+  wrapper?: string | null;
+  strength?: string | null;
+}
+
+export interface CigarResponse {
+  id: number;
+  name: string;
+  length: number | null;
+  ringGauge: number | null;
+  country: string | null;
+  filler: string | null;
+  wrapper: string | null;
+  binder: string | null;
+  color: string | null;
+  strength: string | null;
+  premiumAssistantMessage: string | null;
+  createdAt: string;
+  updatedAt: string;
+  brandId: number;
+  brand: {
+    id: number;
+    name: string;
+  };
+}
+
 
 interface SearchCigarParams {
   query: string;
@@ -39,6 +69,7 @@ interface SearchApiResponse {
   total: number;
   data: SearchResult[];
 }
+
 
 export function useCigarOperations() {
   const [isLoading, setIsLoading] = useState(false);
@@ -146,10 +177,10 @@ export function useCigarOperations() {
     }
   };
 
-  const createCigar = async (data: Omit<Cigar, "id">): Promise<Cigar> => {
+  const createCigar = async (data: CreateCigarRequest): Promise<CigarResponse> => {
     setIsLoading(true);
     setError(null);
-
+  
     try {
       const headers = await getAuthHeaders();
       const response = await fetch(`${config.apiUrl}/api/cigars`, {
@@ -158,12 +189,12 @@ export function useCigarOperations() {
         credentials: "include",
         body: JSON.stringify(data),
       });
-
+  
       if (!response.ok) {
         const errorMessage = await parseErrorResponse(response);
         throw new Error(errorMessage);
       }
-
+  
       return await response.json();
     } catch (err) {
       const errorMessage =

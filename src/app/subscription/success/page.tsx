@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSubscriptionOperations } from '@/hooks/useSubscriptionOperations';
 import { Loader2, CheckCircle } from 'lucide-react';
 
-export default function SubscriptionSuccessPage() {
+function SubscriptionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { verifySubscription } = useSubscriptionOperations();
@@ -25,9 +25,7 @@ export default function SubscriptionSuccessPage() {
       }
 
       try {
-        // Verify subscription on backend
         const result = await verifySubscription(sessionId);
-
         if (result) {
           setIsSuccess(true);
         } else {
@@ -92,7 +90,7 @@ export default function SubscriptionSuccessPage() {
             Go to Home
           </button>
           <button 
-            onClick={() => router.push('/profile')}
+            onClick={() => router.push('/app/profile')}
             className="px-6 py-2 border border-white/10 text-white rounded-xl"
           >
             View Profile
@@ -100,5 +98,25 @@ export default function SubscriptionSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="text-center">
+        <Loader2 className="mx-auto mb-4 w-12 h-12 text-[#EFA427] animate-spin" />
+        <p className="text-white">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function SubscriptionSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SubscriptionContent />
+    </Suspense>
   );
 }

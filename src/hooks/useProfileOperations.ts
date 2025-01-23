@@ -64,6 +64,7 @@ export function useProfileOperations() {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: UpdateProfileData): Promise<ProfileResponse> => {
       const headers = await getAuthHeaders();
+      console.log("HAHAHAHA MASUK UPDATE PROFILE")
 
       const response = await fetch(`${config.apiUrl}/api/profile`, {
         method: "PUT",

@@ -1,6 +1,6 @@
 import { config } from "@/config";
 import { useUser } from "@/hooks/useUserOperations";
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 interface CigarInsights {
   history: string;
@@ -15,8 +15,10 @@ interface APIError {
 
 export function useAssistOperations() {
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   const getInsights = useCallback(async (cigarId: number): Promise<CigarInsights> => {
+    setIsLoading(true);
     try {
       const tokenResponse = await fetch("/api/auth/token");
       if (!tokenResponse.ok) {
@@ -40,14 +42,17 @@ export function useAssistOperations() {
     } catch (error) {
       console.error("Error fetching cigar insights:", error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   const values = useMemo(() => ({
     getInsights,
     isAuthenticated: !!user,
-    isPremium: !!user?.isPremium
-  }), [getInsights, user]);
+    isPremium: !!user?.isPremium,
+    isLoading
+  }), [getInsights, user, isLoading]);
 
   return values;
 }

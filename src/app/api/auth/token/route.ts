@@ -4,9 +4,33 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const { accessToken } = await getAccessToken();
-    return NextResponse.json({ accessToken });
+    const accessToken = await getAccessToken({
+      refresh: true,
+    });
+
+    if (!accessToken) {
+      return NextResponse.json({ 
+        error: 'Not authenticated',
+        code: 'not_authenticated',
+        redirectUrl: '/api/auth/login'
+      }, { 
+        status: 401 
+      });
+    }
+
+    return NextResponse.json({ 
+      accessToken: accessToken.accessToken
+    });
+
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to get access token' }, { status: 500 });
+    console.error('Token error:', error);
+    
+    return NextResponse.json({
+      error: 'Your session has expired. Please log in again.',
+      code: 'auth_error',
+      redirectUrl: '/api/auth/login'
+    }, { 
+      status: 401 
+    });
   }
 }

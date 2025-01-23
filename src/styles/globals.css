@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './pwa.css';
+
+
 :root {
   --background: #171717;
   --foreground: #171717;

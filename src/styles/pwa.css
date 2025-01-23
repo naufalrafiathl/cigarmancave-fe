@@ -1,0 +1,25 @@
+// src/styles/pwa.css
+/* Only apply these styles when running as PWA */
+@media all and (display-mode: standalone) {
+  :root {
+    --pwa-display: block;
+  }
+
+  /* Add padding for iOS safe areas */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Adjust sidebar for PWA mode */
+  .md\:ml-64 {
+    margin-left: calc(16rem + env(safe-area-inset-left));
+  }
+
+  /* Adjust mobile nav for PWA mode */
+  .mobile-nav {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}

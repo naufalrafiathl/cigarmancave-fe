@@ -38,21 +38,21 @@ export default async function Home() {
           <div className="flex gap-x-6">
             {session ? (
               <>
-                <a href="/profile" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                <Link href="/app/profile" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
                   App
-                </a>
-                <a href="/api/auth/logout" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                </Link>
+                <Link href="/api/auth/logout" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
                   Log out
-                </a>
+                </Link>
               </>
             ) : (
               <>
-                <a href="/api/auth/login" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                <Link href="/api/auth/login" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
                   Log in
-                </a>
-                <a href="/api/auth/login?screen_hint=signup" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                </Link>
+                <Link href="/api/auth/login?screen_hint=signup" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
                   Sign up
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -76,20 +76,20 @@ export default async function Home() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               {!session ? (
                 <>
-                  <a href="/api/auth/login?screen_hint=signup" 
+                  <Link href="/api/auth/login?screen_hint=signup" 
                      className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f06941] transition-colors">
                     Get started
-                  </a>
-                  <a href="/api/auth/login" 
+                  </Link>
+                  <Link href="/api/auth/login" 
                      className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
                     Log in <span aria-hidden="true">→</span>
-                  </a>
+                  </Link>
                 </>
               ) : (
-                <a href="/dashboard" 
+                <Link href="/app/feed" 
                    className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E25931] hover:text-white transition-colors">
-                  Go to Dashboard
-                </a>
+                  Go to App
+                </Link>
               )}
             </div>
           </div>
@@ -157,10 +157,10 @@ export default async function Home() {
               <ul className="space-y-3">
                 {["About Us", "Features", "Pricing", "Blog"].map((item) => (
                   <li key={item}>
-                    <a href={`/${item.toLowerCase().replace(' ', '-')}`} 
+                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} 
                        className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -172,10 +172,10 @@ export default async function Home() {
               <ul className="space-y-3">
                 {["Privacy Policy", "Terms of Service", "Cookie Policy", "Disclaimer"].map((item) => (
                   <li key={item}>
-                    <a href={`/${item.toLowerCase().replace(' ', '-')}`} 
+                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} 
                        className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -187,15 +187,15 @@ export default async function Home() {
               <ul className="space-y-3">
                 <li className="flex items-center gap-2 text-gray-400 text-sm group">
                   <Mail size={16} className="text-[#EFA427] group-hover:text-[#E25931] transition-colors" />
-                  <a href="mailto:support@cigarmancave.com" className="hover:text-[#E25931] transition-colors">
+                  <Link href="mailto:support@cigarmancave.com" className="hover:text-[#E25931] transition-colors">
                     support@cigarmancave.com
-                  </a>
+                  </Link>
                 </li>
                 <li className="flex items-center gap-2 text-gray-400 text-sm group">
                   <Phone size={16} className="text-[#EFA427] group-hover:text-[#E25931] transition-colors" />
-                  <a href="tel:+1234567890" className="hover:text-[#E25931] transition-colors">
+                  <Link href="tel:+1234567890" className="hover:text-[#E25931] transition-colors">
                     (123) 456-7890
-                  </a>
+                  </Link>
                 </li>
                 <li className="flex items-center gap-2 text-gray-400 text-sm">
                   <MapPin size={16} className="text-[#EFA427]" />
@@ -204,9 +204,9 @@ export default async function Home() {
               </ul>
               <div className="flex gap-4 mt-6">
                 {[Facebook, Twitter, Instagram].map((Icon, index) => (
-                  <a key={index} href="#" className="text-gray-400 hover:text-[#E25931] transition-colors">
+                  <Link key={index} href="#" className="text-gray-400 hover:text-[#E25931] transition-colors">
                     <Icon size={20} />
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -219,13 +219,13 @@ export default async function Home() {
                 © {new Date().getFullYear()} Cigar Mancave. All rights reserved.
               </p>
               <div className="flex gap-4 mt-4 md:mt-0">
-                <a href="/sitemap" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
+                <Link href="/sitemap" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
                   Sitemap
-                </a>
+                </Link>
                 <span className="text-gray-400">|</span>
-                <a href="/accessibility" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
+                <Link href="/accessibility" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
                   Accessibility
-                </a>
+                </Link>
               </div>
             </div>
           </div>

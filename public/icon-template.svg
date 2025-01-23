@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#1A1A1A"/>
+  
+  <!-- C Letter -->
+  <path d="M 146 156
+           A 100 100 0 0 1 246 156
+           L 246 196
+           A 60 60 0 0 0 186 196
+           L 186 316
+           A 60 60 0 0 0 246 316
+           L 246 356
+           A 100 100 0 0 1 146 356
+           Z"
+        fill="#E25931"/>
+  
+  <!-- M Letter -->
+  <path d="M 266 156
+           L 266 356
+           L 296 356
+           L 296 236
+           L 336 296
+           L 376 236
+           L 376 356
+           L 406 356
+           L 406 156
+           L 376 156
+           L 336 236
+           L 296 156
+           Z"
+        fill="#EFA427"/>
+  
+  <!-- Cigar smoke -->
+  <path d="M 326 96
+           C 326 96, 356 66, 336 46
+           C 316 26, 346 16, 356 36
+           C 366 56, 336 76, 346 86"
+        fill="none"
+        stroke="#E5E5E5"
+        stroke-width="8"
+        stroke-linecap="round"/>
+</svg>
