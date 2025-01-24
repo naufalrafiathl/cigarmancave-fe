@@ -6,7 +6,7 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
+      urlPattern: /^https:\/\/localhost:3001\/api\/.*/,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'api-cache',
@@ -85,7 +85,14 @@ const nextConfig = {
       },
     ];
   },
-  // Remove the rewrites section since we're handling Auth0 directly
+  async rewrites() {
+    return [
+      {
+        source: "/api/auth/:path*",
+        destination: "http://localhost:3001/api/auth/:path*",
+      },
+    ];
+  },
   images: {
     domains: ["cigarmancave.us.auth0.com"],
     remotePatterns: [
@@ -107,35 +114,7 @@ const nextConfig = {
       },
     ],
   },
-  // Add Auth0 configuration
-  auth0: {
-    secret: process.env.AUTH0_SECRET,
-    baseURL: process.env.AUTH0_BASE_URL,
-    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    audience: process.env.AUTH0_AUDIENCE,
-    scope: process.env.AUTH0_SCOPE,
-    authorizationParams: {
-      response_type: 'code',
-      audience: process.env.AUTH0_AUDIENCE,
-      scope: process.env.AUTH0_SCOPE
-    },
-    routes: {
-      callback: '/api/auth/callback',
-      postLogoutRedirect: '/',
-    },
-    session: {
-      absoluteDuration: 24 * 60 * 60,
-      rolling: true,
-      autoSave: true,
-    },
-    httpTimeout: 10000,
-    clockTolerance: 60,
-  },
 };
 
-// Export the config
-export default withPWA({
-  ...nextConfig,
-});
+// Wrap the nextConfig with PWA
+export default withPWA(nextConfig);
