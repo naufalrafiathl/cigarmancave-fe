@@ -5,8 +5,14 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
+    // Auth0 routes - NetworkOnly
     {
-      urlPattern: /^https:\/\/localhost:3001\/api\/.*/,
+      urlPattern: /\/api\/auth\/(login|callback|logout|me)/,
+      handler: 'NetworkOnly'
+    },
+    // API routes
+    {
+      urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'api-cache',
@@ -17,6 +23,7 @@ const withPWA = require('next-pwa')({
         }
       }
     },
+    // Google Images
     {
       urlPattern: /^https:\/\/lh3\.googleusercontent\.com\/.*/,
       handler: 'CacheFirst',
@@ -28,6 +35,7 @@ const withPWA = require('next-pwa')({
         }
       }
     },
+    // Gravatar Images
     {
       urlPattern: /^https:\/\/s\.gravatar\.com\/.*/,
       handler: 'CacheFirst',
@@ -39,6 +47,7 @@ const withPWA = require('next-pwa')({
         }
       }
     },
+    // AWS S3 Images
     {
       urlPattern: /^https:\/\/.*\.amazonaws\.com\/.*/,
       handler: 'CacheFirst',
@@ -50,6 +59,7 @@ const withPWA = require('next-pwa')({
         }
       }
     },
+    // Static Resources
     {
       urlPattern: /\.(?:js|css)$/i,
       handler: 'StaleWhileRevalidate',
@@ -60,8 +70,28 @@ const withPWA = require('next-pwa')({
           maxAgeSeconds: 24 * 60 * 60 // 24 hours
         }
       }
+    },
+    // Auth0 Domain
+    {
+      urlPattern: /^https:\/\/cigarmancave\.us\.auth0\.com\/.*/,
+      handler: 'NetworkOnly'
     }
-  ]
+  ],
+  customWorkerDir: 'worker',
+  customWorkerScript: `
+    const routesToFilter = [
+      "/api/auth/login",
+      "/api/auth/callback",
+      "/api/auth/logout",
+      "/api/auth/me",
+    ];
+
+    self.addEventListener('fetch', (event) => {
+      if (routesToFilter.some(route => event.request.url.includes(route))) {
+        return event.respondWith(fetch(event.request));
+      }
+    });
+  `
 });
 
 const nextConfig = {
@@ -74,7 +104,7 @@ const nextConfig = {
           { key: "Access-Control-Allow-Origin", value: "*" },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET,DELETE,PATCH,POST,PUT",
+            value: "GET,DELETE,PATCH,POST,PUT,OPTIONS",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -83,13 +113,29 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: "/api/auth/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          { key: "Access-Control-Allow-Origin", value: "https://cigarmancave.us.auth0.com" },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET,POST,OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value:
+              "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since",
+          },
+        ],
+      }
     ];
   },
   async rewrites() {
     return [
       {
         source: "/api/auth/:path*",
-        destination: "http://localhost:3001/api/auth/:path*",
+        destination: "https://api.cigarmancave.com/api/auth/:path*",
       },
     ];
   },
