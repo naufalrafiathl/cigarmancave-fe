@@ -10,6 +10,11 @@ const withPWA = require('next-pwa')({
       urlPattern: /\/api\/auth\/(login|callback|logout|me)/,
       handler: 'NetworkOnly'
     },
+    // Auth0 Domain
+    {
+      urlPattern: /^https:\/\/cigarmancave\.us\.auth0\.com\/.*/,
+      handler: 'NetworkOnly'
+    },
     // API routes
     {
       urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
@@ -70,28 +75,9 @@ const withPWA = require('next-pwa')({
           maxAgeSeconds: 24 * 60 * 60 // 24 hours
         }
       }
-    },
-    // Auth0 Domain
-    {
-      urlPattern: /^https:\/\/cigarmancave\.us\.auth0\.com\/.*/,
-      handler: 'NetworkOnly'
     }
   ],
-  customWorkerDir: 'worker',
-  customWorkerScript: `
-    const routesToFilter = [
-      "/api/auth/login",
-      "/api/auth/callback",
-      "/api/auth/logout",
-      "/api/auth/me",
-    ];
-
-    self.addEventListener('fetch', (event) => {
-      if (routesToFilter.some(route => event.request.url.includes(route))) {
-        return event.respondWith(fetch(event.request));
-      }
-    });
-  `
+  buildExcludes: ['/api/auth/login', '/api/auth/callback', '/api/auth/logout', '/api/auth/me']
 });
 
 const nextConfig = {
