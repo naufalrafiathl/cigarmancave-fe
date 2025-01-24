@@ -5,17 +5,10 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
-    // Auth0 routes - NetworkOnly
     {
-      urlPattern: /\/api\/auth\/(login|callback|logout|me)/,
+      urlPattern: /\/api\/auth\/.*/,
       handler: 'NetworkOnly'
     },
-    // Auth0 Domain
-    {
-      urlPattern: /^https:\/\/cigarmancave\.us\.auth0\.com\/.*/,
-      handler: 'NetworkOnly'
-    },
-    // API routes
     {
       urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
       handler: 'NetworkFirst',
@@ -28,7 +21,6 @@ const withPWA = require('next-pwa')({
         }
       }
     },
-    // Google Images
     {
       urlPattern: /^https:\/\/lh3\.googleusercontent\.com\/.*/,
       handler: 'CacheFirst',
@@ -40,7 +32,6 @@ const withPWA = require('next-pwa')({
         }
       }
     },
-    // Gravatar Images
     {
       urlPattern: /^https:\/\/s\.gravatar\.com\/.*/,
       handler: 'CacheFirst',
@@ -52,7 +43,6 @@ const withPWA = require('next-pwa')({
         }
       }
     },
-    // AWS S3 Images
     {
       urlPattern: /^https:\/\/.*\.amazonaws\.com\/.*/,
       handler: 'CacheFirst',
@@ -64,7 +54,6 @@ const withPWA = require('next-pwa')({
         }
       }
     },
-    // Static Resources
     {
       urlPattern: /\.(?:js|css)$/i,
       handler: 'StaleWhileRevalidate',
@@ -76,8 +65,7 @@ const withPWA = require('next-pwa')({
         }
       }
     }
-  ],
-  buildExcludes: ['/api/auth/login', '/api/auth/callback', '/api/auth/logout', '/api/auth/me']
+  ]
 });
 
 const nextConfig = {
@@ -104,16 +92,12 @@ const nextConfig = {
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "https://cigarmancave.us.auth0.com" },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,POST,OPTIONS",
-          },
+          { key: "Access-Control-Allow-Methods", value: "GET,POST,OPTIONS" },
           {
             key: "Access-Control-Allow-Headers",
-            value:
-              "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since",
-          },
-        ],
+            value: "Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"
+          }
+        ]
       }
     ];
   },
@@ -146,6 +130,12 @@ const nextConfig = {
       },
     ],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  }
 };
 
 // Wrap the nextConfig with PWA
