@@ -1,10 +1,11 @@
-"use client"
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Camera, Loader2, X, Upload, Trash } from 'lucide-react';
-import { toast } from 'sonner';
-import { useProfileOperations } from '@/hooks/useProfileOperations';
-import { useUser } from '@auth0/nextjs-auth0/client';
+"use client";
+import React, { useState } from "react";
+import Image from "next/image";
+import { Camera, Loader2, X, Upload, Trash } from "lucide-react";
+import { toast } from "sonner";
+import { useProfileOperations } from "@/hooks/useProfileOperations";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { LocationSelector } from "@/components/LocationSelector";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -17,33 +18,39 @@ interface EditProfileModalProps {
   };
 }
 
-const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalProps) => {
+const EditProfileModal = ({
+  isOpen,
+  onClose,
+  currentProfile,
+}: EditProfileModalProps) => {
   const { user } = useUser();
-  const { 
-    updateProfile, 
-    uploadImage, 
-    deleteImage, 
-    isUpdating, 
-    isUploading, 
-    isDeleting 
+  const {
+    updateProfile,
+    uploadImage,
+    deleteImage,
+    isUpdating,
+    isUploading,
+    isDeleting,
   } = useProfileOperations();
-  
+
   const [formData, setFormData] = useState({
-    fullName: currentProfile.fullName || '',
-    location: currentProfile.location || '',
+    fullName: currentProfile.fullName || "",
+    location: currentProfile.location || "",
   });
-  
+
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(currentProfile.profileImageUrl || '');
+  const [previewUrl, setPreviewUrl] = useState<string>(
+    currentProfile.profileImageUrl || ""
+  );
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size should be less than 5MB');
+        toast.error("Image size should be less than 5MB");
         return;
       }
-      
+
       setProfileImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -53,11 +60,11 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
     try {
       await deleteImage();
       setProfileImage(null);
-      setPreviewUrl('');
-      toast.success('Profile image deleted successfully');
+      setPreviewUrl("");
+      toast.success("Profile image deleted successfully");
     } catch (error) {
-      toast.error('Failed to delete profile image');
-      console.error('Error deleting image:', error);
+      toast.error("Failed to delete profile image");
+      console.error("Error deleting image:", error);
     }
   };
 
@@ -76,14 +83,14 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
       // Update profile data
       await updateProfile({
         ...formData,
-        profileImageUrl
+        profileImageUrl,
       });
-      
-      toast.success('Profile updated successfully');
+
+      toast.success("Profile updated successfully");
       onClose();
       window.location.reload();
     } catch (error) {
-      toast.error('Failed to update profile');
+      toast.error("Failed to update profile");
     }
   };
 
@@ -119,7 +126,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
                   <Camera className="w-8 h-8 text-[#B9B9B9]" />
                 </div>
               )}
-              
+
               <div className="absolute -bottom-2 -right-2 flex gap-2">
                 <label
                   htmlFor="profile-image"
@@ -127,7 +134,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
                 >
                   <Upload className="w-4 h-4 text-white" />
                 </label>
-                
+
                 {previewUrl && (
                   <button
                     type="button"
@@ -147,7 +154,7 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
               onChange={handleImageChange}
               className="hidden"
             />
-            
+
             <p className="text-sm text-[#B9B9B9]">
               Recommended: Square image, max 5MB
             </p>
@@ -156,31 +163,37 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
           {/* Form Fields */}
           <div className="space-y-4">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-white mb-1">
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-white mb-1"
+              >
                 Full Name
               </label>
               <input
                 id="fullName"
                 type="text"
                 value={formData.fullName}
-                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, fullName: e.target.value }))
+                }
                 className="w-full bg-[#363636] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
                 placeholder="Your full name"
               />
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Location
               </label>
-              <input
-                id="location"
-                type="text"
+              <LocationSelector
                 value={formData.location}
-                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                className="w-full bg-[#363636] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#EFA427]"
-                placeholder="Your location"
+                onChange={(location) =>
+                  setFormData((prev) => ({ ...prev, location }))
+                }
               />
+              <p className="text-xs text-[#B9B9B9] mt-1">
+                Select your country and city (optional)
+              </p>
             </div>
           </div>
 
@@ -193,19 +206,23 @@ const EditProfileModal = ({ isOpen, onClose, currentProfile }: EditProfileModalP
             >
               Cancel
             </button>
-            
+
             <button
               type="submit"
               disabled={isUpdating || isUploading || isDeleting}
               className="px-4 py-2 bg-[#EFA427] text-white rounded-xl hover:bg-[#EFA427]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {(isUpdating || isUploading || isDeleting) ? (
+              {isUpdating || isUploading || isDeleting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin inline-block" />
-                  {isUploading ? 'Uploading...' : isDeleting ? 'Deleting...' : 'Saving...'}
+                  {isUploading
+                    ? "Uploading..."
+                    : isDeleting
+                    ? "Deleting..."
+                    : "Saving..."}
                 </>
               ) : (
-                'Save Changes'
+                "Save Changes"
               )}
             </button>
           </div>

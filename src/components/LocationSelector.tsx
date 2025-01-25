@@ -10,50 +10,51 @@ export function LocationSelector({ value, onChange }: LocationSelectorProps) {
   const [countries, setCountries] = useState<ICountry[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string>('');
 
   useEffect(() => {
-    // Get all countries on mount
     setCountries(Country.getAllCountries());
   }, []);
 
   useEffect(() => {
-    // Get cities when country is selected
     if (selectedCountry) {
       setCities(City.getCitiesOfCountry(selectedCountry.isoCode) || []);
-      // Update location with just country when country changes
-      onChange(selectedCountry.name);
     }
-  }, [selectedCountry, onChange]);
+  }, [selectedCountry]);
 
-  // Find and set initial country from value if it exists
+  // Initialize from provided value
   useEffect(() => {
-    if (value && !selectedCountry) {
-      const countryName = value.split(',').pop()?.trim();
-      const country = countries.find(c => c.name === countryName);
+    if (value) {
+      const [cityPart, countryPart] = value.split(',').map(part => part.trim());
+      const country = countries.find(c => c.name === countryPart);
       if (country) {
         setSelectedCountry(country);
+        setSelectedCity(cityPart);
       }
     }
-  }, [value, countries, selectedCountry]);
+  }, [value, countries]);
 
   const handleCountrySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const country = countries.find(c => c.isoCode === e.target.value);
     setSelectedCountry(country || null);
+    setSelectedCity(''); // Reset city when country changes
+    if (country) {
+      onChange(country.name);
+    }
   };
 
   const handleCitySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityName = e.target.value;
-    if (cityName && selectedCountry) {
-      onChange(`${cityName}, ${selectedCountry.name}`);
+    const city = e.target.value;
+    setSelectedCity(city);
+    if (city && selectedCountry) {
+      onChange(`${city}, ${selectedCountry.name}`);
     } else if (selectedCountry) {
-      // If no city is selected, just use the country name
       onChange(selectedCountry.name);
     }
   };
 
   return (
     <div className="space-y-2">
-      {/* Country Selection */}
       <select
         className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
         onChange={handleCountrySelect}
@@ -67,12 +68,11 @@ export function LocationSelector({ value, onChange }: LocationSelectorProps) {
         ))}
       </select>
 
-      {/* City Selection - Optional */}
       {selectedCountry && cities.length > 0 && (
         <select
           className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
           onChange={handleCitySelect}
-          value={value.includes(',') ? value.split(',')[0].trim() : ''}
+          value={selectedCity}
         >
           <option value="">Select City (Optional)</option>
           {cities.map((city) => (
