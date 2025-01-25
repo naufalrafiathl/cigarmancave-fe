@@ -19,7 +19,13 @@ export const metadata: Metadata = {
   title: 'Dashboard | Cigar Mancave',
   description: 'Manage your cigar collection and connect with enthusiasts',
   themeColor: '#171717',
-  viewport,
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover'  // Important for notched phones
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',

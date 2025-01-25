@@ -1,37 +1,43 @@
 const withSerwist = require("@serwist/next").default({
-  swSrc: "src/app/sw.ts", // Updated path
+  swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
   disable: process.env.NODE_ENV === "development",
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Headers configuration
   async headers() {
+    // Define CSP based on environment
+    const cspContent = process.env.NODE_ENV === 'development' 
+      ? "default-src 'self' https://cigarmancave.us.auth0.com http://localhost:3000 http://localhost:3001; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cigarmancave.us.auth0.com; connect-src 'self' https://cigarmancave.us.auth0.com http://localhost:3000 http://localhost:3001;"
+      : "default-src 'self' https://cigarmancave.us.auth0.com https://api.cigarmancave.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cigarmancave.us.auth0.com; connect-src 'self' https://cigarmancave.us.auth0.com https://api.cigarmancave.com;";
+
+    // Define CORS origin based on environment
+    const corsOrigin = process.env.NODE_ENV === 'development'
+      ? "http://localhost:3000"
+      : "https://cigarmancave.com";
+
     return [
-      // Global headers
       {
         source: "/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "https://cigarmancave.com" },
+          { key: "Access-Control-Allow-Origin", value: corsOrigin },
           { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
           {
             key: "Access-Control-Allow-Headers",
             value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
           },
-          // Security headers
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self' https://cigarmancave.us.auth0.com https://api.cigarmancave.com; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cigarmancave.us.auth0.com; connect-src 'self' https://cigarmancave.us.auth0.com https://api.cigarmancave.com;"
+            value: cspContent
           }
         ]
       },
-      // Auth-specific headers
       {
         source: "/api/auth/:path*",
         headers: [
@@ -56,19 +62,24 @@ const nextConfig = {
     ];
   },
 
-  // Rewrites configuration
   async rewrites() {
-    return [
-      {
-        source: "/api/auth/:path*",
-        destination: "https://api.cigarmancave.com/api/auth/:path*"
-      }
-    ];
+    return process.env.NODE_ENV === 'development' 
+      ? [
+          {
+            source: "/api/auth/:path*",
+            destination: "http://localhost:3001/api/auth/:path*" // Local API server
+          }
+        ]
+      : [
+          {
+            source: "/api/auth/:path*",
+            destination: "https://api.cigarmancave.com/api/auth/:path*"
+          }
+        ];
   },
 
-  // Image configuration
   images: {
-    domains: ["cigarmancave.us.auth0.com"],
+    domains: ["cigarmancave.us.auth0.com", "localhost"],
     remotePatterns: [
       {
         protocol: "https",
@@ -89,7 +100,6 @@ const nextConfig = {
     ]
   },
 
-  // Build configuration
   typescript: {
     ignoreBuildErrors: true
   },
@@ -97,11 +107,9 @@ const nextConfig = {
     ignoreDuringBuilds: true
   },
 
-  // Compiler configuration
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   }
 };
 
-// Export the configuration with Serwist
 module.exports = withSerwist(nextConfig);

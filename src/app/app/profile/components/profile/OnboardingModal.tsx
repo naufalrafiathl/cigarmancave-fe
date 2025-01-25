@@ -2,9 +2,10 @@
 import React, { useState, useCallback } from "react";
 import Image from "next/image";
 import { X, Upload, Trash2 } from "lucide-react";
-
+import { LocationSelector } from "@/components/LocationSelector";
 import { useProfileOperations } from "@/hooks/useProfileOperations";
 import { toast } from "sonner";
+import { ProfileFormStep } from "./ProfileFormStep";
 
 interface OnboardingStep {
   title: string;
@@ -14,30 +15,36 @@ interface OnboardingStep {
 
 const onboardingSteps: OnboardingStep[] = [
   {
-    title: "Hey there, welcome aboard!",
+    title: "To Our Beta Pioneers",
     description:
-      "First off, thanks for joining us! We're building something special here - a place where both newcomers and seasoned aficionados can share their cigar journey. No pretense, just genuine connections and great stories.",
-    image: "/welcome-image.jpg",
+      "You're among our first members, and we couldn't be more grateful. As a thank you for being part of our early community, you'll receive an exclusive 'Beta Pioneer' badge - a permanent mark of honor that shows you were here from the beginning. Let's build something amazing together.",
+    image:
+      "https://mancave-uploads.s3.ap-southeast-2.amazonaws.com/onboard2.png",
   },
   {
-    title: "Your Personal Cigar Journey",
+    title: "Track Your Collection, Completely Free",
     description:
-      "Remember that feeling of trying your first cigar? Now you can keep track of every memorable smoke. Create your own digital humidor, log your experiences, and if you're like me when I started, learn from others along the way. And hey, if you're curious about the deeper stories behind each cigar, our premium features have got you covered.",
-    image: "/features-image.jpg",
+      "Create unlimited digital humidors and track as many cigars as you want - all at no cost. We believe in keeping the core features free. Plus, unlock premium features like AI-powered cigar insights and bulk import through receipt scanning to enhance your experience even further.",
+    image:
+      "https://mancave-uploads.s3.ap-southeast-2.amazonaws.com/onboard1.png",
   },
   {
-    title: "Join the Conversation",
+    title: "Share & Discover",
     description:
-      "Whether you're looking for your next favorite smoke, want to share a special moment, or just chat about cigars - this is your space. Drop a review, ask questions (trust me, we've all been beginners), and connect with folks who share your passion. Plus, earn some cool badges that show your journey from novice to know-how!",
-    image: "/social-image.jpg",
+      "Every cigar tells a story. Share yours through reviews and get personalized insights about each cigar you try. Connect with other enthusiasts, discover hidden gems, and learn from the community's collective experience. From quick tips to in-depth discussions, you'll find it all here.",
+    image:
+      "https://mancave-uploads.s3.ap-southeast-2.amazonaws.com/onboard3.png",
   },
   {
-    title: "Let's Make It Official",
+    title: "Let's Get Started",
     description:
-      "Alright, let's get you set up! Tell us a bit about yourself - nothing fancy, just the basics. This helps others in the community get to know you better. After all, every great cigar story starts with an introduction.",
-    image: "/profile-image.jpg",
+      "Time to make yourself at home! Tell us a bit about yourself - it helps others get to know you and makes connecting over shared interests easier. Every great cigar story starts with an introduction.",
+    image:
+      "https://mancave-uploads.s3.ap-southeast-2.amazonaws.com/onboard4.png",
   },
 ];
+
+export default onboardingSteps;
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -123,10 +130,9 @@ export function OnboardingModal({
         location: profileData.location,
         profileImageUrl: profileData.profileImageUrl,
       });
-  
+
       // Log the response
-      console.log('Profile update response:', updateResponse);
-  
+
       // Show toast with loading state
       await toast.promise(
         // Using Promise.resolve since we already have the response
@@ -134,19 +140,17 @@ export function OnboardingModal({
         {
           loading: "Updating profile...",
           success: (data) => {
-            console.log('Toast success data:', data);
             // Only complete and reload after successful update
             onComplete();
             window.location.reload();
             return "Welcome aboard! Your profile has been set up successfully";
           },
           error: (err) => {
-            console.error('Toast error:', err);
+            console.error("Toast error:", err);
             return "Failed to update profile";
-          }
+          },
         }
       );
-  
     } catch (error) {
       console.error("Profile update error:", error);
       toast.error("Failed to update profile");
@@ -163,7 +167,7 @@ export function OnboardingModal({
     }
   };
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
@@ -202,75 +206,93 @@ export function OnboardingModal({
           </p>
 
           {/* Profile form on last step */}
-          {currentStep === onboardingSteps.length - 1 && (
-            <div className="space-y-4 mb-6">
-              {/* Profile Image Upload */}
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative w-24 h-24 group">
-                  {profileData.profileImageUrl ? (
-                    <>
-                      <div className="relative w-full h-full rounded-full overflow-hidden">
-                        <Image
-                          src={profileData.profileImageUrl}
-                          alt="Profile"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <button
-                        onClick={handleImageDelete}
-                        className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all"
-                        disabled={isDeleting}
-                      >
-                        <Trash2 className="w-4 h-4 text-white" />
-                      </button>
-                    </>
-                  ) : (
-                    <label className="w-full h-full rounded-full bg-neutral-700 flex items-center justify-center cursor-pointer hover:bg-neutral-600 transition-colors group">
-                      <div className="flex flex-col items-center gap-1">
-                        <Upload className="w-8 h-8 text-neutral-400 group-hover:text-neutral-300" />
-                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300">
-                          Upload Photo
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={isUploading}
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
+          {/* {currentStep === onboardingSteps.length - 1 && (
+            <ProfileFormStep
+              profileData={profileData}
+              onProfileChange={setProfileData}
+              onImageUpload={handleImageUpload}
+              onImageDelete={handleImageDelete}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+            />
+          )} */}
 
-              <input
-                type="text"
-                value={profileData.fullName}
-                onChange={(e) =>
-                  setProfileData((prev) => ({
-                    ...prev,
-                    fullName: e.target.value,
-                  }))
-                }
-                placeholder="Full Name"
-                className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
-              />
-              <input
-                type="text"
-                value={profileData.location}
-                onChange={(e) =>
-                  setProfileData((prev) => ({
-                    ...prev,
-                    location: e.target.value,
-                  }))
-                }
-                placeholder="Location"
-                className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
+          {/* Profile form on last step */}
+{currentStep === onboardingSteps.length - 1 && (
+  <div className="space-y-4 mb-6">
+    {/* Profile Image Upload */}
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative w-24 h-24 group">
+        {profileData.profileImageUrl ? (
+          <>
+            <div className="relative w-full h-full rounded-full overflow-hidden">
+              <Image
+                src={profileData.profileImageUrl}
+                alt="Profile"
+                fill
+                className="object-cover"
               />
             </div>
-          )}
+            <button
+              onClick={handleImageDelete}
+              className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all"
+              disabled={isDeleting}
+            >
+              <Trash2 className="w-4 h-4 text-white" />
+            </button>
+          </>
+        ) : (
+          <label className="w-full h-full rounded-full bg-neutral-700 flex items-center justify-center cursor-pointer hover:bg-neutral-600 transition-colors group">
+            <div className="flex flex-col items-center gap-1">
+              <Upload className="w-8 h-8 text-neutral-400 group-hover:text-neutral-300" />
+              <span className="text-xs text-neutral-400 group-hover:text-neutral-300">
+                Upload Photo
+              </span>
+            </div>
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={isUploading}
+            />
+          </label>
+        )}
+      </div>
+    </div>
+
+    {/* Full Name Input */}
+    <div className="space-y-2">
+      <label className="text-sm text-neutral-400">Full Name</label>
+      <input
+        type="text"
+        value={profileData.fullName}
+        onChange={(e) =>
+          setProfileData((prev) => ({
+            ...prev,
+            fullName: e.target.value,
+          }))
+        }
+        placeholder="Full Name"
+        className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
+      />
+    </div>
+
+    {/* Location Selector */}
+    <div className="space-y-2">
+      <label className="text-sm text-neutral-400">Location</label>
+      <LocationSelector
+        value={profileData.location}
+        onChange={(location) =>
+          setProfileData((prev) => ({
+            ...prev,
+            location,
+          }))
+        }
+      />
+    </div>
+  </div>
+)}
 
           {/* Navigation buttons */}
           <div className="flex justify-end gap-4">
