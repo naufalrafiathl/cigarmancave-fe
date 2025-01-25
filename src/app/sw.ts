@@ -11,8 +11,7 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
-// Auth routes that should never be cached
-const authRoutes = [
+const routesToFilter = [
   "/api/auth/login",
   "/api/auth/callback",
   "/api/auth/logout",
@@ -25,13 +24,12 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
-    // Auth routes - Always network only
     {
-      matcher: ({ url, sameOrigin }: { url: URL; sameOrigin: boolean }) => 
-        sameOrigin && authRoutes.includes(url.pathname),
+      matcher({ sameOrigin, url }) {
+        return sameOrigin && routesToFilter.includes(url.pathname);
+      },
       handler: new NetworkOnly(),
     },
-    // Add the default cache for everything else
     ...defaultCache,
   ],
 });
