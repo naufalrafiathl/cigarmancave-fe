@@ -35,6 +35,7 @@ const nextConfig = {
       {
         source: "/api/auth/:path*",
         headers: [
+          { key: "Content-Type", value: "text/html; charset=utf-8" },
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "https://cigarmancave.us.auth0.com" },
           { key: "Access-Control-Allow-Methods", value: "GET,POST,OPTIONS" },
