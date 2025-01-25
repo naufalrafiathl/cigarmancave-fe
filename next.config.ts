@@ -35,9 +35,6 @@ const withPWA = require('next-pwa')({
         expiration: {
           maxEntries: 50,
           maxAgeSeconds: 60 * 60 // 1 hour
-        },
-        matchOptions: {
-          ignoreSearch: true
         }
       }
     },
@@ -83,18 +80,6 @@ const withPWA = require('next-pwa')({
       handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'static-resources',
-        expiration: {
-          maxEntries: 32,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
-        }
-      }
-    },
-    // HTML pages
-    {
-      urlPattern: /^https:\/\/cigarmancave\.com\/.*$/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages-cache',
         expiration: {
           maxEntries: 32,
           maxAgeSeconds: 24 * 60 * 60 // 24 hours
@@ -159,8 +144,7 @@ const nextConfig = {
     return [
       {
         source: "/api/auth/:path*",
-        destination: "https://api.cigarmancave.com/api/auth/:path*",
-        hasQuery: true
+        destination: "https://api.cigarmancave.com/api/auth/:path*"
       }
     ];
   },
@@ -194,48 +178,6 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true
-  },
-
-  // Cookie and security configuration
-  experimental: {
-    cookiePrefix: 'auth0',
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
-  },
-
-  // PWA configuration
-  pwa: {
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
-    register: true,
-    scope: '/',
-    sw: 'service-worker.js',
-    skipWaiting: true,
-    customWorkerDir: 'worker',
-  },
-
-  // Environment configuration
-  env: {
-    AUTH0_BASE_URL: process.env.AUTH0_BASE_URL,
-    AUTH0_ISSUER_BASE_URL: process.env.AUTH0_ISSUER_BASE_URL,
-    AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-    AUTH0_SCOPE: 'openid profile email',
-  },
-
-  // Server configuration
-  serverRuntimeConfig: {
-    auth0: {
-      secret: process.env.AUTH0_SECRET,
-      baseURL: process.env.AUTH0_BASE_URL,
-      issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-      clientId: process.env.AUTH0_CLIENT_ID,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    }
-  },
-
-  // Optimization configuration
-  optimization: {
-    minimize: process.env.NODE_ENV === 'production',
   },
 
   // Compiler configuration
