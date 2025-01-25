@@ -1,232 +1,184 @@
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { getSession } from "@auth0/nextjs-auth0";
-import { ScrollText, Users, Book, Repeat, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
-
-export const dynamic = "force-dynamic";
+import {
+  ScrollText,
+  Users,
+  Book,
+  Facebook,
+  Twitter,
+  Instagram,
+} from "lucide-react";
+import SecretAuth from "@/components/SecretAuth";
 
 export default async function Home() {
-  headers();
 
-  let session = null;
+  // More robust session handling
+  let isAuthenticated = false;
+
   try {
-    session = await getSession();
+    const session = await getSession();
+    isAuthenticated = Boolean(session?.user);
   } catch (error) {
     console.error("Session error:", error);
+    isAuthenticated = false;
   }
 
+
   return (
-    <div className="bg-[#171717] min-h-screen">
-      {/* Header/Navigation */}
-      <header className="absolute inset-x-0 top-0 z-50">
-        <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-          <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
+    <div className="h-screen overflow-hidden bg-black flex flex-col">
+      {/* Header */}
+      <header className="fixed top-0 w-full border-b border-white/5 bg-black/10 backdrop-blur-md z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-24">
+            <Link href="/" className="h-16">
               <Image
                 src="/images/logo/logo.png"
-                width={130}
-                height={80}
+                width={140}
+                height={140}
                 alt="Cigar Mancave"
                 priority
-                style={{ height: "auto" }}
-                loading="eager"
-                quality={90}
+                className="h-full w-auto object-contain"
               />
             </Link>
-          </div>
-          <div className="flex gap-x-6">
-            {session ? (
-              <>
-                <Link href="/app/profile" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
-                  App
-                </Link>
-                <Link href="/api/auth/logout" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
-                  Log out
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/api/auth/login" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
-                  Log in
-                </Link>
-                <Link href="/api/auth/login?screen_hint=signup" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
-                  Sign up
-                </Link>
-              </>
-            )}
-          </div>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <div className="relative isolate px-6 pt-14 lg:px-8">
-        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#EFA427] to-[#E25931] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
-        </div>
-        
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-[#EFA427] sm:text-6xl">
-              Finally, The Cigar App Done Right
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-200">
-              More than just another cigar app. Experience the most comprehensive, beautifully crafted platform for the modern aficionado.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              {!session ? (
+            {/* <div className="flex gap-x-6">
+              {session ? (
                 <>
-                  <Link href="/api/auth/login?screen_hint=signup" 
-                     className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#f06941] transition-colors">
-                    Get started
+                  <Link href="/app/profile" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                    App
                   </Link>
-                  <Link href="/api/auth/login" 
-                     className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
-                    Log in <span aria-hidden="true">→</span>
+                  <Link href="/api/auth/logout" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                    Log out
                   </Link>
                 </>
               ) : (
-                <Link href="/app/feed" 
-                   className="rounded-xl bg-[#E25931] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E25931] hover:text-white transition-colors">
-                  Go to App
-                </Link>
+                <>
+                  <Link href="/api/auth/login" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                    Log in
+                  </Link>
+                  <Link href="/api/auth/login?screen_hint=signup" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                    Sign up
+                  </Link>
+                </>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Features Section */}
-      <div className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-[#E25931]">
-              Everything You Need
-            </h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              All-in-one platform for cigar enthusiasts
-            </p>
-          </div>
-          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto pt-24">
+        <div className="max-w-3xl mx-auto px-4 py-12">
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[#EFA427] mb-6">
+              More Than Just Another Cigar App
+            </h1>
+
+            {/* CTA Section */}
+            <div className="my-16">
+              <h3 className="text-xl text-white mb-1">
+                Now in <span className="text-[#EFA427]">Beta.</span>
+              </h3>
+              <h1 className="text-xl text-white mb-4">
+                Join us in building something special
+              </h1>
+              {/* <div className="flex justify-center gap-4">
+                {!session ? (
+                  <>
+                    <Link
+                      href="/api/auth/login?screen_hint=signup"
+                      className="px-6 py-3 bg-[#E25931] text-white rounded-lg font-semibold
+                      hover:bg-[#f06941] focus:outline-none focus:ring-2 focus:ring-[#EFA427] 
+                      focus:ring-offset-2 focus:ring-offset-black flex items-center gap-2
+                      transition-all duration-200"
+                    >
+                      Get Started
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <Link
+                      href="/api/auth/login"
+                      className="px-6 py-3 text-[#EFA427] hover:text-[#E25931] font-semibold
+                      transition-colors flex items-center gap-2"
+                    >
+                      Log in
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </>
+                ) : (
+                  <Link
+                    href="/app/feeds"
+                    className="px-6 py-3 bg-[#E25931] text-white rounded-lg font-semibold
+                    hover:bg-[#f06941] focus:outline-none focus:ring-2 focus:ring-[#EFA427] 
+                    focus:ring-offset-2 focus:ring-offset-black flex items-center gap-2
+                    transition-all duration-200"
+                  >
+                    Go to App
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                )}
+              </div> */}
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               {[
-                { icon: Book, title: "Digital Humidor", desc: "Keep track of your collection with detailed information about each cigar. Monitor humidity, temperature, and aging progress." },
-                { icon: ScrollText, title: "Detailed Reviews", desc: "Share your experiences and read reviews from other enthusiasts. Track flavor profiles, burn quality, and overall impressions." },
-                { icon: Users, title: "Community", desc: "Connect with fellow cigar lovers, share your collection, and participate in discussions about your favorite smokes." },
-                { icon: Repeat, title: "Trading Platform", desc: "Find and trade cigars with other collectors in your area. Build your collection through our secure trading platform." }
-              ].map((feature) => (
-                <div key={feature.title} className="relative pl-16 group">
-                  <dt className="text-base font-semibold leading-7 text-[#EFA427] group-hover:text-[#E25931] transition-colors">
-                    <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-[#404040] group-hover:bg-[#E25931] transition-colors">
-                      <feature.icon className="h-6 w-6 text-[#EFA427] group-hover:text-white transition-colors" />
-                    </div>
+                {
+                  icon: Book,
+                  title: "Your Digital Humidor",
+                  description:
+                    "Keep track of your collection, just like that leather journal - but digital. Track aging, take notes, and never lose a memory.",
+                },
+                {
+                  icon: ScrollText,
+                  title: "Share Your Experience",
+                  description:
+                    "Every cigar has a story. Share yours with detailed reviews, photos, and connect with fellow enthusiasts who get it.",
+                },
+                {
+                  icon: Users,
+                  title: "Find Your Community",
+                  description:
+                    "Connect with local aficionados, and maybe find your next smoking buddy. We're all family here.",
+                },
+              ].map((feature, index) => (
+                <div
+                  key={index}
+                  className="p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/[0.02] 
+                  border border-white/10 hover:border-[#EFA427] transition-colors"
+                >
+                  <feature.icon className="w-8 h-8 text-[#EFA427] mb-4" />
+                  <h3 className="text-xl font-semibold text-white mb-2">
                     {feature.title}
-                  </dt>
-                  <dd className="mt-2 text-base leading-7 text-gray-300">
-                    {feature.desc}
-                  </dd>
+                  </h3>
+                  <p className="text-white/60">{feature.description}</p>
                 </div>
               ))}
-            </dl>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
-      <footer className="bg-[#1a1a1a] border-t border-[#333333]">
-        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Company Info */}
-            <div className="space-y-4">
-              <Image
-                src="/images/logo/logo.png"
-                width={100}
-                height={60}
-                alt="Cigar Mancave"
-                style={{ height: "auto" }}
-                quality={90}
-              />
-              <p className="text-gray-400 text-sm mt-4">
-                The ultimate platform for cigar enthusiasts to connect, share, and trade.
-              </p>
+      <footer className="border-t border-white/5 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center text-white/60 text-sm">
+              <span>
+                © {new Date().getFullYear()} Cigar Mancave. Built with{" "}
+              </span>
+              <SecretAuth isAuthenticated={isAuthenticated} />
+              <span> by the community, for the community.</span>
             </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-[#E25931] font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-3">
-                {["About Us", "Features", "Pricing", "Blog"].map((item) => (
-                  <li key={item}>
-                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} 
-                       className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h3 className="text-[#E25931] font-semibold mb-4">Legal</h3>
-              <ul className="space-y-3">
-                {["Privacy Policy", "Terms of Service", "Cookie Policy", "Disclaimer"].map((item) => (
-                  <li key={item}>
-                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} 
-                       className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-[#E25931] font-semibold mb-4">Contact Us</h3>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-gray-400 text-sm group">
-                  <Mail size={16} className="text-[#EFA427] group-hover:text-[#E25931] transition-colors" />
-                  <Link href="mailto:support@cigarmancave.com" className="hover:text-[#E25931] transition-colors">
-                    support@cigarmancave.com
-                  </Link>
-                </li>
-                <li className="flex items-center gap-2 text-gray-400 text-sm group">
-                  <Phone size={16} className="text-[#EFA427] group-hover:text-[#E25931] transition-colors" />
-                  <Link href="tel:+1234567890" className="hover:text-[#E25931] transition-colors">
-                    (123) 456-7890
-                  </Link>
-                </li>
-                <li className="flex items-center gap-2 text-gray-400 text-sm">
-                  <MapPin size={16} className="text-[#EFA427]" />
-                  <span>New York, NY 10001</span>
-                </li>
-              </ul>
-              <div className="flex gap-4 mt-6">
-                {[Facebook, Twitter, Instagram].map((Icon, index) => (
-                  <Link key={index} href="#" className="text-gray-400 hover:text-[#E25931] transition-colors">
-                    <Icon size={20} />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="mt-12 pt-8 border-t border-[#333333]">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 text-sm">
-                © {new Date().getFullYear()} Cigar Mancave. All rights reserved.
-              </p>
-              <div className="flex gap-4 mt-4 md:mt-0">
-                <Link href="/sitemap" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
-                  Sitemap
+            <div className="flex gap-4">
+              {[Facebook, Twitter, Instagram].map((Icon, index) => (
+                <Link
+                  key={index}
+                  href="#"
+                  className="text-white/60 hover:text-[#E25931] transition-colors"
+                >
+                  <Icon size={20} />
                 </Link>
-                <span className="text-gray-400">|</span>
-                <Link href="/accessibility" className="text-gray-400 hover:text-[#E25931] transition-colors text-sm">
-                  Accessibility
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
         </div>
