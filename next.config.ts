@@ -1,94 +1,10 @@
-/** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-  runtimeCaching: [
-    // Auth routes - Always network only
-    {
-      urlPattern: /\/api\/auth\/(login|callback|logout|me)/,
-      handler: 'NetworkOnly',
-      options: {
-        matchOptions: {
-          ignoreSearch: true
-        }
-      }
-    },
-    // Auth0 domain - Always network only
-    {
-      urlPattern: /^https:\/\/cigarmancave\.us\.auth0\.com\/.*/,
-      handler: 'NetworkOnly',
-      options: {
-        matchOptions: {
-          ignoreSearch: true
-        }
-      }
-    },
-    // API routes
-    {
-      urlPattern: /^https:\/\/api\.cigarmancave\.com\/api\/.*/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'api-cache',
-        networkTimeoutSeconds: 10,
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60 // 1 hour
-        }
-      }
-    },
-    // Google user images
-    {
-      urlPattern: /^https:\/\/lh3\.googleusercontent\.com\/.*/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'google-images',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
-        }
-      }
-    },
-    // Gravatar images
-    {
-      urlPattern: /^https:\/\/s\.gravatar\.com\/.*/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'gravatar-images',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
-        }
-      }
-    },
-    // AWS S3 images
-    {
-      urlPattern: /^https:\/\/.*\.amazonaws\.com\/.*/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 's3-images',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
-        }
-      }
-    },
-    // Static resources
-    {
-      urlPattern: /\.(?:js|css)$/i,
-      handler: 'StaleWhileRevalidate',
-      options: {
-        cacheName: 'static-resources',
-        expiration: {
-          maxEntries: 32,
-          maxAgeSeconds: 24 * 60 * 60 // 24 hours
-        }
-      }
-    }
-  ]
+const withSerwist = require("@serwist/next").default({
+  swSrc: "src/app/sw.ts", // Updated path
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
 });
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   // Headers configuration
   async headers() {
@@ -186,5 +102,5 @@ const nextConfig = {
   }
 };
 
-// Export the configuration with PWA support
-module.exports = withPWA(nextConfig);
+// Export the configuration with Serwist
+module.exports = withSerwist(nextConfig);
