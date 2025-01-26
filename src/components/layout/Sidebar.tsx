@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, LogOut, Star, Box } from "lucide-react";
+import { LayoutDashboard, LogOut, Star, Box, UserCircle } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 interface UserProfile {
@@ -17,10 +17,14 @@ interface NavProps {
   profile: UserProfile;
 }
 
-const isLinkActive = (pathname: string, searchParams: URLSearchParams, href: string) => {
+const isLinkActive = (
+  pathname: string,
+  searchParams: URLSearchParams,
+  href: string
+) => {
   // Split the href into path and query parts
-  const [path, query] = href.split('?');
-  
+  const [path, query] = href.split("?");
+
   if (path === "/dashboard") {
     return pathname === "/dashboard";
   }
@@ -32,8 +36,8 @@ const isLinkActive = (pathname: string, searchParams: URLSearchParams, href: str
 
   // For profile pages with tabs
   if (path === "/app/profile" && query) {
-    const tabParam = query.split('=')[1];
-    return pathname === "/app/profile" && searchParams.get('tab') === tabParam;
+    const tabParam = query.split("=")[1];
+    return pathname === "/app/profile" && searchParams.get("tab") === tabParam;
   }
 
   return pathname.startsWith(path);
@@ -110,20 +114,31 @@ export const Sidebar: React.FC<NavProps> = ({ profile }) => {
 
           <div className="p-4 border-t border-gray-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center truncate">
-                <Image
-                  src={
-                    profile?.data?.profileImageUrl || "/placeholder-avatar.png"
-                  }
-                  width={50}
-                  height={50}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
-                  {profile?.data?.fullName || profile?.data?.email}
-                </span>
-              </div>
+              {profile?.data?.profileImageUrl ? (
+                <div className="flex items-center truncate">
+                  <Image
+                    src={
+                      profile?.data?.profileImageUrl ||
+                      "/placeholder-avatar.png"
+                    }
+                    width={50}
+                    height={50}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
+                    {profile?.data?.fullName || profile?.data?.email}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center truncate">
+                  <UserCircle className="w-5 h-5 sm:w-5 sm:h-5 text-neutral-400" />
+
+                  <span className="ml-3 text-sm font-medium text-[#B9B9B9]">
+                    {profile?.data?.fullName || profile?.data?.email}
+                  </span>
+                </div>
+              )}
               <Link
                 href="/api/auth/logout"
                 className="p-2 text-[#B9B9B9] rounded-xl hover:bg-[#EFA427] hover:text-gray-800"

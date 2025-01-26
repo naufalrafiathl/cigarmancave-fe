@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LayoutDashboard, UserCircle, Flame } from "lucide-react";
+import { LayoutDashboard, UserCircle, Flame, Package2 } from "lucide-react";
 import { usePathname } from 'next/navigation';
 import { SmokeNowModal } from "../SmokeNowModal";
 import ReviewModal from "@/app/app/profile/components/review/ReviewModal";
@@ -59,15 +59,15 @@ export const MobileNav: React.FC<NavProps> = () => {
             <span className="text-xs">Smoke Now</span>
           </button>
           <Link
-            href="/app/profile"
+            href="/app/profile/mobile"
             className={`flex flex-col items-center px-4 ${
               isLinkActive(pathname, '/app/profile')
                 ? 'text-[#222222] rounded-xl'
                 : 'text-[#222222]'
             }`}
           >
-            <UserCircle className="w-5 h-5" />
-            <span className="text-xs">Profile</span>
+            <Package2 className="w-5 h-5" />
+            <span className="text-xs">Humidor</span>
           </Link>
         </nav>
       </div>

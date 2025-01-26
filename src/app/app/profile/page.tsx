@@ -38,7 +38,7 @@ export default async function ProfilePage({
       <div className="bg-[#222222] rounded-3xl w-full p-3 md:p-5 flex flex-col md:flex-row flex-1 mb-16 md:mb-0">
         <ProfileSidebar user={profile.data} />
         <div className="w-full md:w-[75%] rounded-3xl p-0 lg:p-4 pt-8 lg:pt-0">
-          <ProfileTabs currentTab={currentTab} />
+          <ProfileTabs currentTab={currentTab} isMobile={false}/>
           <TabContent currentTab={currentTab} />
         </div>
       </div>

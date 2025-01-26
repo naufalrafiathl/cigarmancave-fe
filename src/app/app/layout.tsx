@@ -67,7 +67,7 @@ export default async function DashboardLayout({ children }: LayoutProps) {
 
       <div className="md:ml-64">
         <main className="p-4 md:ml-4">
-          <SearchHeader />
+          <SearchHeader profile={profile} />
           <div className="mt-4">{children}</div>
         </main>
       </div>

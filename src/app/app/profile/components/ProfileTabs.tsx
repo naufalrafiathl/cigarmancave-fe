@@ -7,10 +7,12 @@ import { TABS, TabType } from "@/types/profile";
 
 interface ProfileTabsProps {
   currentTab: TabType;
+  isMobile: boolean
 }
 
-export function ProfileTabs({ currentTab }: ProfileTabsProps) {
+export function ProfileTabs({ currentTab,isMobile }: ProfileTabsProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  console.log('ini mobile?',isMobile)
 
   const tabs = [
     { id: TABS.humidor, label: "Humidor", icon: Box },
@@ -45,7 +47,7 @@ export function ProfileTabs({ currentTab }: ProfileTabsProps) {
               return (
                 <Link
                   key={tab.id}
-                  href={`profile?tab=${tab.id}`}
+                  href={!isMobile ? `profile?tab=${tab.id}`:`mobile?tab=${tab.id}`}
                   onClick={() => setIsDropdownOpen(false)}
                   className="flex items-center space-x-2 px-4 py-3 text-[#EFA427] hover:bg-[#363636] transition-colors"
                 >

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@/hooks/useUserOperations";
 import { ReviewCard } from "../../profile/components/review/ReviewCard";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, UserCircle } from "lucide-react";
 import { MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { PostCardSkeleton } from "./PostCardSkeleton";
@@ -30,8 +30,8 @@ interface PostCardProps {
   post: Post;
   isDetailView: boolean;
   onCommentSuccess?: () => void;
-  user: any | null;  // Add this
-  isUserLoading?: boolean;  // Add this
+  user: any | null; // Add this
+  isUserLoading?: boolean; // Add this
 }
 
 const buildCommentTree = (comments: Comment[]) => {
@@ -82,7 +82,6 @@ export const PostCard = ({
       comments: post.engagement?.totalComments ?? 0,
     };
   };
-
 
   const [likesCount, setLikesCount] = useState(getCounts().likes);
   const [isLikeProcessing, setIsLikeProcessing] = useState(false);
@@ -172,14 +171,18 @@ export const PostCard = ({
       <div className="p-4 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12">
-              <Image
-                src={post.user.profileImageUrl || "/placeholder-avatar.png"}
-                alt={post.user.fullName}
-                fill
-                className="rounded-full object-cover"
-              />
-            </div>
+            {post.user.profileImageUrl ? (
+              <div className="relative w-12 h-12">
+                <Image
+                  src={post.user.profileImageUrl || "/placeholder-avatar.png"}
+                  alt={post.user.fullName}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
+            ) : (
+              <UserCircle />
+            )}
             <div>
               <h3 className="font-medium text-white">{post.user.fullName}</h3>
               <p className="text-sm text-[#B9B9B9]">
