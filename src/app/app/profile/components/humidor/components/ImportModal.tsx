@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Dialog,
@@ -84,9 +84,11 @@ export const ImportModal = ({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [premiumLoading, setPremiumLoading] = useState<Boolean>(false)
   const [selections, setSelections] = useState<
     Record<string, ImportConfirmation>
   >({});
+  const [showLimitsInfo, setShowLimitsInfo] = useState(false);
 
   const { isPremium, isLoading } = useAssistOperations();
   const { processImport, confirmImport, isProcessing, isConfirming, getQuota } =
@@ -172,7 +174,9 @@ export const ImportModal = ({
       setSelections(initialSelections);
       setStep("review");
     } catch (error) {
-      alert("Failed to process import. Please make sure file is not too big, and keep a maximum of 10 cigars in a single upload.");
+      alert(
+        "Failed to process import. Please make sure file is not too big, and keep a maximum of 10 cigars in a single upload."
+      );
       setStep("upload");
     }
   };
@@ -741,7 +745,11 @@ export const ImportModal = ({
     );
   };
 
-  if (!isPremium) {
+  if(isLoading) {
+    return null
+  }
+
+  if (!isPremium && !isLoading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="bg-[#1A1A1A] text-white sm:max-w-[600px] border border-white/10">
@@ -779,24 +787,76 @@ export const ImportModal = ({
   }
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1A1A1A] text-white sm:max-w-[600px] max-h-[90vh] overflow-y-auto border border-white/10">
-        <DialogHeader>
+    <DialogContent className="bg-[#1A1A1A] text-white sm:max-w-[600px] max-h-[90vh] overflow-y-auto border border-white/10">
+      <DialogHeader>
+        <div className="flex items-center justify-between">
           <DialogTitle className="text-[#EFA427] text-2xl">
             Import Cigars
           </DialogTitle>
-        </DialogHeader>
+          <button
+            onClick={() => setShowLimitsInfo(true)}
+            className="text-sm text-[#B9B9B9] hover:text-[#EFA427] transition-colors flex items-center gap-1"
+          >
+            <span>How many cigars can I import?</span>
+          </button>
+        </div>
+      </DialogHeader>
 
-        {step === "upload" && renderUploadStep()}
-        {step === "processing" && renderProcessingStep()}
-        {step === "review" && renderReviewStep()}
-        <QuotaWarningModal
-          isOpen={showQuotaWarning}
-          onClose={() => {
-            setShowQuotaWarning(false);
-          }}
-          remaining={quotaRemaining || 0}
-        />
-      </DialogContent>
-    </Dialog>
+      {/* Limits Info Overlay */}
+      {showLimitsInfo && (
+        <div className="absolute inset-0 z-50 bg-[#1A1A1A] flex flex-col">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl text-[#EFA427]">Import Limits During Beta</h3>
+              <button
+                onClick={() => setShowLimitsInfo(false)}
+                className="p-2 hover:bg-white/5 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            
+            <div className="space-y-4 text-[#B9B9B9] text-justify">
+              <p>
+                While we're in beta, we've set some friendly guidelines to keep things running smoothly for everyone.
+              </p>
+              
+              <p>
+                For the best experience, try to keep your image <span className="text-[#EFA427]">under 5MB and only import up to 10 different cigars</span> at once. If your receipt has more cigars, a quick crop before uploading does the trick!
+              </p>
+              
+              <p>
+                Don't worry though - you can still use this feature to <span className="text-[#EFA427]">import over 200 cigars monthly</span>, which is... well, quite a collection! We've just set these temporary limits to make sure our systems can handle everyone's imports without breaking a sweat.
+              </p>
+              
+              <p>
+                We're working hard behind the scenes to make importing even better, smoother, and more enjoyable for our growing community. Stay tuned for updates!
+              </p>
+            </div>
+            
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowLimitsInfo(false)}
+                className="px-4 py-2 bg-[#EFA427] text-black rounded-lg font-medium hover:bg-[#EFA427]/90 transition-colors"
+              >
+                Got it, thanks!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {step === "upload" && renderUploadStep()}
+      {step === "processing" && renderProcessingStep()}
+      {step === "review" && renderReviewStep()}
+      <QuotaWarningModal
+        isOpen={showQuotaWarning}
+        onClose={() => {
+          setShowQuotaWarning(false);
+        }}
+        remaining={quotaRemaining || 0}
+      />
+    </DialogContent>
+  </Dialog>
   );
 };

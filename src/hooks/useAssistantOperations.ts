@@ -17,6 +17,7 @@ export function useAssistOperations() {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
+
   const getInsights = useCallback(async (cigarId: number): Promise<CigarInsights> => {
     setIsLoading(true);
     try {
@@ -50,7 +51,7 @@ export function useAssistOperations() {
   const values = useMemo(() => ({
     getInsights,
     isAuthenticated: !!user,
-    isPremium: !!user?.isPremium,
+    isPremium: user ? !!user?.isPremium:true,
     isLoading
   }), [getInsights, user, isLoading]);
 
