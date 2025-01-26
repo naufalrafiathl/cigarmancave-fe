@@ -12,7 +12,6 @@ import {
   DollarSign,
 } from "lucide-react";
 
-// Type Definitions
 interface SubscriptionPlan {
   id: string;
   name: string;
@@ -34,7 +33,6 @@ interface BenefitCardProps {
   description: string;
 }
 
-// Subscription Card Component
 const SubscriptionCard = ({
   plan,
   isSelected,
@@ -70,23 +68,6 @@ const SubscriptionCard = ({
         <p className="text-[#B9B9B9] text-sm leading-relaxed">
           {plan.description}
         </p>
-
-        <div className="space-y-3">
-          <h4 className="text-white font-medium">Features:</h4>
-          <ul className="space-y-2">
-            {plan.features.map((feature, index) => (
-              <li
-                key={index}
-                className="flex items-start gap-2 text-[#B9B9B9] text-sm group"
-              >
-                <Trophy className="w-4 h-4 text-[#E25931] mt-0.5 group-hover:text-[#EFA427] transition-colors" />
-                <span className="group-hover:text-white transition-colors">
-                  {feature}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
     </div>
   );
