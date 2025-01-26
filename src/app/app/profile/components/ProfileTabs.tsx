@@ -12,8 +12,6 @@ interface ProfileTabsProps {
 
 export function ProfileTabs({ currentTab,isMobile }: ProfileTabsProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  console.log('ini mobile?',isMobile)
-
   const tabs = [
     { id: TABS.humidor, label: "Humidor", icon: Box },
     { id: TABS.reviews, label: "Reviews", icon: Star },

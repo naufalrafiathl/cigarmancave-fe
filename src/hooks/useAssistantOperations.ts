@@ -52,7 +52,8 @@ export function useAssistOperations() {
     getInsights,
     isAuthenticated: !!user,
     isPremium: user ? !!user?.isPremium:true,
-    isLoading
+    isLoading,
+    isLoadingPremium: user ? false:true
   }), [getInsights, user, isLoading]);
 
   return values;

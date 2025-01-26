@@ -84,15 +84,15 @@ export const ImportModal = ({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
-  const [premiumLoading, setPremiumLoading] = useState<Boolean>(false)
   const [selections, setSelections] = useState<
     Record<string, ImportConfirmation>
   >({});
   const [showLimitsInfo, setShowLimitsInfo] = useState(false);
 
-  const { isPremium, isLoading } = useAssistOperations();
+  const { isPremium, isLoadingPremium } = useAssistOperations();
   const { processImport, confirmImport, isProcessing, isConfirming, getQuota } =
     useImportOperations();
+  const [isShowPremiumMessage, setShowPremiumMessage] = useState(isLoadingPremium?isPremium:true)
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -120,7 +120,7 @@ export const ImportModal = ({
         setShowQuotaWarning(true);
         setTimeout(() => {
           onClose();
-        }, 100);
+        }, 1000);
       }
 
       const result = await processImport(file);
@@ -328,7 +328,7 @@ export const ImportModal = ({
                     </div>
                     <div className={styles.inputGroup}>
                       <label htmlFor={`price-${key}`} className={styles.label}>
-                        Price
+                        Price/stick
                       </label>
                       <input
                         id={`price-${key}`}
@@ -745,17 +745,17 @@ export const ImportModal = ({
     );
   };
 
-  if(isLoading) {
+  if(isLoadingPremium) {
     return null
   }
 
-  if (!isPremium && !isLoading) {
+  if (isShowPremiumMessage) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="bg-[#1A1A1A] text-white sm:max-w-[600px] border border-white/10">
           <DialogHeader>
             <DialogTitle className="text-[#EFA427] text-2xl flex items-center gap-2">
-              {isLoading ? (
+              {isLoadingPremium ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <Lock className="w-5 h-5" />
@@ -780,6 +780,9 @@ export const ImportModal = ({
               <Crown className="w-4 h-4" />
               Upgrade to Premium
             </Link>
+            <div onClick={()=>{setShowPremiumMessage(false)}} className="mt-5 hover:text-[#EFA427] cursor-pointer">
+              <p>Or try it first</p>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -822,15 +825,22 @@ export const ImportModal = ({
               </p>
               
               <p>
-                For the best experience, try to keep your image <span className="text-[#EFA427]">under 5MB and only import up to 10 different cigars</span> at once. If your receipt has more cigars, a quick crop before uploading does the trick!
+                For the best experience, try to keep your image <span className="text-[#EFA427]">under 5MB and only import up to 20 different cigars</span> at once. If your receipt has more cigars, a quick crop before uploading does the trick! <span className="italic">(psst.. you can screenshot your excel/sheets aswell)</span> 
               </p>
               
               <p>
-                Don't worry though - you can still use this feature to <span className="text-[#EFA427]">import over 200 cigars monthly</span>, which is... well, quite a collection! We've just set these temporary limits to make sure our systems can handle everyone's imports without breaking a sweat.
+                Don't worry though - our premium users can still use this feature to <span className="text-[#EFA427]">import over 300 cigars monthly</span>, which is... well, quite a collection! We've just set these temporary limits to make sure our systems can handle everyone's imports without breaking a sweat.
               </p>
               
               <p>
                 We're working hard behind the scenes to make importing even better, smoother, and more enjoyable for our growing community. Stay tuned for updates!
+              </p>
+              <p>
+                <span className="text-[#EFA427]">To our non premium users:</span> Dont worry, you can try this feature once before you susbscribe, and we're sure you'll love it!
+              </p>
+
+              <p>
+                <span className="text-[#EFA427]">Quick note:</span> Our system can make mistakes, please double check the cigars before you add them to your humidor!
               </p>
             </div>
             
@@ -855,6 +865,7 @@ export const ImportModal = ({
           setShowQuotaWarning(false);
         }}
         remaining={quotaRemaining || 0}
+        isPremium={isPremium}
       />
     </DialogContent>
   </Dialog>
