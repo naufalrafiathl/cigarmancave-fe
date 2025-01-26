@@ -8,11 +8,11 @@ import {
   Facebook,
   Twitter,
   Instagram,
+  ArrowRight,
 } from "lucide-react";
 import SecretAuth from "@/components/SecretAuth";
 
 export default async function Home() {
-
   // More robust session handling
   let isAuthenticated = false;
 
@@ -23,7 +23,6 @@ export default async function Home() {
     console.error("Session error:", error);
     isAuthenticated = false;
   }
-
 
   return (
     <div className="h-screen overflow-hidden bg-black flex flex-col">
@@ -41,27 +40,39 @@ export default async function Home() {
                 className="h-full w-auto object-contain"
               />
             </Link>
-            {/* <div className="flex gap-x-6">
-              {session ? (
+            <div className="flex gap-x-6">
+              {isAuthenticated ? (
                 <>
-                  <Link href="/app/profile" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                  <Link
+                    href="/app/profile"
+                    className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors"
+                  >
                     App
                   </Link>
-                  <Link href="/api/auth/logout" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                  <Link
+                    href="/api/auth/logout"
+                    className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors"
+                  >
                     Log out
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link href="/api/auth/login" className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors">
+                  <Link
+                    href="/api/auth/login"
+                    className="text-sm font-semibold leading-6 text-[#EFA427] hover:text-[#E25931] transition-colors"
+                  >
                     Log in
                   </Link>
-                  <Link href="/api/auth/login?screen_hint=signup" className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors">
+                  <Link
+                    href="/api/auth/login?screen_hint=signup"
+                    className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition-colors"
+                  >
                     Sign up
                   </Link>
                 </>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </header>
@@ -82,8 +93,8 @@ export default async function Home() {
               <h1 className="text-xl text-white mb-4">
                 Join us in building something special
               </h1>
-              {/* <div className="flex justify-center gap-4">
-                {!session ? (
+              <div className="flex justify-center gap-4">
+                {!isAuthenticated ? (
                   <>
                     <Link
                       href="/api/auth/login?screen_hint=signup"
@@ -116,7 +127,7 @@ export default async function Home() {
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 )}
-              </div> */}
+              </div>
             </div>
 
             {/* Features Grid */}
@@ -163,22 +174,20 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center text-white/60 text-sm">
-              <span>
-                © {new Date().getFullYear()} Cigar Mancave. Built with{" "}
-              </span>
-              <SecretAuth isAuthenticated={isAuthenticated} />
-              <span> by the community, for the community.</span>
+              © 2025 Cigar Mancave. Built with passion by the community, for the
+              community.
             </div>
             <div className="flex gap-4">
-              {[Facebook, Twitter, Instagram].map((Icon, index) => (
+              {[Instagram].map((Icon, index) => (
                 <Link
                   key={index}
-                  href="#"
+                  href="https://www.instagram.com/thecigarmancave/#"
                   className="text-white/60 hover:text-[#E25931] transition-colors"
                 >
                   <Icon size={20} />
                 </Link>
               ))}
+
             </div>
           </div>
         </div>
