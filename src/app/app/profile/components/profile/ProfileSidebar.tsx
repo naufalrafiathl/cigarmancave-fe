@@ -18,7 +18,6 @@ export function ProfileSidebar({ user, className = "" }: ProfileSidebarProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(!user?.isOnboarded);
 
-  console.log(user);
 
   const handleOnboardingComplete = async () => {
     setShowOnboarding(false);

@@ -172,7 +172,7 @@ export const ImportModal = ({
       setSelections(initialSelections);
       setStep("review");
     } catch (error) {
-      alert("Failed to process import");
+      alert("Failed to process import. Please make sure file is not too big, and keep a maximum of 10 cigars in a single upload.");
       setStep("upload");
     }
   };
