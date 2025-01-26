@@ -108,6 +108,10 @@ export const ImportModal = ({
     }
   };
 
+  useEffect(()=>{
+    setShowPremiumMessage(!isPremium)
+  },[isLoadingPremium])
+
   const handleProcess = async () => {
     if (!file) return;
     setStep("processing");
