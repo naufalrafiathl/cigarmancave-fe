@@ -271,9 +271,7 @@ export function HumidorView() {
                 </button>
                 <button
                   onClick={() => {
-                    console.log("Import button clicked");
                     setShowImportModal(true);
-                    console.log("showImportModal:", showImportModal);
                   }}
                   className="h-10 px-4 bg-[#E25931] text-white rounded-xl hover:bg-[#e25a3171] transition-colors flex items-center gap-2"
                 >
@@ -494,17 +492,15 @@ export function HumidorView() {
           </div>
         </div>
       </div>
-
-      {/* Humidors Grid/List */}
+  
+      {/* Humidors Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Grid View (shown only on 2xl screens and up) */}
-        <div
-          className={
-            humidorViewMode === "grid"
-              ? "max-w-[1200px] mx-auto hidden 3xl:grid 3xl:grid-cols-4 gap-4"
-              : "flex flex-col gap-4 my-10"
+        <div className={`
+          ${humidorViewMode === 'grid' 
+            ? 'max-w-[1200px] mx-auto grid 3xl:grid-cols-4 gap-4' 
+            : 'flex flex-col gap-4'
           }
-        >
+        `}>
           {isLoadingHumidors ? (
             <div className="col-span-full flex justify-center py-12">
               <div className="text-white/60">Loading humidors...</div>
@@ -561,77 +557,13 @@ export function HumidorView() {
             ))
           )}
         </div>
-
-        {/* List View (shown on smaller screens) */}
-        <div className="3xl:hidden">
-          {isLoadingHumidors ? (
-            <div className="flex justify-center py-12">
-              <div className="text-white/60">Loading humidors...</div>
-            </div>
-          ) : humidors.length === 0 ? (
-            <div className="flex flex-col items-center py-12">
-              <div className="bg-[#2A2A2A] rounded-xl p-8 max-w-md w-full text-center">
-                <div className="mb-4">
-                  <div className="w-16 h-16 bg-[#333333] rounded-full flex items-center justify-center mx-auto">
-                    <PlusCircle className="w-8 h-8 text-gray-400" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  No Humidors Yet
-                </h3>
-                <p className="text-gray-400 mb-6">
-                  Start organizing your cigar collection by creating your first
-                  humidor.
-                </p>
-                <button
-                  onClick={() =>
-                    setEditingHumidor({
-                      name: "",
-                      description: "",
-                      imageUrl: "",
-                    })
-                  }
-                  className="inline-flex items-center justify-center px-4 py-2 bg-[#EFA427] hover:bg-amber-600 transition-colors rounded-xl text-white text-md"
-                >
-                  <PlusCircle className="w-4 h-4 mr-2" />
-                  Create Your First Humidor
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {humidors.map((humidor) => (
-                <HumidorCard
-                  key={humidor.id}
-                  onView={() => setSelectedHumidor(humidor)}
-                  viewMode="list"
-                  onSelect={() => setSelectedHumidor(humidor)}
-                  humidor={humidor}
-                  onEdit={() => setEditingHumidor(humidor)}
-                  onDelete={async () => {
-                    try {
-                      await deleteHumidor(humidor.id);
-                      const updatedHumidors =
-                        (await getHumidors()) as Humidor[];
-                      setHumidors(updatedHumidors);
-                    } catch (err) {
-                      console.error("Failed to delete humidor:", err);
-                    }
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
       </div>
-
+  
       {/* Modals */}
       {editingHumidor && (
         <EditHumidorModal
           humidor={editingHumidor.id ? (editingHumidor as Humidor) : undefined}
-          onSubmit={
-            editingHumidor.id ? handleUpdateHumidor : handleCreateHumidor
-          }
+          onSubmit={editingHumidor.id ? handleUpdateHumidor : handleCreateHumidor}
           onClose={() => setEditingHumidor(null)}
         />
       )}
