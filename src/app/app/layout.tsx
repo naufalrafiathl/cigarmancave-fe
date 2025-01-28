@@ -6,6 +6,7 @@ import { Sidebar } from "../../components/layout/Sidebar";
 import { MobileNav } from "../../components/layout/MobileNav";
 import { SearchHeader } from "./profile/components/SearchHeader";
 import { Metadata, Viewport } from 'next';
+import { PWAPrompt } from "@/components/PWAPrompt";
 
 // Define viewport settings separately to match the Viewport type
 const viewport: Viewport = {
@@ -42,6 +43,8 @@ interface LayoutProps {
 }
 
 export default async function DashboardLayout({ children }: LayoutProps) {
+  console.log('ini childern di layout /app',children)
+
   const session = await getSession();
 
   if (!session?.user) {
@@ -64,7 +67,7 @@ export default async function DashboardLayout({ children }: LayoutProps) {
 
       <Sidebar profile={profile} />
       <MobileNav profile={profile} />
-
+      <PWAPrompt/>
       <div className="md:ml-64">
         <main className="p-4 md:ml-4">
           <SearchHeader profile={profile} />
