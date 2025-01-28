@@ -170,7 +170,7 @@ export function OnboardingModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 overflow-auto">
       <div className="bg-neutral-800 rounded-3xl w-full max-w-2xl mx-4 p-6 relative">
         {/* Progress indicator */}
         <div className="flex mb-4 gap-2">
@@ -190,7 +190,7 @@ export function OnboardingModal({
             {onboardingSteps[currentStep].title}
           </h2>
 
-          {onboardingSteps[currentStep].image && (
+          {onboardingSteps[currentStep].image && currentStep !== 3 && (
             <div className="relative w-full h-48 mb-4">
               <Image
                 src={onboardingSteps[currentStep].image}
@@ -218,81 +218,86 @@ export function OnboardingModal({
           )} */}
 
           {/* Profile form on last step */}
-{currentStep === onboardingSteps.length - 1 && (
-  <div className="space-y-4 mb-6">
-    {/* Profile Image Upload */}
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative w-24 h-24 group">
-        {profileData.profileImageUrl ? (
-          <>
-            <div className="relative w-full h-full rounded-full overflow-hidden">
-              <Image
-                src={profileData.profileImageUrl}
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <button
-              onClick={handleImageDelete}
-              className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all"
-              disabled={isDeleting}
-            >
-              <Trash2 className="w-4 h-4 text-white" />
-            </button>
-          </>
-        ) : (
-          <label className="w-full h-full rounded-full bg-neutral-700 flex items-center justify-center cursor-pointer hover:bg-neutral-600 transition-colors group">
-            <div className="flex flex-col items-center gap-1">
-              <Upload className="w-8 h-8 text-neutral-400 group-hover:text-neutral-300" />
-              <span className="text-xs text-neutral-400 group-hover:text-neutral-300">
-                Upload Photo
-              </span>
-            </div>
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={isUploading}
-            />
-          </label>
-        )}
-      </div>
-    </div>
+          {currentStep === onboardingSteps.length - 1 && (
+            <div className="flex flex-col md:flex-row md:items-center gap-6 px-4 py-6">
+              {/* Left Column - Profile Image */}
+              <div className="flex flex-col items-center md:items-start">
+                <div className="relative w-24 h-24 group">
+                  {profileData.profileImageUrl ? (
+                    <>
+                      <div className="relative w-full h-full rounded-full overflow-hidden ring-2 ring-neutral-600 ring-offset-2 ring-offset-neutral-800">
+                        <Image
+                          src={profileData.profileImageUrl}
+                          alt="Profile"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <button
+                        onClick={handleImageDelete}
+                        className="absolute -bottom-2 -right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-colors"
+                        disabled={isDeleting}
+                      >
+                        <Trash2 className="w-4 h-4 text-white" />
+                      </button>
+                    </>
+                  ) : (
+                    <label className="w-full h-full rounded-full bg-neutral-700 flex items-center justify-center cursor-pointer hover:bg-neutral-600 transition-colors group ring-2 ring-neutral-600 ring-offset-2 ring-offset-neutral-800">
+                      <div className="flex flex-col items-center gap-1">
+                        <Upload className="w-6 h-6 text-neutral-400 group-hover:text-neutral-300" />
+                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300">
+                          Upload
+                        </span>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={isUploading}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
 
-    {/* Full Name Input */}
-    <div className="space-y-2">
-      <label className="text-sm text-neutral-400">Full Name</label>
-      <input
-        type="text"
-        value={profileData.fullName}
-        onChange={(e) =>
-          setProfileData((prev) => ({
-            ...prev,
-            fullName: e.target.value,
-          }))
-        }
-        placeholder="Full Name"
-        className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white"
-      />
-    </div>
+              {/* Right Column - Form Fields */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <label className="text-left text-sm text-neutral-400 mb-1.5 block">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profileData.fullName}
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        fullName: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter your full name"
+                    className="w-full px-4 py-2 bg-neutral-700 rounded-xl text-white placeholder-neutral-500"
+                  />
+                </div>
 
-    {/* Location Selector */}
-    <div className="space-y-2">
-      <label className="text-sm text-neutral-400">Location</label>
-      <LocationSelector
-        value={profileData.location}
-        onChange={(location) =>
-          setProfileData((prev) => ({
-            ...prev,
-            location,
-          }))
-        }
-      />
-    </div>
-  </div>
-)}
+                <div>
+                  <label className="text-left text-sm text-neutral-400 mb-1.5 block">
+                    Location
+                  </label>
+                  <LocationSelector
+                    value={profileData.location}
+                    onChange={(location) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        location,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Navigation buttons */}
           <div className="flex justify-end gap-4">
