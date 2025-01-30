@@ -26,6 +26,7 @@ interface ReviewFormProps {
   notes: string;
   showNotesModal: boolean;
   isNotesMinimized: boolean;
+  isSubmittingReview: boolean;
   sectionsCollapsed: {
     overall: boolean;
     flavor: boolean;
@@ -62,6 +63,7 @@ export const ReviewForm = ({
   cigarStrength,
   isHumidorCigar,
   isSubmitting = false, // Default to false
+  isSubmittingReview,
   onCigarStrengthChange,
   onScoreChange,
   onDecreaseHumidorCigarChange,
@@ -118,7 +120,7 @@ export const ReviewForm = ({
       <Button
         className="w-full"
         onClick={onSubmit}
-        disabled={buyAgain === null || isSubmitting}
+        disabled={buyAgain === null || isSubmitting || isSubmittingReview}
       >
         {isSubmitting ? (
           <>

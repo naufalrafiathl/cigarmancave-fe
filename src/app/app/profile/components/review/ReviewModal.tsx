@@ -56,6 +56,7 @@ const ReviewModal = ({
   const [showTimerPrompt, setShowTimerPrompt] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showPostPrompt, setShowPostPrompt] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false)
 
   // Post creation states
   const [postContent, setPostContent] = useState("");
@@ -153,6 +154,7 @@ const ReviewModal = ({
   };
 
   const handleSubmit = async () => {
+    setSubmittingReview(true)
     try {
       let imageUrls: string[] = [];
 
@@ -201,6 +203,7 @@ const ReviewModal = ({
 
       // Show post creation prompt instead of closing
       setShowPostPrompt(true);
+      setSubmittingReview(false)
     } catch (error) {
       toast.error("Failed to submit review");
       console.error("Review submission error:", error);
@@ -360,6 +363,7 @@ const ReviewModal = ({
             }
             onSubmit={handleSubmit}
             isSubmitting={isCreating}
+            isSubmittingReview={submittingReview}
           />
         )}
 
