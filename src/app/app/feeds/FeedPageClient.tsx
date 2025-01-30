@@ -76,6 +76,7 @@ export default function FeedPageClient() {
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
   const lastPostRef = useRef<number | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  
 
   const { getFeed } = useFeedOperations();
   const entry = useIntersection(loadMoreRef, {});
@@ -545,12 +546,19 @@ export default function FeedPageClient() {
           open={showCreatePostModal && isMobile}
           onOpenChange={setShowCreatePostModal}
         >
-          <DialogContent className="sm:max-w-[425px] p-0 bg-[#1A1A1A] border-white/10">
+          <DialogContent
+            className="sm:max-w-[425px] p-0 bg-[#1A1A1A] border-white/10"
+            // Add this to ensure higher z-index than the fixed button
+            style={{ zIndex: 100 }}
+          >
             <DialogTitle className="sr-only">Create New Post</DialogTitle>
             <DialogDescription className="sr-only">
               Create a new post to share with your followers
             </DialogDescription>
-            <CreatePostCard onClose={() => setShowCreatePostModal(false)} />
+            <CreatePostCard
+              onClose={() => setShowCreatePostModal(false)}
+              isMobile={true} // Add this prop
+            />
           </DialogContent>
         </Dialog>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createPortal } from 'react-dom';
+import { createPortal } from "react-dom";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 import { Camera, X, Plus, Check } from "lucide-react";
@@ -15,9 +15,10 @@ import { validateFile } from "@/utils/validateFIle";
 
 interface CreatePostCardProps {
   onClose?: () => void;
+  isMobile?: boolean;
 }
 
-export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
+export const CreatePostCard = ({ onClose, isMobile }: CreatePostCardProps) => {
   const { user } = useUser();
   const { createPost, isCreating } = useFeedOperations();
   const { directUpload, isUploading, error: uploadError } = useImageUpload();
@@ -68,7 +69,6 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
           page,
           limit: ITEMS_PER_PAGE,
         });
-        console.log("response", response);
         const reviewData = response.data.reviews || [];
         const pagination = response.data.pagination;
 
@@ -98,25 +98,25 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
     }
   }, [isSelectingReview]);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(event.target.files || []);
     if (files.length + images.length > 4) {
       alert("Maximum 4 images allowed");
       return;
     }
+
     try {
       files.forEach((file) => validateFile(file));
+
+      setImages((prev) => [...prev, ...files]);
+
+      const urls = files.map((file) => URL.createObjectURL(file));
+      setImageUrls((prev) => [...prev, ...urls]);
     } catch (error) {
       alert(error instanceof Error ? error.message : "Invalid file");
-      return;
     }
-
-    setImages((prev) => [...prev, ...files]);
-
-    files.forEach((file) => {
-      const url = URL.createObjectURL(file);
-      setImageUrls((prev) => [...prev, url]);
-    });
   };
 
   const removeImage = (index: number) => {
@@ -177,6 +177,78 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
     setImageUrls([]);
     setSelectedReview(null);
     onClose?.();
+  };
+
+  const renderReviewSelectionModal = () => {
+    if (!isSelectingReview) return null;
+
+    const modalContent = (
+      <div
+        className="fixed inset-0 bg-black/50 flex items-center justify-center"
+        style={{ zIndex: 200 }}
+      >
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+          <div
+            className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/10 
+      p-4 max-w-xl w-full max-h-[80vh] overflow-y-auto m-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-white">
+                Select Your Review
+              </h3>
+              <button
+                onClick={() => setIsSelectingReview(false)}
+                className="p-1.5 hover:bg-[#363636] rounded-full
+            transition-colors duration-300"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {reviews.length === 0 && !isLoadingReviews ? (
+                <div className="text-center py-8 text-[#B9B9B9]">
+                  No reviews found. Create some reviews first!
+                </div>
+              ) : (
+                <>
+                  {reviews.map((review, index) => (
+                    <div
+                      key={review.id}
+                      ref={
+                        index === reviews.length - 1
+                          ? lastReviewElementRef
+                          : undefined
+                      }
+                      onClick={() => {
+                        setSelectedReview(review);
+                        setIsSelectingReview(false);
+                      }}
+                      className="cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                    >
+                      <SimpleReviewCard review={review} />
+                    </div>
+                  ))}
+                  {isLoadingReviews && (
+                    <div className="flex justify-center items-center py-4">
+                      <div className="animate-spin text-2xl">⏳</div>
+                    </div>
+                  )}
+
+                  {!isLoadingReviews && !hasMore && reviews.length > 0 && (
+                    <div className="text-center py-4 text-[#B9B9B9]">
+                      No more reviews to load
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    return isMobile ? modalContent : createPortal(modalContent, document.body);
   };
 
   return (
@@ -273,14 +345,14 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
               onChange={handleImageUpload}
             />
 
-<button
-  onClick={() => setIsSelectingReview(true)}
-  className="p-2 text-[#B9B9B9] hover:text-[#EFA427] rounded-full
+            <button
+              onClick={() => setIsSelectingReview(true)}
+              className="p-2 text-[#B9B9B9] hover:text-[#EFA427] rounded-full
     transition-colors duration-300 flex items-center gap-1"
->
-  <Plus className="w-5 h-5" />
-  <span className="text-sm">Select Review</span>
-</button>
+            >
+              <Plus className="w-5 h-5" />
+              <span className="text-sm">Select Review</span>
+            </button>
           </div>
 
           <button
@@ -314,67 +386,7 @@ export const CreatePostCard = ({ onClose }: CreatePostCardProps) => {
       </div>
 
       {/* Review Selection Modal */}
-      {isSelectingReview && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-          <div
-            className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/10 
-      p-4 max-w-xl w-full max-h-[80vh] overflow-y-auto m-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-white">
-                Select Your Review
-              </h3>
-              <button
-                onClick={() => setIsSelectingReview(false)}
-                className="p-1.5 hover:bg-[#363636] rounded-full
-            transition-colors duration-300"
-              >
-                <X className="w-5 h-5 text-white" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {reviews.length === 0 && !isLoadingReviews ? (
-                <div className="text-center py-8 text-[#B9B9B9]">
-                  No reviews found. Create some reviews first!
-                </div>
-              ) : (
-                <>
-                  {reviews.map((review, index) => (
-                    <div
-                      key={review.id}
-                      ref={
-                        index === reviews.length - 1
-                          ? lastReviewElementRef
-                          : undefined
-                      }
-                      onClick={() => {
-                        setSelectedReview(review);
-                        setIsSelectingReview(false);
-                      }}
-                      className="cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                    >
-                      <SimpleReviewCard review={review} />
-                    </div>
-                  ))}
-                  {isLoadingReviews && (
-                    <div className="flex justify-center items-center py-4">
-                      <div className="animate-spin text-2xl">⏳</div>
-                    </div>
-                  )}
-
-                  {!isLoadingReviews && !hasMore && reviews.length > 0 && (
-                    <div className="text-center py-4 text-[#B9B9B9]">
-                      No more reviews to load
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>,  
-        document.body
-      )}
+      {renderReviewSelectionModal()}
     </div>
   );
 };
