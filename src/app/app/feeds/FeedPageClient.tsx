@@ -183,7 +183,7 @@ export default function FeedPageClient() {
                         {sortBy === "top" && "Most Popular"}
                         {sortBy === "hot" && "Trending"}
                       </SelectTrigger>
-                      <SelectContent className="bg-[#EFA427] border-white/10">
+                      <SelectContent className="bg-[#EFA427] border-white/10 text-black">
                         <SelectItem value="recent">Most Recent</SelectItem>
                         <SelectItem value="top">Most Popular</SelectItem>
                         <SelectItem value="hot">Trending</SelectItem>
