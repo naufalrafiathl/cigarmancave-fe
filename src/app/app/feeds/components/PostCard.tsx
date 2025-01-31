@@ -1,8 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useUser } from "@/hooks/useUserOperations";
 import { ReviewCard } from "../../profile/components/review/ReviewCard";
-import { Heart, MessageCircle, Share2, UserCircle } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  UserCircle,
+  BadgeCheck
+} from "lucide-react";
 import { MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { PostCardSkeleton } from "./PostCardSkeleton";
@@ -24,7 +29,6 @@ import { useRouter } from "next/navigation";
 import { Comment } from "@/types/feeds";
 import { Post } from "@/types/feed";
 import ImageCarousel from "./ImageCarousel";
-import { User } from "@/types/auth";
 
 interface PostCardProps {
   post: Post;
@@ -163,8 +167,6 @@ export const PostCard = ({
     return <PostCardSkeleton />;
   }
 
-  console.log(post)
-
   return (
     <div
       className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/5 
@@ -186,7 +188,20 @@ export const PostCard = ({
               <UserCircle />
             )}
             <div>
-              <h3 className={post.user.isPremium ? `font-medium text-[#EFA427]`:`font-medium text-white`}>{post.user.fullName}</h3>
+              <h3 className="flex items-baseline gap-1">
+                <span
+                  className={
+                    post.user.isPremium
+                      ? `font-medium text-[#EFA427]`
+                      : `font-medium text-white`
+                  }
+                >
+                  {post.user.fullName}
+                </span>
+                {post.user.isPremium && (
+                  <BadgeCheck className="w-3.5 h-3.5 text-[#EFA427] translate-y-[1px]" />
+                )}
+              </h3>
               <p className="text-sm text-[#B9B9B9]">
                 {format(new Date(post.createdAt), "MMM d, yyyy • h:mm a")}
               </p>
