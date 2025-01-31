@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { MoreVertical, Reply } from "lucide-react";
+import { BadgeCheck, MoreVertical, Reply } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ interface CommentThreadProps {
   comment: Comment;
   postId: number;
   level?: number;
-  parentCommentId?: number | null;  // Add parentCommentId prop
+  parentCommentId?: number | null; // Add parentCommentId prop
   isDetailView?: boolean; // Add this prop
 }
 
@@ -90,12 +90,21 @@ export const CommentThread = ({
 
       <div className="flex-1">
         <div className="flex items-start justify-between">
-          <div>
-            <span className={comment.user.isPremium ? `font-medium text-[#EFA427]`:`font-medium text-white`}>
+          <div className="flex items-baseline">
+            <span
+              className={
+                comment.user.isPremium
+                  ? `font-medium text-[#EFA427]`
+                  : `font-medium text-white`
+              }
+            >
               {comment.user.fullName}
             </span>
+            {comment.user.isPremium && (
+              <BadgeCheck className="w-3.5 h-3.5 text-[#EFA427] translate-y-[1px] ml-1" />
+            )}
             <span className="text-sm text-[#B9B9B9] ml-2">
-              {format(new Date(comment.createdAt), "MMM d, yyyy")}
+              {format(new Date(comment.createdAt), "MMM d, yyyy • h:mm a")}
             </span>
           </div>
 
@@ -145,15 +154,16 @@ export const CommentThread = ({
           </div>
         )}
 
-        {comment.replies && comment.replies?.map((reply) => (
-          <CommentThread
-            key={reply.id}
-            comment={reply}
-            postId={postId}
-            level={level + 1}
-            isDetailView={isDetailView}
-          />
-        ))}
+        {comment.replies &&
+          comment.replies?.map((reply) => (
+            <CommentThread
+              key={reply.id}
+              comment={reply}
+              postId={postId}
+              level={level + 1}
+              isDetailView={isDetailView}
+            />
+          ))}
       </div>
     </div>
   );
