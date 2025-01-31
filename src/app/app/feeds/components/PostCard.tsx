@@ -163,6 +163,8 @@ export const PostCard = ({
     return <PostCardSkeleton />;
   }
 
+  console.log(post)
+
   return (
     <div
       className="bg-gradient-to-b from-[#2A2A2A] to-[#232323] rounded-xl border border-white/5 
@@ -184,7 +186,7 @@ export const PostCard = ({
               <UserCircle />
             )}
             <div>
-              <h3 className="font-medium text-white">{post.user.fullName}</h3>
+              <h3 className={post.user.isPremium ? `font-medium text-[#EFA427]`:`font-medium text-white`}>{post.user.fullName}</h3>
               <p className="text-sm text-[#B9B9B9]">
                 {format(new Date(post.createdAt), "MMM d, yyyy • h:mm a")}
               </p>

@@ -139,6 +139,8 @@ export default function FeedPageClient() {
     return () => clearInterval(pollInterval);
   }, [sortBy, filterBy, data]);
 
+  console.log('inidata',data)
+
   const handleRefresh = async () => {
     setHasNewPosts(false);
     await refetch();

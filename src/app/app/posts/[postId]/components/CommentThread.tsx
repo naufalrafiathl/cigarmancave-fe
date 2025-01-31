@@ -72,8 +72,6 @@ export const CommentThread = ({
     });
   };
 
-  console.log('comment',comment)
-
   // Don't render if we've reached max depth
   if (level >= maxLevel) {
     return null;
@@ -93,7 +91,7 @@ export const CommentThread = ({
       <div className="flex-1">
         <div className="flex items-start justify-between">
           <div>
-            <span className="font-medium text-white">
+            <span className={comment.user.isPremium ? `font-medium text-[#EFA427]`:`font-medium text-white`}>
               {comment.user.fullName}
             </span>
             <span className="text-sm text-[#B9B9B9] ml-2">

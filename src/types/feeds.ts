@@ -55,7 +55,13 @@ export interface User {
     userId: number;
     postId: number;
     parentId: number | null;
-    user: User;
+    user: {
+      id: number;
+      fullName: string;
+      profileImageUrl?: string;
+      isPremium: boolean;
+    };
+
     replies: Comment[];
   }
   

@@ -9,6 +9,7 @@ export interface Comment {
       id: number;
       fullName: string;
       profileImageUrl: string;
+      isPremium: boolean;
     };
     replies: Comment[];
     userId: number;

@@ -11,6 +11,7 @@ export interface Post {
       id: number;
       fullName: string;
       profileImageUrl: string;
+      isPremium: string;
     };
     review?: {
       id: number;
